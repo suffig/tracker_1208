@@ -132,7 +132,9 @@ const createFallbackClient = () => {
       on: () => mockClient.channel(),
       subscribe: (callback) => {
         console.warn('Supabase realtime not available - using fallback');
-        setTimeout(() => callback('CLOSED'), 100);
+        if (typeof callback === 'function') {
+          setTimeout(() => callback('CLOSED'), 100);
+        }
         return mockClient.channel();
       }
     }),
