@@ -335,8 +335,8 @@ class SupabaseWrapper {
     }, this.maxRetries, priority);
   }
 
-  // Enhanced delete with better validation
-  async delete(table, conditions = {}, priority = 'normal') {
+  // Enhanced deleteRow with better validation
+  async deleteRow(table, conditions = {}, priority = 'normal') {
     if (!table) throw new Error('Table name is required');
     if (Object.keys(conditions).length === 0) throw new Error('At least one condition is required for delete');
     
@@ -409,7 +409,7 @@ class SupabaseWrapper {
 export const supabaseDb = new SupabaseWrapper(supabase);
 
 // Enhanced auth event handler with better error handling and monitoring
-supabase.auth.onAuthStateChange((event, session) => {
+const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
   const userInfo = session?.user?.email || 'No user';
   console.log(`Auth state changed: ${event}`, userInfo);
   
