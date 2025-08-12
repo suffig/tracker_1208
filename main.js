@@ -159,18 +159,7 @@ async function switchTab(tab) {
     try {
         currentTab = tab;
         
-        // Update desktop tabs
-        document.querySelectorAll('nav a').forEach(btn => {
-            btn.classList.remove("bg-blue-700","text-white","active-tab","lg:text-blue-700");
-            btn.removeAttribute("aria-current");
-        });
-        
-        const desktopTab = document.getElementById(tab + "-tab");
-        if (desktopTab) {
-            desktopTab.classList.add("bg-blue-700","text-white","active-tab","lg:text-blue-700");
-            desktopTab.setAttribute("aria-current","page");
-        }
-        
+        // Update bottom navigation only
         updateBottomNavActive(tab);
         showTabLoader(true);
         
@@ -229,23 +218,7 @@ async function renderCurrentTab() {
 }
 
 function setupTabButtons() {
-    // Unregister old handlers and rebind
-    const tabIds = [
-        "squad-tab", "bans-tab", "matches-tab",
-        "stats-tab", "finanzen-tab", "spieler-tab"
-    ];
-    tabIds.forEach(id => {
-        const tab = document.getElementById(id);
-        if (tab) {
-            tab.replaceWith(tab.cloneNode(true));
-        }
-    });
-    document.getElementById("squad-tab")?.addEventListener("click", e => { e.preventDefault(); switchTab("squad"); });
-    document.getElementById("bans-tab")?.addEventListener("click", e => { e.preventDefault(); switchTab("bans"); });
-    document.getElementById("matches-tab")?.addEventListener("click", e => { e.preventDefault(); switchTab("matches"); });
-    document.getElementById("stats-tab")?.addEventListener("click", e => { e.preventDefault(); switchTab("stats"); });
-    document.getElementById("finanzen-tab")?.addEventListener("click", e => { e.preventDefault(); switchTab("finanzen"); });
-    document.getElementById("spieler-tab")?.addEventListener("click", e => { e.preventDefault(); switchTab("spieler"); });
+    // Since we're only using bottom navigation, no desktop tab setup needed
     tabButtonsInitialized = true;
 }
 
@@ -415,7 +388,7 @@ function showFallbackStatus() {
     };
 }
 
-//document.addEventListener('visibilitychange', handleVisibilityChange);
+document.addEventListener('visibilitychange', handleVisibilityChange);
 window.addEventListener('beforeunload', () => {
     cleanupRealtimeSubscriptions();
     if (inactivityCleanupTimer) {
