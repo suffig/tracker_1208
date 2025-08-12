@@ -1,50 +1,144 @@
 import { showModal, hideModal } from './modal.js';
 import { decrementBansAfterMatch } from './bans.js';
+import { dataManager } from './dataManager.js';
+import { loadingManager, ErrorHandler, Performance, DOM } from './utils.js';
 import { supabase } from './supabaseClient.js';
 
-// Globale Daten
-let matches = [];
-let aekAthen = [];
-let realMadrid = [];
-let bans = [];
-let finances = {
-    aekAthen: { balance: 0 },
-    realMadrid: { balance: 0 }
-};
-let spielerDesSpiels = [];
-let transactions = [];
-let matchesInitialized = false;
+// Optimized data management with caching
+class MatchesDataManager {
+    constructor() {
+        this.matches = [];
+        this.aekAthen = [];
+        this.realMadrid = [];
+        this.bans = [];
+        this.finances = {
+            aekAthen: { balance: 0 },
+            realMadrid: { balance: 0 }
+        };
+        this.spielerDesSpiels = [];
+        this.transactions = [];
+        this.matchesInitialized = false;
+        this.matchesChannel = null;
+        this.lastLoadTime = 0;
+        this.loadingPromise = null;
+    }
 
-// Hilfsfunktion: App-Matchnummer (laufende Nummer, wie Übersicht)
+    // Debounced data loading to prevent excessive calls
+    loadAllData = Performance.debounce(async (renderFn = null) => {
+        if (this.loadingPromise) {
+            return this.loadingPromise;
+        }
+
+        this.loadingPromise = this._loadAllDataInternal(renderFn);
+        try {
+            await this.loadingPromise;
+        } finally {
+            this.loadingPromise = null;
+        }
+    }, 100);
+
+    async _loadAllDataInternal(renderFn) {
+        const loadingKey = 'matches-data';
+        loadingManager.show(loadingKey);
+
+        try {
+            const data = await dataManager.loadAllAppData();
+            
+            this.matches = data.matches || [];
+            
+            // Filter players by team
+            const allPlayers = data.players || [];
+            this.aekAthen = allPlayers.filter(p => p.team === "AEK");
+            this.realMadrid = allPlayers.filter(p => p.team === "Real");
+            
+            this.bans = data.bans || [];
+            
+            // Process finances
+            const financesData = data.finances || [];
+            this.finances = {
+                aekAthen: financesData.find(f => f.team === "AEK") || { balance: 0 },
+                realMadrid: financesData.find(f => f.team === "Real") || { balance: 0 }
+            };
+            
+            this.spielerDesSpiels = data.spieler_des_spiels || [];
+            this.transactions = data.transactions || [];
+            
+            this.lastLoadTime = Date.now();
+            
+            if (renderFn) {
+                renderFn();
+            }
+        } catch (error) {
+            ErrorHandler.handleDatabaseError(error, 'Matches-Daten laden');
+        } finally {
+            loadingManager.hide(loadingKey);
+        }
+    }
+
+    subscribeToChanges(renderFn = null) {
+        if (this.matchesChannel) return;
+        
+        try {
+            this.matchesChannel = supabase
+                .channel('matches_live')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, 
+                    () => this.loadAllData(renderFn))
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'spieler_des_spiels' }, 
+                    () => this.loadAllData(renderFn))
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'finances' }, 
+                    () => this.loadAllData(renderFn))
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, 
+                    () => this.loadAllData(renderFn))
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, 
+                    () => this.loadAllData(renderFn))
+                .subscribe();
+        } catch (error) {
+            console.error('Error subscribing to changes:', error);
+        }
+    }
+
+    unsubscribe() {
+        if (this.matchesChannel) {
+            supabase.removeChannel(this.matchesChannel);
+            this.matchesChannel = null;
+        }
+    }
+
+    reset() {
+        this.matches = [];
+        this.aekAthen = [];
+        this.realMadrid = [];
+        this.bans = [];
+        this.finances = { aekAthen: { balance: 0 }, realMadrid: { balance: 0 } };
+        this.spielerDesSpiels = [];
+        this.transactions = [];
+        this.matchesInitialized = false;
+        this.lastLoadTime = 0;
+        this.unsubscribe();
+    }
+}
+
+// Create singleton instance
+const matchesData = new MatchesDataManager();
+
+// Hilfsfunktion: App-Matchnummer (laufende Nummer, wie Übersicht) - optimized
 export function getAppMatchNumber(matchId) {
+    if (!matchId || !matchesData.matches.length) return null;
+    
     // matches ist absteigend sortiert (neueste zuerst)
-    const idx = matches.findIndex(m => m.id === matchId);
-    return idx >= 0 ? matches.length - idx : null;
+    const idx = matchesData.matches.findIndex(m => m.id === matchId);
+    return idx >= 0 ? matchesData.matches.length - idx : null;
 }
 
-async function loadAllData(renderFn = renderMatchesList) {
-    const { data: matchesData } = await supabase.from('matches').select('*').order('id', { ascending: false });
-    matches = matchesData || [];
-    const { data: players } = await supabase.from('players').select('*');
-    aekAthen = players ? players.filter(p => p.team === "AEK") : [];
-    realMadrid = players ? players.filter(p => p.team === "Real") : [];
-    const { data: bansData } = await supabase.from('bans').select('*');
-    bans = bansData || [];
-    const { data: finData } = await supabase.from('finances').select('*');
-    finances = {
-        aekAthen: finData?.find(f => f.team === "AEK") || { balance: 0 },
-        realMadrid: finData?.find(f => f.team === "Real") || { balance: 0 }
-    };
-    const { data: sdsData } = await supabase.from('spieler_des_spiels').select('*');
-    spielerDesSpiels = sdsData || [];
-    const { data: transData } = await supabase.from('transactions').select('*').order('id', { ascending: false });
-    transactions = transData || [];
-    renderFn();
-}
+export async function renderMatchesTab(containerId = "app") {
+    console.log("renderMatchesTab aufgerufen!", { containerId });
+    
+    const app = DOM.getElementById(containerId);
+    if (!app) {
+        console.error(`Container ${containerId} not found`);
+        return;
+    }
 
-export function renderMatchesTab(containerId = "app") {
-	console.log("renderMatchesTab aufgerufen!", { containerId });
-    const app = document.getElementById(containerId);
     app.innerHTML = `
         <div class="flex flex-col sm:flex-row sm:justify-between mb-4 gap-2">
             <h2 class="text-lg font-semibold">Matches</h2>
@@ -52,91 +146,146 @@ export function renderMatchesTab(containerId = "app") {
                 <i class="fas fa-plus"></i> <span>Match hinzufügen</span>
             </button>
         </div>
-        <div id="matches-list" class="space-y-3"></div>
+        <div id="matches-list" class="space-y-3">
+            <div class="flex items-center justify-center py-8">
+                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <span class="ml-2 text-gray-600">Lädt Matches...</span>
+            </div>
+        </div>
     `;
-    document.getElementById("add-match-btn").onclick = () => openMatchForm();
-    loadAllData(renderMatchesList);
+
+    // Attach event listener safely
+    const addMatchBtn = DOM.getElementById("add-match-btn");
+    if (addMatchBtn) {
+        addMatchBtn.onclick = () => openMatchForm();
+    }
+
+    // Subscribe to real-time changes
+    matchesData.subscribeToChanges(renderMatchesList);
+    
+    // Load data
+    await matchesData.loadAllData(renderMatchesList);
 }
 
-let matchesChannel;
-function subscribeMatches(renderFn = renderMatchesList) {
-    if (matchesChannel) return;
-    matchesChannel = supabase
-        .channel('matches_live')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'matches' }, () => loadAllData(renderFn))
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'spieler_des_spiels' }, () => loadAllData(renderFn))
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'finances' }, () => loadAllData(renderFn))
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, () => loadAllData(renderFn))
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, () => loadAllData(renderFn))
-        .subscribe();
+// Export reset function for main.js
+export function resetMatchesState() {
+    matchesData.reset();
 }
 
 let matchViewDate = new Date().toISOString().slice(0, 10); // Standard: heute
 
+// Optimized match list rendering with better error handling
 function renderMatchesList() {
-    const container = document.getElementById('matches-list');
+    const container = DOM.getElementById('matches-list');
     if (!container) {
         console.warn("Element #matches-list nicht gefunden!");
         return;
     }
-    if (!matches.length) {
-        container.innerHTML = `<div class="text-gray-400 text-sm">Noch keine Matches eingetragen.</div>`;
-        return;
+
+    try {
+        if (!matchesData.matches.length) {
+            container.innerHTML = `<div class="text-gray-400 text-sm text-center py-4">Noch keine Matches eingetragen.</div>`;
+            return;
+        }
+
+        // Alle Daten nach Datum gruppieren - optimized
+        const uniqueDates = [...new Set(matchesData.matches.map(m => m.date))].sort((a, b) => b.localeCompare(a));
+        
+        // matchViewDate initialisieren, falls leer
+        if (!matchViewDate && uniqueDates.length) {
+            matchViewDate = uniqueDates[0];
+        }
+
+        // Nur Matches des aktuellen Tages anzeigen
+        const filteredMatches = matchesData.matches.filter(m => m.date === matchViewDate);
+
+        // Überschrift mit Datum, schön formatiert
+        const dateStr = matchViewDate ? matchViewDate.split('-').reverse().join('.') : '';
+        let html = `<div class="text-center font-semibold text-base mb-2">Spiele am <span class="text-sky-700 dark:text-sky-400">${dateStr}</span></div>`;
+
+        if (!filteredMatches.length) {
+            html += `<div class="text-gray-400 text-sm text-center py-4">Keine Spiele für diesen Tag.</div>`;
+        } else {
+            html += filteredMatches.map(match => {
+                // Durchgehende Nummerierung, unabhängig vom Tag!
+                const nr = matchesData.matches.length - matchesData.matches.findIndex(m => m.id === match.id);
+                return matchHtml(match, nr);
+            }).join('');
+        }
+
+        // Navigation Buttons - optimized
+        html += renderNavigationButtons(uniqueDates);
+        
+        DOM.setSafeHTML(container, html);
+        
+        // Attach event listeners safely
+        attachMatchEventListeners(uniqueDates);
+        
+    } catch (error) {
+        console.error('Error rendering matches list:', error);
+        ErrorHandler.showUserError('Fehler beim Anzeigen der Matches');
+        container.innerHTML = `<div class="text-red-500 text-center py-4">Fehler beim Laden der Matches</div>`;
     }
+}
 
-    // Alle Daten nach Datum gruppieren
-    const uniqueDates = [...new Set(matches.map(m => m.date))].sort((a, b) => b.localeCompare(a));
-    // matchViewDate initialisieren, falls leer
-    if (!matchViewDate && uniqueDates.length) matchViewDate = uniqueDates[0];
-
-    // Nur Matches des aktuellen Tages anzeigen
-    const filteredMatches = matches.filter(m => m.date === matchViewDate);
-
-    // Überschrift mit Datum, schön formatiert
-    let dateStr = matchViewDate ? matchViewDate.split('-').reverse().join('.') : '';
-    let html = `<div class="text-center font-semibold text-base mb-2">Spiele am <span class="text-sky-700 dark:text-sky-400">${dateStr}</span></div>`;
-
-    if (!filteredMatches.length) {
-        html += `<div class="text-gray-400 text-sm">Keine Spiele für diesen Tag.</div>`;
-    } else {
-        html += filteredMatches.map(match => {
-            // Durchgehende Nummerierung, unabhängig vom Tag!
-            const nr = matches.length - matches.findIndex(m => m.id === match.id);
-            return matchHtml(match, nr);
-        }).join('');
-    }
-
-    // Navigation Buttons
-    let navHtml = `<div class="flex gap-2 justify-center mt-4">`;
+// Separate function for navigation buttons
+function renderNavigationButtons(uniqueDates) {
     const currIdx = uniqueDates.indexOf(matchViewDate);
+    let navHtml = `<div class="flex gap-2 justify-center mt-4">`;
+    
     if (currIdx < uniqueDates.length - 1) {
-        navHtml += `<button id="older-matches-btn" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded-lg font-semibold">Ältere Spiele anzeigen</button>`;
+        navHtml += `<button id="older-matches-btn" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-gray-400">Ältere Spiele anzeigen</button>`;
     }
     if (currIdx > 0) {
-        navHtml += `<button id="newer-matches-btn" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded-lg font-semibold">Neuere Spiele anzeigen</button>`;
+        navHtml += `<button id="newer-matches-btn" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-gray-400">Neuere Spiele anzeigen</button>`;
     }
+    
     navHtml += `</div>`;
-    container.innerHTML = html + navHtml;
+    return navHtml;
+}
 
-    // Button-Handler für Seitenwechsel
+// Separate function for event listeners
+function attachMatchEventListeners(uniqueDates) {
+    const currIdx = uniqueDates.indexOf(matchViewDate);
+    
+    // Navigation button handlers
     if (currIdx < uniqueDates.length - 1) {
-        document.getElementById('older-matches-btn').onclick = () => {
-            matchViewDate = uniqueDates[currIdx + 1];
-            renderMatchesList();
-        };
+        const olderBtn = DOM.getElementById('older-matches-btn');
+        if (olderBtn) {
+            olderBtn.onclick = () => {
+                matchViewDate = uniqueDates[currIdx + 1];
+                renderMatchesList();
+            };
+        }
     }
+    
     if (currIdx > 0) {
-        document.getElementById('newer-matches-btn').onclick = () => {
-            matchViewDate = uniqueDates[currIdx - 1];
-            renderMatchesList();
-        };
+        const newerBtn = DOM.getElementById('newer-matches-btn');
+        if (newerBtn) {
+            newerBtn.onclick = () => {
+                matchViewDate = uniqueDates[currIdx - 1];
+                renderMatchesList();
+            };
+        }
     }
 
+    // Match action buttons
     document.querySelectorAll('.edit-match-btn').forEach(btn => {
-        btn.onclick = () => openMatchForm(parseInt(btn.getAttribute('data-id')));
+        btn.onclick = () => {
+            const matchId = parseInt(btn.getAttribute('data-id'));
+            if (matchId) {
+                openMatchForm(matchId);
+            }
+        };
     });
+    
     document.querySelectorAll('.delete-match-btn').forEach(btn => {
-        btn.onclick = () => deleteMatch(parseInt(btn.getAttribute('data-id')));
+        btn.onclick = () => {
+            const matchId = parseInt(btn.getAttribute('data-id'));
+            if (matchId) {
+                deleteMatch(matchId);
+            }
+        };
     });
 }
 
@@ -196,102 +345,160 @@ function matchHtml(match, nr) {
 }
 
 // --- MODERNES, KOMPAKTES POPUP, ABER MIT ALLER ALTER LOGIK ---
+// Optimized match form with better error handling and validation
 function openMatchForm(id) {
-    let match = null, edit = false;
-    if (typeof id === "number") {
-        match = matches.find(m => m.id === id);
-        edit = !!match;
+    try {
+        let match = null, edit = false;
+        
+        if (typeof id === "number") {
+            match = matchesData.matches.find(m => m.id === id);
+            edit = !!match;
+        }
+
+        // Validate player data is available
+        if (!matchesData.aekAthen.length && !matchesData.realMadrid.length) {
+            ErrorHandler.showUserError('Keine Spielerdaten verfügbar. Bitte laden Sie die Seite neu.');
+            return;
+        }
+
+        // Spieler-Optionen SORTIERT nach Toren (goals, absteigend) - safely
+        const aekSorted = [...matchesData.aekAthen].sort((a, b) => (b.goals || 0) - (a.goals || 0));
+        const realSorted = [...matchesData.realMadrid].sort((a, b) => (b.goals || 0) - (a.goals || 0));
+        
+        const aekSpieler = aekSorted.map(p => 
+            `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${p.goals || 0} Tore)</option>`
+        ).join('');
+        
+        const realSpieler = realSorted.map(p => 
+            `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${p.goals || 0} Tore)</option>`
+        ).join('');
+
+        const goalsListA = match?.goalslista || [];
+        const goalsListB = match?.goalslistb || [];
+        const manofthematch = match?.manofthematch || "";
+        const dateVal = match ? match.date : (new Date()).toISOString().slice(0,10);
+
+        // Validate date
+        if (!dateVal || !dateVal.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            ErrorHandler.showUserError('Ungültiges Datum');
+            return;
+        }
+
+        // Show modal with enhanced form
+        showModal(generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, aekSorted, realSorted, goalsListA, goalsListB, manofthematch));
+        
+        // Attach event handlers safely
+        attachMatchFormEventHandlers(edit, match?.id);
+        
+    } catch (error) {
+        console.error('Error opening match form:', error);
+        ErrorHandler.showUserError('Fehler beim Öffnen des Match-Formulars');
     }
+}
 
-    // Spieler-Optionen SORTIERT nach Toren (goals, absteigend)
-    const aekSorted = aekAthen.slice().sort((a, b) => (b.goals || 0) - (a.goals || 0));
-    const realSorted = realMadrid.slice().sort((a, b) => (b.goals || 0) - (a.goals || 0));
-    const aekSpieler = aekSorted.map(p => `<option value="${p.name}">${p.name} (${p.goals || 0} Tore)</option>`).join('');
-    const realSpieler = realSorted.map(p => `<option value="${p.name}">${p.name} (${p.goals || 0} Tore)</option>`).join('');
-    const goalsListA = match?.goalslista || [];
-    const goalsListB = match?.goalslistb || [];
-    const manofthematch = match?.manofthematch || "";
-    const dateVal = match ? match.date : (new Date()).toISOString().slice(0,10);
-
-    // NEUES DESIGN für oberen Teil (Datum + Teams + Tore), inkl. schönerer "Torschützen hinzufügen"-Button
-    showModal(`
+// Helper function to generate form HTML
+function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, aekSorted, realSorted, goalsListA, goalsListB, manofthematch) {
+    return `
     <form id="match-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl shadow-lg py-6 relative w-full text-black dark:text-white" style="max-width:98vw;">
         <h3 class="font-bold text-lg mb-2 text-center">${edit ? "Match bearbeiten" : "Match hinzufügen"}</h3>
         <div class="flex flex-col gap-3 items-center mb-2">
             <div class="flex flex-row items-center gap-2 w-full justify-center">
-                <button type="button" id="show-date" class="flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-sky-600 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none" tabindex="0">
+                <button type="button" id="show-date" class="flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-sky-600 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none transition-colors" tabindex="0">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                     <span id="date-label">${dateVal.split('-').reverse().join('.')}</span>
                 </button>
-                <input type="date" name="date" id="date-input" class="hidden" value="${dateVal}">
+                <input type="date" name="date" id="date-input" class="hidden" value="${dateVal}" required>
             </div>
             <div class="flex flex-row items-center gap-3 w-full justify-center">
                 <div class="flex flex-col items-center">
                     <span class="font-bold text-blue-700 text-base">AEK</span>
                 </div>
-                <input type="number" min="0" name="goalsa" class="border rounded-lg p-3 w-16 text-center text-base focus:ring-2 focus:ring-sky-500" required placeholder="Tore" value="${match ? match.goalsa : ""}">
+                <input type="number" min="0" max="50" name="goalsa" class="border rounded-lg p-3 w-16 text-center text-base focus:ring-2 focus:ring-sky-500" required placeholder="Tore" value="${match ? match.goalsa : ""}">
                 <span class="font-bold text-lg">:</span>
-                <input type="number" min="0" name="goalsb" class="border rounded-lg p-3 w-16 text-center text-base focus:ring-2 focus:ring-sky-500" required placeholder="Tore" value="${match ? match.goalsb : ""}">
+                <input type="number" min="0" max="50" name="goalsb" class="border rounded-lg p-3 w-16 text-center text-base focus:ring-2 focus:ring-sky-500" required placeholder="Tore" value="${match ? match.goalsb : ""}">
                 <div class="flex flex-col items-center">
                     <span class="font-bold text-red-700 text-base">Real</span>
                 </div>
             </div>
         </div>
-        <!-- AB HIER UNTERER TEIL -->
+        
         <div id="scorersA-block" class="bg-blue-50 p-2 rounded">
             <b>Torschützen AEK</b>
             <div id="scorersA">
                 ${scorerFields("goalslista", goalsListA, aekSpieler)}
             </div>
-            <button type="button" id="addScorerA" class="w-full mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-black font-semibold py-2 px-4 rounded-lg text-base shadow transition active:scale-95">
+            <button type="button" id="addScorerA" class="w-full mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-semibold py-2 px-4 rounded-lg text-base shadow transition active:scale-95">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 <span>Torschütze hinzufügen</span>
             </button>
         </div>
+        
         <div id="scorersB-block" class="bg-red-50 p-2 rounded">
             <b>Torschützen Real</b>
             <div id="scorersB">
                 ${scorerFields("goalslistb", goalsListB, realSpieler)}
             </div>
-            <button type="button" id="addScorerB" class="w-full mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-black font-semibold py-2 px-4 rounded-lg text-base shadow transition active:scale-95">
+            <button type="button" id="addScorerB" class="w-full mt-2 flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-semibold py-2 px-4 rounded-lg text-base shadow transition active:scale-95">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 <span>Torschütze hinzufügen</span>
             </button>
         </div>
+        
         <div class="bg-blue-50 p-2 rounded">
             <b>Karten AEK</b>
             <div class="flex space-x-2 items-center mb-1">
                 <label>🟨</label>
-                <input type="number" min="0" name="yellowa" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.yellowa || 0}">
+                <input type="number" min="0" max="20" name="yellowa" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.yellowa || 0}">
                 <label>🟥</label>
-                <input type="number" min="0" name="reda" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.reda || 0}">
+                <input type="number" min="0" max="11" name="reda" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.reda || 0}">
             </div>
         </div>
+        
         <div class="bg-red-50 p-2 rounded">
             <b>Karten Real</b>
             <div class="flex space-x-2 items-center mb-1">
                 <label>🟨</label>
-                <input type="number" min="0" name="yellowb" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.yellowb || 0}">
+                <input type="number" min="0" max="20" name="yellowb" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.yellowb || 0}">
                 <label>🟥</label>
-                <input type="number" min="0" name="redb" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.redb || 0}">
+                <input type="number" min="0" max="11" name="redb" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.redb || 0}">
             </div>
         </div>
+        
         <div>
             <label class="font-semibold">Spieler des Spiels (SdS):</label>
             <select name="manofthematch" class="border rounded-lg p-3 w-full h-12 text-base">
                 <option value="">Keiner</option>
-                ${aekSorted.map(p => `<option value="${p.name}"${manofthematch===p.name?' selected':''}>${p.name} (AEK)</option>`).join('')}
-                ${realSorted.map(p => `<option value="${p.name}"${manofthematch===p.name?' selected':''}>${p.name} (Real)</option>`).join('')}
+                ${aekSorted.map(p => `<option value="${DOM.sanitizeForAttribute(p.name)}"${manofthematch===p.name?' selected':''}>${DOM.sanitizeForHTML(p.name)} (AEK)</option>`).join('')}
+                ${realSorted.map(p => `<option value="${DOM.sanitizeForAttribute(p.name)}"${manofthematch===p.name?' selected':''}>${DOM.sanitizeForHTML(p.name)} (Real)</option>`).join('')}
             </select>
         </div>
+        
         <div class="flex gap-2">
-            <button type="submit" class="bg-green-600 text-white w-full px-4 py-2 rounded-lg text-base active:scale-95 transition">${edit ? "Speichern" : "Anlegen"}</button>
-            <button type="button" class="bg-gray-300 w-full px-4 py-2 rounded-lg text-base" onclick="window.hideModal()">Abbrechen</button>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white w-full px-4 py-2 rounded-lg text-base active:scale-95 transition">${edit ? "Speichern" : "Anlegen"}</button>
+            <button type="button" class="bg-gray-300 hover:bg-gray-400 w-full px-4 py-2 rounded-lg text-base transition-colors" onclick="window.hideModal()">Abbrechen</button>
         </div>
     </form>
-    `);
+    `;
+}
+
+// Helper functions for DOM safety
+DOM.sanitizeForHTML = function(str) {
+    if (!str) return '';
+    return str.replace(/[<>&"']/g, function(match) {
+        const escapeMap = { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' };
+        return escapeMap[match];
+    });
+};
+
+DOM.sanitizeForAttribute = function(str) {
+    if (!str) return '';
+    return str.replace(/[<>&"']/g, function(match) {
+        const escapeMap = { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' };
+        return escapeMap[match];
+    });
+};
 
     // Datum-Show/Hide (wie gehabt)
     document.getElementById('show-date').onclick = function() {
