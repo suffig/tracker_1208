@@ -167,11 +167,6 @@ export async function renderMatchesTab(containerId = "app") {
     await matchesData.loadAllData(renderMatchesList);
 }
 
-// Export reset function for main.js
-export function resetMatchesState() {
-    matchesData.reset();
-}
-
 let matchViewDate = new Date().toISOString().slice(0, 10); // Standard: heute
 
 // Optimized match list rendering with better error handling
