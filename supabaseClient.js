@@ -404,7 +404,7 @@ class SupabaseWrapper {
     return this.client;
   }
 }
-}
+
 
 export const supabaseDb = new SupabaseWrapper(supabase);
 
