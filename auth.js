@@ -1,9 +1,7 @@
 import { supabase } from './supabaseClient.js';
 import { ErrorHandler, FormValidator } from './utils.js';
-import { resetKaderState } from './kader.js';
-import { resetBansState } from './bans.js';
-import { resetFinanzenState } from './finanzen.js';
-import { resetMatchesState } from './matches.js';
+// Remove circular dependency by not importing reset functions here
+// The reset functions will be called directly from main.js instead
 
 export async function signUp(email, password) {
     try {
@@ -54,24 +52,6 @@ export async function signOut() {
     try {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
-
-        // Reset all module states safely
-        const resetFunctions = [
-            resetKaderState,
-            resetBansState, 
-            resetFinanzenState,
-            resetMatchesState
-        ];
-
-        resetFunctions.forEach(resetFn => {
-            if (typeof resetFn === "function") {
-                try {
-                    resetFn();
-                } catch (error) {
-                    console.error('Error resetting module state:', error);
-                }
-            }
-        });
 
         ErrorHandler.showUserError('Erfolgreich abgemeldet!', 'success');
     } catch (error) {

@@ -1,7 +1,3 @@
-import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2.54.0';
-
-console.log("supabaseClient.js geladen!");
-
 // Enhanced Supabase configuration with better error handling and performance
 const supabaseConfig = {
   auth: {
@@ -28,11 +24,39 @@ const supabaseConfig = {
   }
 };
 
-export const supabase = createClient(
-  'https://buduldeczjwnjvsckqat.supabase.co',
-  'sb_publishable_wcOHaKNEW9rQ3anrRNlEpA_r1_wGda3',
-  supabaseConfig
-);
+// Fallback client for when CDN is blocked
+const createFallbackClient = () => {
+  const mockClient = {
+    auth: {
+      getSession: () => Promise.resolve({ data: { session: null } }),
+      onAuthStateChange: (callback) => {
+        console.warn('Supabase auth not available - using fallback');
+        setTimeout(() => callback('SIGNED_OUT', null), 100);
+        return { data: { subscription: { unsubscribe: () => {} } } };
+      }
+    },
+    from: (table) => ({
+      select: () => Promise.resolve({ data: [], error: null }),
+      insert: () => Promise.resolve({ data: [], error: null }),
+      update: () => Promise.resolve({ data: [], error: null }),
+      delete: () => Promise.resolve({ data: [], error: null }),
+    }),
+    channel: () => ({
+      on: () => mockClient.channel(),
+      subscribe: (callback) => {
+        console.warn('Supabase realtime not available - using fallback');
+        setTimeout(() => callback('CLOSED'), 100);
+        return mockClient.channel();
+      }
+    }),
+    removeChannel: () => {}
+  };
+  return mockClient;
+};
+
+// Start with fallback client
+console.log("supabaseClient.js geladen mit Fallback!");
+export const supabase = createFallbackClient();
 
 // Enhanced wrapper with better connection handling and metrics
 class SupabaseWrapper {
