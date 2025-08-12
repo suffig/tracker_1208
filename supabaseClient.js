@@ -33,10 +33,38 @@ const createFallbackClient = () => {
         console.warn('Supabase auth not available - using fallback');
         setTimeout(() => callback('SIGNED_OUT', null), 100);
         return { data: { subscription: { unsubscribe: () => {} } } };
+      },
+      signInWithPassword: () => {
+        console.warn('Supabase signInWithPassword not available - using fallback');
+        return Promise.resolve({ 
+          error: new Error('Authentifizierungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.') 
+        });
+      },
+      signUp: () => {
+        console.warn('Supabase signUp not available - using fallback');
+        return Promise.resolve({ 
+          error: new Error('Registrierungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.') 
+        });
+      },
+      signOut: () => {
+        console.warn('Supabase signOut not available - using fallback');
+        return Promise.resolve({ error: null });
       }
     },
     from: (table) => ({
-      select: () => Promise.resolve({ data: [], error: null }),
+      select: () => ({
+        limit: () => Promise.resolve({ data: [], error: null }),
+        eq: () => Promise.resolve({ data: [], error: null }),
+        neq: () => Promise.resolve({ data: [], error: null }),
+        gt: () => Promise.resolve({ data: [], error: null }),
+        gte: () => Promise.resolve({ data: [], error: null }),
+        lt: () => Promise.resolve({ data: [], error: null }),
+        lte: () => Promise.resolve({ data: [], error: null }),
+        like: () => Promise.resolve({ data: [], error: null }),
+        in: () => Promise.resolve({ data: [], error: null }),
+        order: () => Promise.resolve({ data: [], error: null }),
+        range: () => Promise.resolve({ data: [], error: null })
+      }),
       insert: () => Promise.resolve({ data: [], error: null }),
       update: () => Promise.resolve({ data: [], error: null }),
       delete: () => Promise.resolve({ data: [], error: null }),
