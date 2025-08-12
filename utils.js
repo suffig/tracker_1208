@@ -174,7 +174,10 @@ export class ErrorHandler {
         let userMessage = 'Ein unerwarteter Fehler ist aufgetreten.';
         
         if (error.message) {
-            if (error.message.includes('auth')) {
+            if (error.message.includes('nicht verfügbar')) {
+                // Fallback service message - show as-is since it's already user-friendly
+                userMessage = error.message;
+            } else if (error.message.includes('auth')) {
                 userMessage = 'Authentifizierungsfehler. Bitte melden Sie sich erneut an.';
             } else if (error.message.includes('network') || error.message.includes('fetch')) {
                 userMessage = 'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.';
