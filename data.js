@@ -1,27 +1,15 @@
+import { dataManager } from './dataManager.js';
+import { ErrorHandler } from './utils.js';
+
 export const POSITIONEN = ["TH","LV","RV","IV","ZDM","ZM","ZOM","LM","RM","LF","RF","ST"];
-import { supabaseDb, supabase } from './supabaseClient.js';
-import { isDatabaseAvailable } from './connectionMonitor.js';
 
-// Hinweis: Alle Daten werden jetzt über Supabase geladen – mit verbesserter Fehlerbehandlung und Retry-Logik!
-
-// Enhanced data loading with fallback and retry logic
+// Enhanced data loading with centralized data manager
 async function safeDataOperation(operation, fallbackValue = []) {
-    if (!isDatabaseAvailable()) {
-        console.warn('Database not available, returning fallback data');
-        return fallbackValue;
-    }
-
     try {
         const result = await operation();
         return result.data || fallbackValue;
     } catch (error) {
-        console.error('Database operation failed:', error);
-        
-        // For user-facing operations, show a friendly message
-        if (error.message && !error.message.includes('auth')) {
-            console.warn('Data loading failed, using fallback');
-        }
-        
+        ErrorHandler.handleDatabaseError(error, 'Data loading');
         return fallbackValue;
     }
 }
@@ -29,7 +17,7 @@ async function safeDataOperation(operation, fallbackValue = []) {
 // Lade alle Spieler eines Teams aus Supabase
 export async function getPlayersByTeam(team) {
     return safeDataOperation(
-        () => supabaseDb.select('players', '*', { eq: { team } }),
+        () => dataManager.getPlayersByTeam(team),
         []
     );
 }
@@ -37,7 +25,7 @@ export async function getPlayersByTeam(team) {
 // Lade alle Ehemaligen (team === "Ehemalige")
 export async function getEhemalige() {
     return safeDataOperation(
-        () => supabaseDb.select('players', '*', { eq: { team: "Ehemalige" } }),
+        () => dataManager.getPlayersByTeam("Ehemalige"),
         []
     );
 }
@@ -45,7 +33,7 @@ export async function getEhemalige() {
 // Lade alle bans
 export async function getBans() {
     return safeDataOperation(
-        () => supabaseDb.select('bans', '*'),
+        () => dataManager.getBans(),
         []
     );
 }
@@ -53,7 +41,7 @@ export async function getBans() {
 // Lade alle Matches
 export async function getMatches() {
     return safeDataOperation(
-        () => supabaseDb.select('matches', '*'),
+        () => dataManager.getAllMatches(),
         []
     );
 }
@@ -61,7 +49,7 @@ export async function getMatches() {
 // Lade alle Transaktionen
 export async function getTransactions() {
     return safeDataOperation(
-        () => supabaseDb.select('transactions', '*'),
+        () => dataManager.getTransactions(),
         []
     );
 }
@@ -69,7 +57,7 @@ export async function getTransactions() {
 // Lade Finanzen (liefert beide Teams als Array)
 export async function getFinances() {
     return safeDataOperation(
-        () => supabaseDb.select('finances', '*'),
+        () => dataManager.getFinances(),
         []
     );
 }
@@ -77,48 +65,43 @@ export async function getFinances() {
 // Lade SpielerDesSpiels-Statistik
 export async function getSpielerDesSpiels() {
     return safeDataOperation(
-        () => supabaseDb.select('spieler_des_spiels', '*'),
+        () => dataManager.getSpielerDesSpiels(),
         []
     );
 }
 
-// Enhanced save operations with retry logic
+// Enhanced save operations with validation and centralized error handling
 export async function savePlayer(player) {
-    if (!isDatabaseAvailable()) {
-        throw new Error('Keine Datenbankverbindung verfügbar. Bitte später versuchen.');
-    }
-
-    try {
+    return ErrorHandler.withErrorHandling(async () => {
         if (player.id) {
-            return await supabaseDb.update('players', {
+            const result = await dataManager.update('players', {
                 name: player.name,
                 team: player.team,
                 position: player.position,
                 value: player.value
             }, player.id);
+            return result;
         } else {
-            return await supabaseDb.insert('players', [{
+            const result = await dataManager.insert('players', {
                 name: player.name,
                 team: player.team,
                 position: player.position,
                 value: player.value
-            }]);
+            });
+            return result;
         }
-    } catch (error) {
-        console.error('Failed to save player:', error);
-        throw new Error('Fehler beim Speichern des Spielers. Bitte versuchen Sie es erneut.');
-    }
+    }, 'Spieler speichern');
 }
 
 export async function deletePlayer(id) {
-    if (!isDatabaseAvailable()) {
-        throw new Error('Keine Datenbankverbindung verfügbar. Bitte später versuchen.');
-    }
+    return ErrorHandler.withErrorHandling(async () => {
+        return await dataManager.delete('players', id);
+    }, 'Spieler löschen');
+}
 
-    try {
-        return await supabaseDb.delete('players', id);
-    } catch (error) {
-        console.error('Failed to delete player:', error);
-        throw new Error('Fehler beim Löschen des Spielers. Bitte versuchen Sie es erneut.');
-    }
+// Batch data loading for better performance
+export async function loadAllAppData() {
+    return ErrorHandler.withErrorHandling(async () => {
+        return await dataManager.loadAllAppData();
+    }, 'App-Daten laden');
 }
