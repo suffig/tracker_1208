@@ -2,7 +2,7 @@
  * Connection Monitor - Monitors database connectivity, handles reconnection,
  * provides KeepAlive/Heartbeat, and notifies UI of session/connection state.
  */
-import { supabase } from './supabaseClient.js';
+import { supabase, usingFallback } from './supabaseClient.js';
 
 // Interval for KeepAlive (default: 4 minutes)
 const KEEPALIVE_INTERVAL = 4 * 60 * 1000;
@@ -47,8 +47,21 @@ class ConnectionMonitor {
 
     async checkConnection() {
         try {
+            // If using fallback mode, simulate successful connection
+            if (usingFallback) {
+                if (!this.isConnected) {
+                    console.log('Demo mode - simulating connection restored');
+                    this.isConnected = true;
+                    this.reconnectAttempts = 0;
+                    this.reconnectDelay = 1000;
+                    this.lastSuccessfulConnection = Date.now();
+                    this.notifyListeners({ connected: true, reconnected: true });
+                }
+                return true;
+            }
+
             // Try a simple query to test connection
-            const { error } = await supabase.from('players').select('id').limit(1);
+            const { data, error } = await supabase.from('players').select('id');
 
             if (error) throw error;
 
@@ -242,5 +255,5 @@ export const connectionMonitor = new ConnectionMonitor();
 
 // Utility function to check if we should attempt database operations
 export function isDatabaseAvailable() {
-    return connectionMonitor.isConnected;
+    return usingFallback || connectionMonitor.isConnected;
 }
