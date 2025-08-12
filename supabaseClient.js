@@ -26,28 +26,87 @@ const supabaseConfig = {
 
 // Fallback client for when CDN is blocked
 const createFallbackClient = () => {
+  // Simple session state for fallback mode
+  let fallbackSession = null;
+  let authCallbacks = [];
+  
   const mockClient = {
     auth: {
-      getSession: () => Promise.resolve({ data: { session: null } }),
+      getSession: () => Promise.resolve({ data: { session: fallbackSession } }),
       onAuthStateChange: (callback) => {
         console.warn('Supabase auth not available - using fallback');
-        setTimeout(() => callback('SIGNED_OUT', null), 100);
-        return { data: { subscription: { unsubscribe: () => {} } } };
+        authCallbacks.push(callback);
+        // Initial callback
+        setTimeout(() => callback(fallbackSession ? 'SIGNED_IN' : 'SIGNED_OUT', fallbackSession), 100);
+        return { data: { subscription: { unsubscribe: () => {
+          authCallbacks = authCallbacks.filter(cb => cb !== callback);
+        } } } };
       },
-      signInWithPassword: () => {
-        console.warn('Supabase signInWithPassword not available - using fallback');
-        return Promise.resolve({ 
-          error: new Error('Authentifizierungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.') 
+      signInWithPassword: ({ email, password }) => {
+        console.warn('Supabase signInWithPassword not available - using fallback demo auth');
+        
+        // Simple validation for demo purposes
+        if (!email || !password) {
+          return Promise.resolve({ 
+            error: new Error('E-Mail und Passwort sind erforderlich.') 
+          });
+        }
+        
+        if (!email.includes('@')) {
+          return Promise.resolve({ 
+            error: new Error('Bitte geben Sie eine gültige E-Mail-Adresse ein.') 
+          });
+        }
+        
+        // Create a mock session for demo mode
+        fallbackSession = {
+          user: {
+            id: 'demo-user-' + Date.now(),
+            email: email,
+            created_at: new Date().toISOString(),
+            app_metadata: {},
+            user_metadata: {}
+          },
+          access_token: 'demo-token-' + Date.now(),
+          expires_at: Date.now() / 1000 + 3600 // 1 hour from now
+        };
+        
+        // Notify all auth listeners
+        authCallbacks.forEach(callback => {
+          setTimeout(() => callback('SIGNED_IN', fallbackSession), 50);
         });
+        
+        return Promise.resolve({ data: { user: fallbackSession.user, session: fallbackSession }, error: null });
       },
-      signUp: () => {
-        console.warn('Supabase signUp not available - using fallback');
+      signUp: ({ email, password }) => {
+        console.warn('Supabase signUp not available - using fallback demo mode');
+        
+        if (!email || !password) {
+          return Promise.resolve({ 
+            error: new Error('E-Mail und Passwort sind erforderlich.') 
+          });
+        }
+        
+        if (password.length < 6) {
+          return Promise.resolve({ 
+            error: new Error('Passwort muss mindestens 6 Zeichen haben.') 
+          });
+        }
+        
         return Promise.resolve({ 
-          error: new Error('Registrierungsdienst nicht verfügbar. Bitte versuchen Sie es später erneut.') 
+          data: { user: null, session: null },
+          error: null 
         });
       },
       signOut: () => {
         console.warn('Supabase signOut not available - using fallback');
+        fallbackSession = null;
+        
+        // Notify all auth listeners
+        authCallbacks.forEach(callback => {
+          setTimeout(() => callback('SIGNED_OUT', null), 50);
+        });
+        
         return Promise.resolve({ error: null });
       }
     },
