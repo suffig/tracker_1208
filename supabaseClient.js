@@ -143,9 +143,50 @@ const createFallbackClient = () => {
   return mockClient;
 };
 
-// Start with fallback client
-console.log("supabaseClient.js geladen mit Fallback!");
-export const supabase = createFallbackClient();
+// Supabase configuration - replace with your actual values
+// You can also set these via environment variables if using a build system
+const SUPABASE_URL = (typeof process !== 'undefined' && process?.env?.VITE_SUPABASE_URL) || 
+                     (typeof process !== 'undefined' && process?.env?.REACT_APP_SUPABASE_URL) || 
+                     'https://your-project.supabase.co';
+const SUPABASE_ANON_KEY = (typeof process !== 'undefined' && process?.env?.VITE_SUPABASE_ANON_KEY) || 
+                          (typeof process !== 'undefined' && process?.env?.REACT_APP_SUPABASE_ANON_KEY) || 
+                          'your-anon-key';
+
+// Alternative: you can also hardcode your values here for static hosting
+// const SUPABASE_URL = 'https://yourproject.supabase.co';
+// const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+
+// Try to create real Supabase client first, fallback if not available
+let supabase;
+let usingFallback = false;
+
+try {
+  // Check if Supabase is available via CDN
+  if (typeof window !== 'undefined' && window.supabase && window.supabase.createClient) {
+    // Check if we have valid configuration
+    if (SUPABASE_URL !== 'https://your-project.supabase.co' && 
+        SUPABASE_ANON_KEY !== 'your-anon-key' &&
+        SUPABASE_URL.includes('.supabase.co')) {
+      console.log('🔄 Attempting to connect to Supabase...');
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, supabaseConfig);
+      console.log('✅ Supabase client created successfully');
+    } else {
+      throw new Error('Supabase configuration not provided - Please set SUPABASE_URL and SUPABASE_ANON_KEY');
+    }
+  } else {
+    throw new Error('Supabase library not available (CDN may be blocked)');
+  }
+} catch (error) {
+  console.warn('⚠️ Supabase realtime not available - using fallback:', error.message);
+  console.log('📝 To connect to your Supabase database:');
+  console.log('   1. Replace SUPABASE_URL with your project URL');
+  console.log('   2. Replace SUPABASE_ANON_KEY with your anon key');
+  console.log('   3. Ensure the Supabase CDN can load');
+  usingFallback = true;
+  supabase = createFallbackClient();
+}
+
+export { supabase, usingFallback };
 
 // Enhanced wrapper with better connection handling and metrics
 class SupabaseWrapper {

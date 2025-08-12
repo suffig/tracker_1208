@@ -1,4 +1,4 @@
-import { supabase, supabaseDb } from './supabaseClient.js';
+import { supabase, supabaseDb, usingFallback } from './supabaseClient.js';
 import { connectionMonitor, isDatabaseAvailable } from './connectionMonitor.js';
 import { dataManager } from './dataManager.js';
 import { loadingManager, ErrorHandler, eventBus } from './utils.js';
@@ -388,8 +388,32 @@ async function renderLoginArea() {
 supabase.auth.onAuthStateChange((_event, _session) => renderLoginArea());
 window.addEventListener('DOMContentLoaded', async () => {
 	console.log("DOMContentLoaded!");
+    
+    // Show fallback status if using fallback mode
+    if (usingFallback) {
+        showFallbackStatus();
+    }
+    
     await renderLoginArea();
 });
+
+// Show fallback status indicator
+function showFallbackStatus() {
+    let indicator = document.getElementById('connection-status');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'connection-status';
+        indicator.className = 'fixed top-2 right-2 z-50 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300';
+        document.body.appendChild(indicator);
+    }
+    indicator.textContent = 'Demo-Modus (Supabase nicht konfiguriert)';
+    indicator.className = indicator.className.replace(/bg-\w+-\d+/g, '') + ' bg-blue-500 text-white cursor-pointer';
+    
+    // Add click handler to show configuration help
+    indicator.onclick = () => {
+        alert(`Demo-Modus aktiv\n\nUm eine echte Supabase-Verbindung zu verwenden:\n\n1. Ersetzen Sie SUPABASE_URL in supabaseClient.js\n2. Ersetzen Sie SUPABASE_ANON_KEY in supabaseClient.js\n3. Stellen Sie sicher, dass die Supabase CDN geladen werden kann\n\nMomentan werden keine echten Daten geladen.`);
+    };
+}
 
 //document.addEventListener('visibilitychange', handleVisibilityChange);
 window.addEventListener('beforeunload', () => {
