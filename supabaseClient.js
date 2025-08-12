@@ -150,7 +150,7 @@ const SUPABASE_URL = (typeof process !== 'undefined' && process?.env?.VITE_SUPAB
                      'https://buduldeczjwnjvsckqat.supabase.co';
 const SUPABASE_ANON_KEY = (typeof process !== 'undefined' && process?.env?.VITE_SUPABASE_ANON_KEY) || 
                           (typeof process !== 'undefined' && process?.env?.REACT_APP_SUPABASE_ANON_KEY) || 
-                          'sb_secret_utzm5C_LEaHkdPbduXZoWw_UhgD3EKm';
+                          'sb_publishable_wcOHaKNEW9rQ3anrRNlEpA_r1_wGda3';
 
 // Alternative: you can also hardcode your values here for static hosting
 // const SUPABASE_URL = 'https://yourproject.supabase.co';
