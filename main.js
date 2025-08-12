@@ -1,5 +1,7 @@
 import { supabase, supabaseDb } from './supabaseClient.js';
 import { connectionMonitor, isDatabaseAvailable } from './connectionMonitor.js';
+import { dataManager } from './dataManager.js';
+import { loadingManager, ErrorHandler, eventBus } from './utils.js';
 
 import { signUp, signIn, signOut } from './auth.js';
 import { renderKaderTab } from './kader.js';
@@ -124,56 +126,106 @@ function cleanupRealtimeSubscriptions() {
 
 function showTabLoader(show = true) {
     const loader = document.getElementById('tab-loader');
-    if (loader) loader.style.display = show ? "flex" : "none";
+    if (loader) {
+        loader.style.display = show ? "flex" : "none";
+    }
+    
+    // Use centralized loading manager
+    if (show) {
+        loadingManager.show('tab-loading');
+    } else {
+        loadingManager.hide('tab-loading');
+    }
 }
 
 // --- Bottom Navbar Indicator ---
 function updateBottomNavActive(tab) {
-    document.querySelectorAll('.nav-indicator').forEach(ind => ind.className = 'nav-indicator');
-    if(tab==="squad") document.getElementById("nav-squad")?.querySelector('.nav-indicator').classList.add('active', 'indicator-squad');
-    if(tab==="matches") document.getElementById("nav-matches")?.querySelector('.nav-indicator').classList.add('active', 'indicator-matches');
-    if(tab==="bans") document.getElementById("nav-bans")?.querySelector('.nav-indicator').classList.add('active', 'indicator-bans');
-    if(tab==="finanzen") document.getElementById("nav-finanzen")?.querySelector('.nav-indicator').classList.add('active', 'indicator-finanzen');
-    if(tab==="stats") document.getElementById("nav-stats")?.querySelector('.nav-indicator').classList.add('active', 'indicator-stats');
-    if(tab==="spieler") document.getElementById("nav-spieler")?.querySelector('.nav-indicator').classList.add('active', 'indicator-spieler');
-}
-
-function switchTab(tab) {
-    currentTab = tab;
-    document.querySelectorAll('nav a').forEach(btn => {
-        btn.classList.remove("bg-blue-700","text-white","active-tab","lg:text-blue-700");
-        btn.removeAttribute("aria-current");
-    });
-    const desktopTab = document.getElementById(tab + "-tab");
-    if (desktopTab) {
-        desktopTab.classList.add("bg-blue-700","text-white","active-tab","lg:text-blue-700");
-        desktopTab.setAttribute("aria-current","page");
+    try {
+        document.querySelectorAll('.nav-indicator').forEach(ind => {
+            ind.className = 'nav-indicator';
+        });
+        
+        const navElement = document.getElementById(`nav-${tab}`);
+        const indicator = navElement?.querySelector('.nav-indicator');
+        if (indicator) {
+            indicator.classList.add('active', `indicator-${tab}`);
+        }
+    } catch (error) {
+        console.error('Error updating bottom nav:', error);
     }
-    updateBottomNavActive(tab);
-    showTabLoader(true);
-    setTimeout(() => {
-        renderCurrentTab();
-        showTabLoader(false);
-    }, 300);
 }
 
-function renderCurrentTab() {
+async function switchTab(tab) {
+    try {
+        currentTab = tab;
+        
+        // Update desktop tabs
+        document.querySelectorAll('nav a').forEach(btn => {
+            btn.classList.remove("bg-blue-700","text-white","active-tab","lg:text-blue-700");
+            btn.removeAttribute("aria-current");
+        });
+        
+        const desktopTab = document.getElementById(tab + "-tab");
+        if (desktopTab) {
+            desktopTab.classList.add("bg-blue-700","text-white","active-tab","lg:text-blue-700");
+            desktopTab.setAttribute("aria-current","page");
+        }
+        
+        updateBottomNavActive(tab);
+        showTabLoader(true);
+        
+        // Add small delay for better UX
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        await renderCurrentTab();
+        showTabLoader(false);
+    } catch (error) {
+        console.error('Error switching tab:', error);
+        ErrorHandler.showUserError('Fehler beim Wechseln des Tabs');
+        showTabLoader(false);
+    }
+}
+
+async function renderCurrentTab() {
     const appDiv = document.getElementById("app");
-    if (!appDiv) return;
-    appDiv.innerHTML = "";
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!appDiv) {
+        console.error('App container not found');
+        return;
+    }
+    
+    try {
+        appDiv.innerHTML = "";
+        
+        const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
             appDiv.innerHTML = `<div class="text-red-700 text-center py-6">Nicht angemeldet. Bitte einloggen.</div>`;
             return;
         }
+        
         console.log("renderCurrentTab mit currentTab:", currentTab);
-        if(currentTab==="squad") renderKaderTab("app");
-        else if(currentTab==="bans") renderBansTab("app");
-        else if(currentTab==="matches") renderMatchesTab("app");
-        else if(currentTab==="stats") renderStatsTab("app");
-        else if(currentTab==="finanzen") renderFinanzenTab("app");
-        else if(currentTab==="spieler") renderSpielerTab("app");
-    });
+        
+        // Use a more structured approach for tab rendering
+        const tabRenderers = {
+            'squad': () => renderKaderTab("app"),
+            'bans': () => renderBansTab("app"),
+            'matches': () => renderMatchesTab("app"),
+            'stats': () => renderStatsTab("app"),
+            'finanzen': () => renderFinanzenTab("app"),
+            'spieler': () => renderSpielerTab("app")
+        };
+        
+        const renderer = tabRenderers[currentTab];
+        if (renderer) {
+            await renderer();
+        } else {
+            console.warn(`No renderer found for tab: ${currentTab}`);
+            appDiv.innerHTML = `<div class="text-yellow-700 text-center py-6">Unbekannter Tab: ${currentTab}</div>`;
+        }
+    } catch (error) {
+        console.error('Error rendering tab:', error);
+        ErrorHandler.handleDatabaseError(error, 'Tab laden');
+        appDiv.innerHTML = `<div class="text-red-700 text-center py-6">Fehler beim Laden des Tabs. Bitte versuchen Sie es erneut.</div>`;
+    }
 }
 
 function setupTabButtons() {
