@@ -147,10 +147,10 @@ const createFallbackClient = () => {
 // You can also set these via environment variables if using a build system
 const SUPABASE_URL = (typeof process !== 'undefined' && process?.env?.VITE_SUPABASE_URL) || 
                      (typeof process !== 'undefined' && process?.env?.REACT_APP_SUPABASE_URL) || 
-                     'https://your-project.supabase.co';
+                     'https://buduldeczjwnjvsckqat.supabase.co';
 const SUPABASE_ANON_KEY = (typeof process !== 'undefined' && process?.env?.VITE_SUPABASE_ANON_KEY) || 
                           (typeof process !== 'undefined' && process?.env?.REACT_APP_SUPABASE_ANON_KEY) || 
-                          'your-anon-key';
+                          'sb_secret_utzm5C_LEaHkdPbduXZoWw_UhgD3EKm';
 
 // Alternative: you can also hardcode your values here for static hosting
 // const SUPABASE_URL = 'https://yourproject.supabase.co';
