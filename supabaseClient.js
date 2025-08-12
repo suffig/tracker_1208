@@ -223,8 +223,8 @@ const createFallbackClient = () => {
       
       const queryBuilder = {
         select: (columns = '*') => {
-          // Execute query with current state and return a promise
-          return executeQuery();
+          // Don't execute immediately, return the builder for chaining
+          return queryBuilder;
         },
         eq: (column, value) => {
           queryState.eq = [column, value];
@@ -289,12 +289,15 @@ const createFallbackClient = () => {
           const result = data.length > 0 ? data[0] : null;
           return Promise.resolve({ data: result, error: null });
         },
-        // Make the builder itself callable (for compatibility)
+        // Make the builder thenable (awaitable)
         then: (resolve, reject) => {
           executeQuery().then(resolve, reject);
         },
         catch: (reject) => {
           executeQuery().catch(reject);
+        },
+        finally: (callback) => {
+          executeQuery().finally(callback);
         },
         insert: (data) => {
           console.warn('Supabase insert not available in demo mode - simulating success');
