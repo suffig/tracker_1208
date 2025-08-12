@@ -495,6 +495,8 @@ DOM.sanitizeForAttribute = function(str) {
     });
 };
 
+// Helper function to attach event handlers to the match form
+function attachMatchFormEventHandlers(edit, id) {
     // Datum-Show/Hide (wie gehabt)
     document.getElementById('show-date').onclick = function() {
         document.getElementById('date-input').classList.toggle('hidden');
@@ -949,4 +951,4 @@ export function resetMatchesState() {
     matchesChannel = undefined;
 }
 
-export {matches};
+export {matchesData as matches};
