@@ -1,5 +1,5 @@
 import { POSITIONEN, savePlayer as dataSavePlayer, deletePlayer as dataDeletePlayer } from './data.js';
-import { showModal, hideModal } from './modal.js';
+import { showModal, hideModal, showSuccessAndCloseModal } from './modal.js';
 import { supabaseDb, supabase } from './supabaseClient.js';
 import { isDatabaseAvailable } from './connectionMonitor.js';
 
@@ -391,20 +391,31 @@ async function submitPlayerForm(event, team, id) {
     const position = form.position.value;
     const value = parseFloat(form.value.value);
 
-    if (!id && (team === "AEK" || team === "Real")) {
-        let fin = team === "AEK" ? finances.aekAthen : finances.realMadrid;
-        if (fin.balance < value * 1000000) {
-            alert("Kontostand zu gering!");
-            return;
+    try {
+        if (!id && (team === "AEK" || team === "Real")) {
+            let fin = team === "AEK" ? finances.aekAthen : finances.realMadrid;
+            if (fin.balance < value * 1000000) {
+                alert("Kontostand zu gering!");
+                return;
+            }
+            try {
+                await saveTransactionAndFinance(team, "Spielerkauf", -value * 1000000, `Kauf von ${name} (${position})`);
+            } catch (error) {
+                console.warn("Transaction save failed (demo mode):", error);
+                // Continue with player save even if transaction fails in demo mode
+            }
         }
-        await saveTransactionAndFinance(team, "Spielerkauf", -value * 1000000, `Kauf von ${name} (${position})`);
+        if (id) {
+            await savePlayer({ id, name, position, value, team });
+            showSuccessAndCloseModal(`Spieler ${name} erfolgreich aktualisiert`);
+        } else {
+            await savePlayer({ name, position, value, team });
+            showSuccessAndCloseModal(`Spieler ${name} erfolgreich hinzugefügt`);
+        }
+    } catch (error) {
+        console.error("Error submitting player form:", error);
+        alert("Fehler beim Speichern des Spielers: " + error.message);
     }
-    if (id) {
-        await savePlayer({ id, name, position, value, team });
-    } else {
-        await savePlayer({ name, position, value, team });
-    }
-    hideModal();
 }
 
 export { deletePlayerDb };

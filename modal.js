@@ -1,3 +1,5 @@
+import { ErrorHandler } from './utils.js';
+
 // Zentrale Modal-Hilfsfunktionen für alle Module
 export function showModal(html) {
     let modal = document.getElementById("modal-root");
@@ -13,7 +15,17 @@ export function showModal(html) {
     `;
     window.hideModal = hideModal;
 }
+
 export function hideModal() {
     let modal = document.getElementById("modal-root");
     if (modal) modal.innerHTML = "";
+}
+
+// Neue Funktion für Success-Benachrichtigung und Modal-Schließung
+export function showSuccessAndCloseModal(message) {
+    ErrorHandler.showSuccessMessage(message);
+    // Kurze Verzögerung, damit User die Benachrichtigung sieht
+    setTimeout(() => {
+        hideModal();
+    }, 500);
 }

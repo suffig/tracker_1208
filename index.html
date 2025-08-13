@@ -4,6 +4,25 @@
     <meta charset="UTF-8">
     <title>FIFA Statistik-Tracker</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2563eb">
+    <meta name="description" content="Verfolge FIFA-Spiele, Spieler, Sperren und Finanzen">
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FIFA Tracker">
+    <link rel="apple-touch-icon" href="/assets/logo.png">
+    <link rel="apple-touch-startup-image" href="/assets/logo.png">
+    
+    <!-- Windows PWA Meta Tags -->
+    <meta name="msapplication-TileColor" content="#2563eb">
+    <meta name="msapplication-TileImage" content="/assets/logo.png">
+    
+    <!-- Standard favicon -->
+    <link rel="icon" type="image/png" href="/assets/logo.png">
     <!-- Roboto Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS via CDN -->
@@ -159,5 +178,87 @@
 <div id="modal-root"></div>
 <!-- WICHTIG: Nur ein Einstiegspunkt! -->
 <script type="module" src="./main.js"></script>
+
+<!-- Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(registration) {
+        console.log('SW: Service Worker registered successfully:', registration.scope);
+        
+        // Check for updates
+        registration.addEventListener('updatefound', function() {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', function() {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              // New version available
+              console.log('SW: New version available');
+              if (confirm('Eine neue Version ist verfügbar. Jetzt aktualisieren?')) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                window.location.reload();
+              }
+            }
+          });
+        });
+      })
+      .catch(function(err) {
+        console.log('SW: Service Worker registration failed:', err);
+      });
+  });
+
+  // Listen for service worker updates
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    window.location.reload();
+  });
+}
+
+// PWA Install Prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  deferredPrompt = e;
+  
+  // Show custom install button after a delay
+  setTimeout(function() {
+    const installButton = document.createElement('button');
+    installButton.textContent = 'Als App installieren';
+    installButton.className = 'fixed bottom-20 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm z-40';
+    installButton.addEventListener('click', function() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(function(choiceResult) {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('PWA: App installation accepted');
+          }
+          deferredPrompt = null;
+          installButton.remove();
+        });
+      }
+    });
+    
+    // Only show install button if not already installed
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+      document.body.appendChild(installButton);
+      
+      // Auto-hide after 10 seconds
+      setTimeout(function() {
+        if (installButton.parentElement) {
+          installButton.remove();
+        }
+      }, 10000);
+    }
+  }, 3000);
+});
+
+// Hide install button when app is installed
+window.addEventListener('appinstalled', function() {
+  console.log('PWA: App installed successfully');
+  const installButton = document.querySelector('button:contains("Als App installieren")');
+  if (installButton) {
+    installButton.remove();
+  }
+});
+</script>
 </body>
 </html>

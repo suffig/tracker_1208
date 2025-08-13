@@ -160,12 +160,17 @@ export class ErrorHandler {
             </div>
         `;
 
-        // Auto-remove after 5 seconds
+        // Auto-remove after 5 seconds for error/warning, 3 seconds for success
+        const autoRemoveTime = type === 'success' ? 3000 : 5000;
         setTimeout(() => {
             if (notification && notification.parentElement) {
                 notification.remove();
             }
-        }, 5000);
+        }, autoRemoveTime);
+    }
+
+    static showSuccessMessage(message) {
+        this.showUserError(message, 'success');
     }
 
     static handleDatabaseError(error, operation = 'Database operation') {

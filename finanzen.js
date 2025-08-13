@@ -1,4 +1,4 @@
-import { showModal, hideModal } from './modal.js';
+import { showModal, hideModal, showSuccessAndCloseModal } from './modal.js';
 import { supabase } from './supabaseClient.js';
 import { matches } from './matches.js';
 
@@ -305,7 +305,8 @@ function openTransForm() {
             type, team, amount, info
         });
 
-        hideModal();
+        const transactionText = amount >= 0 ? "Einnahme" : "Ausgabe";
+        showSuccessAndCloseModal(`${transactionText} erfolgreich hinzugefügt`);
     };
 }
 
