@@ -62,6 +62,36 @@
         .nav-indicator.active.indicator-finanzen { background: #16a34a; box-shadow: 0 0 8px #4ade80; }
         .nav-indicator.active.indicator-stats    { background: #8b5cf6; box-shadow: 0 0 8px #a78bfa; }
         .nav-indicator.active.indicator-spieler  { background: orange; box-shadow: 0 0 8px #f9a825; }
+        
+        /* Enhanced mobile navigation styles */
+        @media (max-width: 767px) {
+            #bottom-nav {
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 60 !important;
+                border-radius: 0 !important;
+                backdrop-filter: blur(8px);
+                background: rgba(255, 255, 255, 0.95) !important;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
+            }
+            
+            #bottom-nav a {
+                min-height: 48px;
+                justify-content: center;
+            }
+            
+            body.nav-open {
+                overflow: hidden;
+            }
+        }
+        
+        /* Ensure navigation is always on top */
+        #bottom-nav {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
     </style>
 </head>
 <body class="bg-gray-100 font-sans transition-colors">
@@ -84,41 +114,41 @@
     </header>
     <!-- TOP HEADER END -->
 
-    <!-- BOTTOM NAVIGATION -->
-    <nav id="bottom-nav" class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-lg flex justify-between items-center px-4 py-2" style="z-index:40; padding-bottom: env(safe-area-inset-bottom, 8px);">
-      <a id="nav-squad" href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors py-1">
+    <!-- BOTTOM NAVIGATION - Enhanced for mobile devices -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 shadow-lg flex justify-between items-center px-2 py-2" style="z-index:50; padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px); min-height: 64px;">
+      <a id="nav-squad" href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-users text-lg"></i>
-        <span class="text-xs mt-1">Kader</span>
+        <span class="text-xs mt-1 truncate">Kader</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-matches" href="#" class="flex flex-col items-center text-gray-600 hover:text-rose-600 transition-colors py-1">
+      <a id="nav-matches" href="#" class="flex flex-col items-center text-gray-600 hover:text-rose-600 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-futbol text-lg"></i>
-        <span class="text-xs mt-1">Spiele</span>
+        <span class="text-xs mt-1 truncate">Spiele</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-bans" href="#" class="flex flex-col items-center text-gray-600 hover:text-yellow-500 transition-colors py-1">
+      <a id="nav-bans" href="#" class="flex flex-col items-center text-gray-600 hover:text-yellow-500 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-ban text-lg"></i>
-        <span class="text-xs mt-1">Sperren</span>
+        <span class="text-xs mt-1 truncate">Sperren</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-gray-600 hover:text-green-600 transition-colors py-1">
+      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-gray-600 hover:text-green-600 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-euro-sign text-lg"></i>
-        <span class="text-xs mt-1">Finanzen</span>
+        <span class="text-xs mt-1 truncate">Finanzen</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-stats" href="#" class="flex flex-col items-center text-gray-600 hover:text-purple-600 transition-colors py-1">
+      <a id="nav-stats" href="#" class="flex flex-col items-center text-gray-600 hover:text-purple-600 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-chart-bar text-lg"></i>
-        <span class="text-xs mt-1">Stats</span>
+        <span class="text-xs mt-1 truncate">Stats</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-spieler" href="#" class="flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors py-1">
+      <a id="nav-spieler" href="#" class="flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-star text-lg"></i>
-        <span class="text-xs mt-1">Spieler</span>
+        <span class="text-xs mt-1 truncate">Spieler</span>
         <span class="nav-indicator"></span>
       </a>
     </nav>
 
-    <main class="p-2 pb-20 lg:pb-8 relative min-h-[calc(100vh-120px)]">
+    <main class="p-2 pb-24 lg:pb-8 relative min-h-[calc(100vh-140px)]">
         <!-- Loader -->
         <div id="tab-loader" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-10 flex items-center justify-center z-50" style="display:none;">
             <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"></div>

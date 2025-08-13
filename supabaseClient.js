@@ -30,6 +30,108 @@ const createFallbackClient = () => {
   let fallbackSession = null;
   let authCallbacks = [];
   
+  // Sample data for demo mode
+  const sampleData = {
+    players: [
+      { id: 1, name: 'Max Müller', team: 'AEK', position: 'ST', value: 120000, created_at: '2024-01-01' },
+      { id: 2, name: 'Tom Schmidt', team: 'AEK', position: 'TH', value: 100000, created_at: '2024-01-02' },
+      { id: 3, name: 'Leon Wagner', team: 'AEK', position: 'IV', value: 90000, created_at: '2024-01-03' },
+      { id: 4, name: 'Tim Fischer', team: 'AEK', position: 'ZM', value: 85000, created_at: '2024-01-04' },
+      { id: 5, name: 'Jan Becker', team: 'Real', position: 'ST', value: 110000, created_at: '2024-01-05' },
+      { id: 6, name: 'Paul Klein', team: 'Real', position: 'TH', value: 95000, created_at: '2024-01-06' },
+      { id: 7, name: 'Lukas Wolf', team: 'Real', position: 'IV', value: 88000, created_at: '2024-01-07' },
+      { id: 8, name: 'Ben Richter', team: 'Real', position: 'ZM', value: 92000, created_at: '2024-01-08' },
+      { id: 9, name: 'Alex Weber', team: 'Ehemalige', position: 'ST', value: 75000, created_at: '2024-01-09' },
+      { id: 10, name: 'Chris Meyer', team: 'Ehemalige', position: 'ZM', value: 70000, created_at: '2024-01-10' }
+    ],
+    matches: [
+      { id: 1, team1: 'AEK', team2: 'Real', score1: 2, score2: 1, date: '2024-08-01', created_at: '2024-08-01' },
+      { id: 2, team1: 'Real', team2: 'AEK', score1: 1, score2: 3, date: '2024-08-05', created_at: '2024-08-05' },
+      { id: 3, team1: 'AEK', team2: 'Real', score1: 0, score2: 2, date: '2024-08-08', created_at: '2024-08-08' },
+      { id: 4, team1: 'Real', team2: 'AEK', score1: 2, score2: 2, date: '2024-08-10', created_at: '2024-08-10' }
+    ],
+    bans: [
+      { id: 1, player_id: 1, matches_remaining: 2, reason: 'Gelb-Rot Karte', created_at: '2024-08-01' },
+      { id: 2, player_id: 5, matches_remaining: 1, reason: 'Unsportlichkeit', created_at: '2024-08-05' }
+    ],
+    transactions: [
+      { id: 1, amount: -50000, description: 'Spielerkauf: Max Müller', team: 'AEK', created_at: '2024-01-01' },
+      { id: 2, amount: 30000, description: 'Spielerverkauf: Klaus Meyer', team: 'AEK', created_at: '2024-01-15' },
+      { id: 3, amount: -45000, description: 'Spielerkauf: Jan Becker', team: 'Real', created_at: '2024-01-05' },
+      { id: 4, amount: 25000, description: 'Sponsoring Einnahme', team: 'Real', created_at: '2024-01-20' }
+    ],
+    finances: [
+      { id: 1, team: 'AEK', budget: 150000, created_at: '2024-01-01' },
+      { id: 2, team: 'Real', budget: 175000, created_at: '2024-01-01' }
+    ],
+    spieler_des_spiels: [
+      { id: 1, player_id: 1, match_id: 1, created_at: '2024-08-01' },
+      { id: 2, player_id: 5, match_id: 2, created_at: '2024-08-05' },
+      { id: 3, player_id: 7, match_id: 3, created_at: '2024-08-08' }
+    ]
+  };
+  
+  // Helper function to filter data based on query parameters
+  const filterData = (tableName, query = {}) => {
+    let data = [...(sampleData[tableName] || [])];
+    
+    // Apply filters
+    if (query.eq) {
+      const [column, value] = query.eq;
+      data = data.filter(item => item[column] === value);
+    }
+    if (query.neq) {
+      const [column, value] = query.neq;
+      data = data.filter(item => item[column] !== value);
+    }
+    if (query.gt) {
+      const [column, value] = query.gt;
+      data = data.filter(item => item[column] > value);
+    }
+    if (query.gte) {
+      const [column, value] = query.gte;
+      data = data.filter(item => item[column] >= value);
+    }
+    if (query.lt) {
+      const [column, value] = query.lt;
+      data = data.filter(item => item[column] < value);
+    }
+    if (query.lte) {
+      const [column, value] = query.lte;
+      data = data.filter(item => item[column] <= value);
+    }
+    if (query.like) {
+      const [column, pattern] = query.like;
+      const regex = new RegExp(pattern.replace(/%/g, '.*'), 'i');
+      data = data.filter(item => regex.test(item[column]));
+    }
+    if (query.in) {
+      const [column, values] = query.in;
+      data = data.filter(item => values.includes(item[column]));
+    }
+    
+    // Apply ordering
+    if (query.order) {
+      const [column, direction = 'asc'] = query.order;
+      data.sort((a, b) => {
+        if (direction === 'desc') {
+          return b[column] > a[column] ? 1 : -1;
+        }
+        return a[column] > b[column] ? 1 : -1;
+      });
+    }
+    
+    // Apply range/limit
+    if (query.range) {
+      const [start, end] = query.range;
+      data = data.slice(start, end + 1);
+    } else if (query.limit) {
+      data = data.slice(0, query.limit);
+    }
+    
+    return data;
+  };
+  
   const mockClient = {
     auth: {
       getSession: () => Promise.resolve({ data: { session: fallbackSession } }),
@@ -110,24 +212,129 @@ const createFallbackClient = () => {
         return Promise.resolve({ error: null });
       }
     },
-    from: (table) => ({
-      select: () => ({
-        limit: () => Promise.resolve({ data: [], error: null }),
-        eq: () => Promise.resolve({ data: [], error: null }),
-        neq: () => Promise.resolve({ data: [], error: null }),
-        gt: () => Promise.resolve({ data: [], error: null }),
-        gte: () => Promise.resolve({ data: [], error: null }),
-        lt: () => Promise.resolve({ data: [], error: null }),
-        lte: () => Promise.resolve({ data: [], error: null }),
-        like: () => Promise.resolve({ data: [], error: null }),
-        in: () => Promise.resolve({ data: [], error: null }),
-        order: () => Promise.resolve({ data: [], error: null }),
-        range: () => Promise.resolve({ data: [], error: null })
-      }),
-      insert: () => Promise.resolve({ data: [], error: null }),
-      update: () => Promise.resolve({ data: [], error: null }),
-      delete: () => Promise.resolve({ data: [], error: null }),
-    }),
+    from: (table) => {
+      let queryState = {};
+      
+      const executeQuery = () => {
+        const data = filterData(table, queryState);
+        queryState = {}; // Reset for next query
+        return Promise.resolve({ data, error: null });
+      };
+      
+      const queryBuilder = {
+        select: (columns = '*') => {
+          // Don't execute immediately, return the builder for chaining
+          return queryBuilder;
+        },
+        eq: (column, value) => {
+          queryState.eq = [column, value];
+          return queryBuilder;
+        },
+        neq: (column, value) => {
+          queryState.neq = [column, value];
+          return queryBuilder;
+        },
+        gt: (column, value) => {
+          queryState.gt = [column, value];
+          return queryBuilder;
+        },
+        gte: (column, value) => {
+          queryState.gte = [column, value];
+          return queryBuilder;
+        },
+        lt: (column, value) => {
+          queryState.lt = [column, value];
+          return queryBuilder;
+        },
+        lte: (column, value) => {
+          queryState.lte = [column, value];
+          return queryBuilder;
+        },
+        like: (column, pattern) => {
+          queryState.like = [column, pattern];
+          return queryBuilder;
+        },
+        in: (column, values) => {
+          queryState.in = [column, values];
+          return queryBuilder;
+        },
+        order: (column, options = {}) => {
+          queryState.order = [column, options.ascending === false ? 'desc' : 'asc'];
+          return queryBuilder;
+        },
+        range: (start, end) => {
+          queryState.range = [start, end];
+          return queryBuilder;
+        },
+        limit: (count) => {
+          queryState.limit = count;
+          return queryBuilder;
+        },
+        // Additional methods that might be called by SupabaseWrapper
+        onConflict: (column) => {
+          // Ignore in fallback mode
+          return queryBuilder;
+        },
+        single: () => {
+          // Return first result only
+          const data = filterData(table, queryState);
+          queryState = {};
+          const result = data.length > 0 ? data[0] : null;
+          return Promise.resolve({ data: result, error: null });
+        },
+        maybeSingle: () => {
+          // Same as single but doesn't error if no results
+          const data = filterData(table, queryState);
+          queryState = {};
+          const result = data.length > 0 ? data[0] : null;
+          return Promise.resolve({ data: result, error: null });
+        },
+        // Make the builder thenable (awaitable)
+        then: (resolve, reject) => {
+          executeQuery().then(resolve, reject);
+        },
+        catch: (reject) => {
+          executeQuery().catch(reject);
+        },
+        finally: (callback) => {
+          executeQuery().finally(callback);
+        },
+        insert: (data) => {
+          console.warn('Supabase insert not available in demo mode - simulating success');
+          // Simulate successful insert
+          const newId = Math.max(...(sampleData[table] || []).map(item => item.id || 0)) + 1;
+          const newItem = { id: newId, ...data, created_at: new Date().toISOString() };
+          if (sampleData[table]) {
+            sampleData[table].push(newItem);
+          }
+          return Promise.resolve({ data: [newItem], error: null });
+        },
+        update: (data) => {
+          console.warn('Supabase update not available in demo mode - simulating success');
+          const filteredData = filterData(table, queryState);
+          queryState = {};
+          // Update the sample data
+          filteredData.forEach(item => {
+            Object.assign(item, data);
+          });
+          return Promise.resolve({ data: filteredData, error: null });
+        },
+        delete: () => {
+          console.warn('Supabase delete not available in demo mode - simulating success');
+          const filteredData = filterData(table, queryState);
+          queryState = {};
+          // Remove from sample data
+          if (sampleData[table] && filteredData.length > 0) {
+            sampleData[table] = sampleData[table].filter(item => 
+              !filteredData.some(toDelete => toDelete.id === item.id)
+            );
+          }
+          return Promise.resolve({ data: filteredData, error: null });
+        }
+      };
+      
+      return queryBuilder;
+    },
     channel: () => ({
       on: () => mockClient.channel(),
       subscribe: (callback) => {
