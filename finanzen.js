@@ -195,7 +195,8 @@ function renderTransactions() {
                 Match #${appNr}${matchInfo}
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm dark:bg-gray-800 dark:text-gray-100 bg-white rounded-lg overflow-hidden shadow">
+                <!-- Desktop Table View -->
+                <table class="hidden md:table w-full text-sm dark:bg-gray-800 dark:text-gray-100 bg-white rounded-lg overflow-hidden shadow">
                     <thead class="bg-gray-100 dark:bg-gray-700">
                         <tr>
                             <th class="p-3 text-left font-semibold">Datum</th>
@@ -223,6 +224,27 @@ function renderTransactions() {
         html += `
                     </tbody>
                 </table>
+                
+                <!-- Mobile Card View -->
+                <div class="md:hidden space-y-3">
+        `;
+        txs.forEach(t => {
+            html += `
+                <div class="bg-white dark:bg-gray-700 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-500' : t.team === 'Real' ? 'border-red-500' : 'border-gray-400'}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="text-sm text-gray-500 dark:text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
+                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                            ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}€
+                        </div>
+                    </div>
+                    <div class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">${t.type}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
+                    ${t.info ? `<div class="text-sm text-gray-600 dark:text-gray-300">${t.info}</div>` : ''}
+                </div>
+            `;
+        });
+        html += `
+                </div>
             </div>
         </div>
         `;
@@ -236,7 +258,8 @@ function renderTransactions() {
                 Sonstige Transaktionen
             </div>
             <div class="overflow-x-auto">
-                <table class="w-full text-sm dark:bg-gray-700 dark:text-gray-100 bg-white rounded-lg overflow-hidden shadow">
+                <!-- Desktop Table View -->
+                <table class="hidden md:table w-full text-sm dark:bg-gray-700 dark:text-gray-100 bg-white rounded-lg overflow-hidden shadow">
                     <thead class="bg-gray-100 dark:bg-gray-600">
                         <tr>
                             <th class="p-3 text-left font-semibold">Datum</th>
@@ -264,6 +287,27 @@ function renderTransactions() {
         html += `
                     </tbody>
                 </table>
+                
+                <!-- Mobile Card View -->
+                <div class="md:hidden space-y-3">
+        `;
+        nonMatchTransactions.forEach(t => {
+            html += `
+                <div class="bg-white dark:bg-gray-700 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-500' : t.team === 'Real' ? 'border-red-500' : 'border-gray-400'}">
+                    <div class="flex justify-between items-start mb-2">
+                        <div class="text-sm text-gray-500 dark:text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
+                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                            ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}€
+                        </div>
+                    </div>
+                    <div class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">${t.type}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
+                    ${t.info ? `<div class="text-sm text-gray-600 dark:text-gray-300">${t.info}</div>` : ''}
+                </div>
+            `;
+        });
+        html += `
+                </div>
             </div>
         </div>`;
     }
