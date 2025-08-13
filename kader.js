@@ -20,18 +20,18 @@ const POSITION_ORDER = {
 // --- NEU: Accordion-Zustand ---
 let openPanel = null; // "aek", "real", "ehemalige" oder null
 
-// --- Hilfsfunktion: Positionsfarbe ---
+// --- Hilfsfunktion: Positionsfarbe (Dark Theme optimiert) ---
 function getPositionColor(pos) {
     // Defensiv: Blau, Mittelfeld: Grün, Angriff: Orange/Rot
 	const th  = ["TH"];
     const def = ["IV", "LV", "RV", "ZDM"];
     const mid = ["ZM", "ZOM", "LM", "RM"];
     const att = ["LF", "RF", "ST"];
-	if (th.includes(pos)) return "bg-green-100 text-green-900 border-green-300";
-    if (def.includes(pos)) return "bg-blue-100 text-blue-900 border-blue-300";
-    if (mid.includes(pos)) return "bg-yellow-100 text-yellow-900 border-yellow-300";
-    if (att.includes(pos)) return "bg-red-100 text-red-900 border-red-300";
-    return "bg-gray-100 text-gray-700 border-gray-300";
+	if (th.includes(pos)) return "bg-green-800 text-green-200 border-green-600 dark:bg-green-900 dark:text-green-300 dark:border-green-700";
+    if (def.includes(pos)) return "bg-blue-800 text-blue-200 border-blue-600 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700";
+    if (mid.includes(pos)) return "bg-yellow-800 text-yellow-200 border-yellow-600 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700";
+    if (att.includes(pos)) return "bg-red-800 text-red-200 border-red-600 dark:bg-red-900 dark:text-red-300 dark:border-red-700";
+    return "bg-gray-700 text-gray-200 border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700";
 }
 
 

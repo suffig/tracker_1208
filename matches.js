@@ -288,17 +288,17 @@ function matchHtml(match, nr) {
     function goalsHtml(goals) {
         if (!goals || !goals.length) return `<span class="text-gray-400 text-xs">(keine Torschützen)</span>`;
         return goals
-            .map(g => `<span class="inline-block bg-gray-100 rounded px-2 mx-0.5">${g.player} (${g.count})</span>`)
+            .map(g => `<span class="inline-block bg-gray-700 dark:bg-gray-600 text-gray-200 dark:text-gray-300 rounded px-2 mx-0.5">${g.player} (${g.count})</span>`)
             .join('');
     }
     function prizeHtml(amount, team) {
         const isPos = amount >= 0;
-        const tClass = team === "AEK" ? "bg-blue-100" : "bg-red-100";
-        const color = isPos ? "text-green-700" : "text-red-700";
+        const tClass = team === "AEK" ? "bg-blue-800 dark:bg-blue-900" : "bg-red-800 dark:bg-red-900";
+        const color = isPos ? "text-green-200 dark:text-green-300" : "text-red-200 dark:text-red-300";
         return `<span class="inline-block px-2 rounded ${tClass} ${color} font-bold">${isPos ? '+' : ''}${amount.toLocaleString('de-DE')} €</span>`;
     }
     return `
-    <div class="bg-white border rounded-lg p-2 mt-1">
+    <div class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2 mt-1 text-gray-900 dark:text-gray-100">
       <div class="flex justify-between items-center mb-1">
         <div>
           <span class="font-bold">#${nr} ${match.date}:</span>
@@ -320,12 +320,12 @@ function matchHtml(match, nr) {
         <b>${match.teamb} Torschützen:</b> ${goalsHtml(match.goalslistb || [])}
       </div>
       <div class="text-xs">
-        <b>${match.teama} Karten:</b> <span class="inline-block bg-yellow-100 text-yellow-800 rounded px-2 mx-0.5 text-xs">Gelb: ${match.yellowa || 0}</span>
-        <span class="inline-block bg-red-100 text-red-800 rounded px-2 mx-0.5 text-xs">Rot: ${match.reda || 0}</span>
+        <b>${match.teama} Karten:</b> <span class="inline-block bg-yellow-800 dark:bg-yellow-900 text-yellow-200 dark:text-yellow-300 rounded px-2 mx-0.5 text-xs">Gelb: ${match.yellowa || 0}</span>
+        <span class="inline-block bg-red-800 dark:bg-red-900 text-red-200 dark:text-red-300 rounded px-2 mx-0.5 text-xs">Rot: ${match.reda || 0}</span>
       </div>
       <div class="text-xs">
-        <b>${match.teamb} Karten:</b> <span class="inline-block bg-yellow-100 text-yellow-800 rounded px-2 mx-0.5 text-xs">Gelb: ${match.yellowb || 0}</span>
-        <span class="inline-block bg-red-100 text-red-800 rounded px-2 mx-0.5 text-xs">Rot: ${match.redb || 0}</span>
+        <b>${match.teamb} Karten:</b> <span class="inline-block bg-yellow-800 dark:bg-yellow-900 text-yellow-200 dark:text-yellow-300 rounded px-2 mx-0.5 text-xs">Gelb: ${match.yellowb || 0}</span>
+        <span class="inline-block bg-red-800 dark:bg-red-900 text-red-200 dark:text-red-300 rounded px-2 mx-0.5 text-xs">Rot: ${match.redb || 0}</span>
       </div>
       <div class="text-xs mt-2">
         <b>Preisgelder:</b>
