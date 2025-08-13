@@ -130,6 +130,12 @@ function renderTransactions() {
     if (selectedDateIdx >= transactionGroups.length) selectedDateIdx = 0;
     if (selectedDateIdx < 0) selectedDateIdx = 0;
 
+    // Check if we have any valid transaction groups (transactions with dates)
+    if (transactionGroups.length === 0) {
+        container.innerHTML = `<div class="text-gray-400 text-sm">Keine gültigen Transaktionen mit Datum vorhanden.</div>`;
+        return;
+    }
+
     const { date, items } = transactionGroups[selectedDateIdx];
 
     // Matches sortieren wie Übersicht (neueste oben)
@@ -162,47 +168,50 @@ function renderTransactions() {
     let html = "";
 
     function getCellBgClass(team) {
-        if (team === "AEK") return "bg-blue-50 dark:bg-blue-950";
-        if (team === "Real") return "bg-red-50 dark:bg-red-950";
-        return "";
+        if (team === "AEK") return "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 border-l-4 border-blue-500";
+        if (team === "Real") return "bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-100 border-l-4 border-red-500";
+        return "bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100";
     }
 
     // Match-Transaktionen
     matchGroups.forEach(({ match, txs }) => {
         const appNr = getAppMatchNumber(match.id);
+        const matchInfo = match ? ` - AEK ${match.goalsa || 0}:${match.goalsb || 0} Real (${new Date(match.date).toLocaleDateString('de-DE')})` : '';
         html += `
-        <div class="border-2 border-yellow-400 bg-yellow-50 dark:bg-yellow-900 rounded-lg mb-4 p-2">
-            <div class="font-bold text-yellow-800 dark:text-yellow-300 pl-2 mb-1">
-                Match #${appNr}
+        <div class="border-2 border-yellow-400 bg-yellow-50 dark:bg-yellow-900 rounded-lg mb-4 p-3 shadow-lg">
+            <div class="font-bold text-yellow-800 dark:text-yellow-300 pl-2 mb-2 text-lg">
+                Match #${appNr}${matchInfo}
             </div>
-            <table class="w-full text-xs sm:text-sm dark:bg-gray-900 dark:text-gray-100">
-                <thead>
-                    <tr>
-                        <th class="p-2 text-left">Datum</th>
-                        <th class="p-2 text-left">Typ</th>
-                        <th class="p-2 text-left">Team</th>
-                        <th class="p-2 text-left">Info</th>
-                        <th class="p-2 text-left">Betrag (€)</th>
-                    </tr>
-                </thead>
-                <tbody>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm dark:bg-gray-800 dark:text-gray-100 bg-white rounded-lg overflow-hidden shadow">
+                    <thead class="bg-gray-100 dark:bg-gray-700">
+                        <tr>
+                            <th class="p-3 text-left font-semibold">Datum</th>
+                            <th class="p-3 text-left font-semibold">Typ</th>
+                            <th class="p-3 text-left font-semibold">Team</th>
+                            <th class="p-3 text-left font-semibold">Info</th>
+                            <th class="p-3 text-left font-semibold">Betrag (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
         `;
         txs.forEach(t => {
             html += `
-                <tr>
-                    <td class="p-2 text-left ${getCellBgClass(t.team)}">${t.date}</td>
-                    <td class="p-2 text-left ${getCellBgClass(t.team)}">${t.type}</td>
-                    <td class="p-2 text-left ${getCellBgClass(t.team)}">${t.team}</td>
-                    <td class="p-2 text-left ${getCellBgClass(t.team)}">Match #${appNr}</td>
-                    <td class="p-2 text-left font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}">
+                <tr class="border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <td class="p-3 ${getCellBgClass(t.team)}">${new Date(t.date).toLocaleDateString('de-DE')}</td>
+                    <td class="p-3 ${getCellBgClass(t.team)}">${t.type}</td>
+                    <td class="p-3 ${getCellBgClass(t.team)} font-semibold">${t.team}</td>
+                    <td class="p-3 ${getCellBgClass(t.team)}">${t.info || '-'}</td>
+                    <td class="p-3 font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
                         ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}
                     </td>
                 </tr>
             `;
         });
         html += `
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
         `;
     });
@@ -210,41 +219,54 @@ function renderTransactions() {
     // Normale Transaktionen (ohne Match)
     if (nonMatchTransactions.length) {
         html += `
-        <table class="w-full text-xs sm:text-sm dark:bg-gray-900 dark:text-gray-100">
-            <thead>
-                <tr>
-                    <th class="p-2 text-left">Datum</th>
-                    <th class="p-2 text-left">Typ</th>
-                    <th class="p-2 text-left">Team</th>
-                    <th class="p-2 text-left">Info</th>
-                    <th class="p-2 text-left">Betrag (€)</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="border-2 border-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg mb-4 p-3 shadow-lg">
+            <div class="font-bold text-gray-800 dark:text-gray-200 pl-2 mb-2 text-lg">
+                Sonstige Transaktionen
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm dark:bg-gray-700 dark:text-gray-100 bg-white rounded-lg overflow-hidden shadow">
+                    <thead class="bg-gray-100 dark:bg-gray-600">
+                        <tr>
+                            <th class="p-3 text-left font-semibold">Datum</th>
+                            <th class="p-3 text-left font-semibold">Typ</th>
+                            <th class="p-3 text-left font-semibold">Team</th>
+                            <th class="p-3 text-left font-semibold">Info</th>
+                            <th class="p-3 text-left font-semibold">Betrag (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
         `;
         nonMatchTransactions.forEach(t => {
             html += `
-                <tr>
-                    <td class="p-2 text-left ${getCellBgClass(t.team)}">${t.date}</td>
-                    <td class="p-2 text-left ${getCellBgClass(t.team)}">${t.type}</td>
-                    <td class="p-2 text-left ${getCellBgClass(t.team)}">${t.team}</td>
-                    <td class="p-2 text-left ${getCellBgClass(t.team)}">${t.info || ""}</td>
-                    <td class="p-2 text-left font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}">
+                <tr class="border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                    <td class="p-3 ${getCellBgClass(t.team)}">${new Date(t.date).toLocaleDateString('de-DE')}</td>
+                    <td class="p-3 ${getCellBgClass(t.team)}">${t.type}</td>
+                    <td class="p-3 ${getCellBgClass(t.team)} font-semibold">${t.team}</td>
+                    <td class="p-3 ${getCellBgClass(t.team)}">${t.info || '-'}</td>
+                    <td class="p-3 font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
                         ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}
                     </td>
                 </tr>
             `;
         });
-        html += `</tbody></table>`;
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        </div>`;
     }
 
     // Navigation Buttons
-    html += `<div class="flex gap-2 mt-4">`;
+    html += `<div class="flex gap-3 mt-6 justify-center">`;
     if (selectedDateIdx < transactionGroups.length - 1) {
-        html += `<button id="older-trans-btn" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded-lg font-semibold">Ältere Transaktionen</button>`;
+        html += `<button id="older-trans-btn" class="bg-gray-600 hover:bg-gray-700 dark:bg-gray-700 dark:hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition-colors">
+            <i class="fas fa-chevron-left mr-2"></i>Ältere Transaktionen
+        </button>`;
     }
     if (selectedDateIdx > 0) {
-        html += `<button id="newer-trans-btn" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded-lg font-semibold">Neuere Transaktionen</button>`;
+        html += `<button id="newer-trans-btn" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold shadow-lg transition-colors">
+            Neuere Transaktionen<i class="fas fa-chevron-right ml-2"></i>
+        </button>`;
     }
     html += `</div>`;
 
