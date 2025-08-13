@@ -95,12 +95,12 @@ export function renderKaderTab(containerId = "app") {
     app.innerHTML = `
         <div class="max-w-[480px] mx-auto w-full px-2">
             <div class="flex flex-col sm:flex-row justify-between mb-4 gap-2">
-                <h2 class="text-lg font-semibold dark:text-black">Team-Kader</h2>
+                <h2 class="text-lg font-semibold dark:text-white">Team-Kader</h2>
             </div>
             <div class="space-y-4">
                 ${accordionPanelHtml('AEK', 'aek', 'bg-blue-50 dark:bg-blue-900', 'text-blue-700 dark:text-blue-200')}
                 ${accordionPanelHtml('Real', 'real', 'bg-red-50 dark:bg-red-900', 'text-red-700 dark:text-red-200')}
-                ${accordionPanelHtml('Ehemalige', 'ehemalige', 'bg-gray-100 dark:bg-gray-700', 'text-gray-700 dark:text-gray-200')}
+                ${accordionPanelHtml('Ehemalige', 'ehemalige', 'bg-gray-700 dark:bg-gray-700', 'text-gray-700 dark:text-gray-200')}
             </div>
         </div>
     `;
@@ -122,7 +122,7 @@ function accordionPanelHtml(team, key, bgClass, textClass) {
             </button>
             <div id="panel-content-${key}" class="transition-all duration-200" style="${isOpen ? '' : 'display:none;'}">
                 <div class="pt-2 pb-1">
-                    <button id="add-player-${key}" class="bg-sky-600 hover:bg-sky-700 text-black w-full px-4 py-3 rounded-lg text-base flex items-center justify-center gap-2 font-semibold transition shadow mb-2">
+                    <button id="add-player-${key}" class="bg-sky-600 hover:bg-sky-700 text-white w-full px-4 py-3 rounded-lg text-base flex items-center justify-center gap-2 font-semibold transition shadow mb-2">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                         <span>Spieler hinzufügen</span>
                     </button>
@@ -175,7 +175,7 @@ function renderPlayerList(containerId, arr, team) {
             : "";
 
         const d = document.createElement("div");
-        d.className = "player-card flex items-center bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
+        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
         d.innerHTML = `
           <div class="flex flex-col gap-2 mr-3">
             <button class="edit-btn bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg flex items-center" title="Bearbeiten">
@@ -189,7 +189,7 @@ function renderPlayerList(containerId, arr, team) {
             <p class="font-bold text-sm mt-1">${marktwert}M</p>
           </div>
           <div class="flex flex-col gap-2 ml-3">
-            <button class="move-btn bg-gray-400 hover:bg-gray-500 text-black p-2 rounded-lg flex items-center" title="Zu Ehemalige">
+            <button class="move-btn bg-gray-400 hover:bg-gray-7000 text-white p-2 rounded-lg flex items-center" title="Zu Ehemalige">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
@@ -224,7 +224,7 @@ function renderEhemaligeList(containerId = "ehemalige-players") {
 
         // Cards: Edit/Löschen links, Infos Mitte, Move zu AEK/Real rechts (blau/rot)
         const d = document.createElement("div");
-        d.className = "player-card flex items-center bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
+        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
         d.innerHTML = `
           <div class="flex flex-col gap-2 mr-3">
             <button class="edit-btn bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg flex items-center" title="Bearbeiten">
@@ -232,7 +232,7 @@ function renderEhemaligeList(containerId = "ehemalige-players") {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 17H6v-3L16.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414L9 17z" />
               </svg>
             </button>
-            <button class="delete-btn bg-gray-100 hover:bg-gray-300 text-gray-600 p-2 rounded-lg flex items-center" title="Löschen">
+            <button class="delete-btn bg-gray-700 hover:bg-gray-300 text-gray-600 p-2 rounded-lg flex items-center" title="Löschen">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a2 2 0 012 2v2H8V5a2 2 0 012-2z" />
               </svg>
@@ -364,7 +364,7 @@ function openPlayerForm(team, id) {
         if (player) edit = true;
     }
     showModal(`
-        <form id="player-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-white dark:bg-gray-800 dark:text-gray-100 rounded-lg text-black dark:text-white">
+        <form id="player-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-gray-800 dark:bg-gray-800 dark:text-gray-100 rounded-lg text-white dark:text-white">
             <h3 class="font-bold text-lg mb-2">${edit ? "Spieler bearbeiten" : "Spieler hinzufügen"} <span class="text-xs">${team}</span></h3>
             <input type="text" name="name" class="border rounded-md p-2 w-full h-12 text-base dark:bg-gray-700 dark:text-gray-100" placeholder="Name" value="${player ? player.name : ""}" required>
             <select name="position" class="border rounded-md p-2 w-full h-12 text-base dark:bg-gray-700 dark:text-gray-100" required>
@@ -373,7 +373,7 @@ function openPlayerForm(team, id) {
             </select>
             <input type="number" min="0" step="0.1" name="value" class="border rounded-md p-2 w-full h-12 text-base dark:bg-gray-700 dark:text-gray-100" placeholder="Marktwert (M)" value="${player && player.value !== undefined ? player.value : ""}" required>
             <div class="flex gap-2">
-                <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-black w-full px-4 py-3 rounded-lg text-base font-semibold transition flex gap-2 items-center justify-center">
+                <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white w-full px-4 py-3 rounded-lg text-base font-semibold transition flex gap-2 items-center justify-center">
                   <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                   ${edit ? "Speichern" : "Anlegen"}
                 </button>

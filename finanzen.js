@@ -180,9 +180,9 @@ function renderTransactions() {
     let html = "";
 
     function getCellBgClass(team) {
-        if (team === "AEK") return "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-100 border-l-4 border-blue-500";
-        if (team === "Real") return "bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-100 border-l-4 border-red-500";
-        return "bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100";
+        if (team === "AEK") return "bg-blue-900 dark:bg-blue-900 text-blue-100 dark:text-blue-100 border-l-4 border-blue-500";
+        if (team === "Real") return "bg-red-900 dark:bg-red-900 text-red-100 dark:text-red-100 border-l-4 border-red-500";
+        return "bg-gray-800 dark:bg-gray-800 text-gray-100 dark:text-gray-100";
     }
 
     // Match-Transaktionen
@@ -196,8 +196,8 @@ function renderTransactions() {
             </div>
             <div class="overflow-x-auto">
                 <!-- Desktop Table View -->
-                <table class="hidden md:table w-full text-sm dark:bg-gray-800 dark:text-gray-100 bg-white rounded-lg overflow-hidden shadow">
-                    <thead class="bg-gray-100 dark:bg-gray-700">
+                <table class="hidden md:table w-full text-sm dark:bg-gray-800 dark:text-gray-100 bg-gray-800 rounded-lg overflow-hidden shadow">
+                    <thead class="bg-gray-700 dark:bg-gray-700">
                         <tr>
                             <th class="p-3 text-left font-semibold">Datum</th>
                             <th class="p-3 text-left font-semibold">Typ</th>
@@ -210,12 +210,12 @@ function renderTransactions() {
         `;
         txs.forEach(t => {
             html += `
-                <tr class="border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                <tr class="border-b border-gray-600 dark:border-gray-600 hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors">
                     <td class="p-3 ${getCellBgClass(t.team)}">${new Date(t.date).toLocaleDateString('de-DE')}</td>
                     <td class="p-3 ${getCellBgClass(t.team)}">${t.type}</td>
                     <td class="p-3 ${getCellBgClass(t.team)} font-semibold">${t.team}</td>
                     <td class="p-3 ${getCellBgClass(t.team)}">${t.info || '-'}</td>
-                    <td class="p-3 font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                    <td class="p-3 font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-400 dark:text-green-400' : 'text-red-400 dark:text-red-400'}">
                         ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}
                     </td>
                 </tr>
@@ -230,15 +230,15 @@ function renderTransactions() {
         `;
         txs.forEach(t => {
             html += `
-                <div class="bg-white dark:bg-gray-700 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-500' : t.team === 'Real' ? 'border-red-500' : 'border-gray-400'}">
+                <div class="bg-gray-800 dark:bg-gray-700 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-500' : t.team === 'Real' ? 'border-red-500' : 'border-gray-400'}">
                     <div class="flex justify-between items-start mb-2">
-                        <div class="text-sm text-gray-500 dark:text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
-                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                        <div class="text-sm text-gray-400 dark:text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
+                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-400 dark:text-green-400' : 'text-red-400 dark:text-red-400'}">
                             ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}€
                         </div>
                     </div>
-                    <div class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">${t.type}</div>
-                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
+                    <div class="text-base font-semibold text-gray-100 dark:text-gray-100 mb-1">${t.type}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-400 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
                     ${t.info ? `<div class="text-sm text-gray-600 dark:text-gray-300">${t.info}</div>` : ''}
                 </div>
             `;
@@ -253,14 +253,14 @@ function renderTransactions() {
     // Normale Transaktionen (ohne Match)
     if (nonMatchTransactions.length) {
         html += `
-        <div class="border-2 border-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg mb-4 p-3 shadow-lg">
+        <div class="border-2 border-gray-400 bg-gray-800 dark:bg-gray-800 rounded-lg mb-4 p-3 shadow-lg">
             <div class="font-bold text-gray-800 dark:text-gray-200 pl-2 mb-2 text-lg">
                 Sonstige Transaktionen
             </div>
             <div class="overflow-x-auto">
                 <!-- Desktop Table View -->
-                <table class="hidden md:table w-full text-sm dark:bg-gray-700 dark:text-gray-100 bg-white rounded-lg overflow-hidden shadow">
-                    <thead class="bg-gray-100 dark:bg-gray-600">
+                <table class="hidden md:table w-full text-sm dark:bg-gray-700 dark:text-gray-100 bg-gray-800 rounded-lg overflow-hidden shadow">
+                    <thead class="bg-gray-700 dark:bg-gray-600">
                         <tr>
                             <th class="p-3 text-left font-semibold">Datum</th>
                             <th class="p-3 text-left font-semibold">Typ</th>
@@ -273,12 +273,12 @@ function renderTransactions() {
         `;
         nonMatchTransactions.forEach(t => {
             html += `
-                <tr class="border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
+                <tr class="border-b border-gray-600 dark:border-gray-600 hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
                     <td class="p-3 ${getCellBgClass(t.team)}">${new Date(t.date).toLocaleDateString('de-DE')}</td>
                     <td class="p-3 ${getCellBgClass(t.team)}">${t.type}</td>
                     <td class="p-3 ${getCellBgClass(t.team)} font-semibold">${t.team}</td>
                     <td class="p-3 ${getCellBgClass(t.team)}">${t.info || '-'}</td>
-                    <td class="p-3 font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                    <td class="p-3 font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-400 dark:text-green-400' : 'text-red-400 dark:text-red-400'}">
                         ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}
                     </td>
                 </tr>
@@ -293,15 +293,15 @@ function renderTransactions() {
         `;
         nonMatchTransactions.forEach(t => {
             html += `
-                <div class="bg-white dark:bg-gray-700 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-500' : t.team === 'Real' ? 'border-red-500' : 'border-gray-400'}">
+                <div class="bg-gray-800 dark:bg-gray-700 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-500' : t.team === 'Real' ? 'border-red-500' : 'border-gray-400'}">
                     <div class="flex justify-between items-start mb-2">
-                        <div class="text-sm text-gray-500 dark:text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
-                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}">
+                        <div class="text-sm text-gray-400 dark:text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
+                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-400 dark:text-green-400' : 'text-red-400 dark:text-red-400'}">
                             ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}€
                         </div>
                     </div>
-                    <div class="text-base font-semibold text-gray-900 dark:text-gray-100 mb-1">${t.type}</div>
-                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-600 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
+                    <div class="text-base font-semibold text-gray-100 dark:text-gray-100 mb-1">${t.type}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-400 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
                     ${t.info ? `<div class="text-sm text-gray-600 dark:text-gray-300">${t.info}</div>` : ''}
                 </div>
             `;
@@ -344,7 +344,7 @@ function renderTransactions() {
 
 function openTransForm() {
     showModal(`
-        <form id="trans-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-white dark:bg-gray-800 rounded-lg text-black dark:text-white">
+        <form id="trans-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-gray-800 dark:bg-gray-800 rounded-lg text-white dark:text-white">
             <h3 class="font-bold text-lg mb-2">Transaktion hinzufügen</h3>
             <select name="team" class="border rounded-lg p-3 w-full h-12 text-base dark:bg-gray-700 dark:text-gray-100" required>
                 <option value="">Team wählen</option>

@@ -92,9 +92,9 @@ export async function renderStatsTab(containerId = "app") {
         <div class="mt-3" id="bans-table-wrap" style="display:none;">
             <b>Alle Sperren</b>
             <div style="overflow-x:auto;">
-                <table class="w-full mt-2 text-xs border border-gray-200 rounded overflow-hidden bg-white">
+                <table class="w-full mt-2 text-xs border border-gray-600 rounded overflow-hidden bg-gray-800">
                     <thead>
-                        <tr class="bg-gray-100">
+                        <tr class="bg-gray-700">
                             <th class="p-1 text-left">Spieler</th>
                             <th class="p-1 text-left">Typ</th>
                             <th class="p-1 text-left">Spiele</th>
@@ -164,7 +164,7 @@ export async function renderStatsTab(containerId = "app") {
         <div class="flex flex-col gap-6">
 
             <!-- Übersicht -->
-            <div class="rounded-xl shadow border bg-white p-4 mb-2">
+            <div class="rounded-xl shadow border bg-gray-800 p-4 mb-2">
                 <div class="font-bold text-lg mb-1">Übersicht</div>
                 <div class="flex flex-wrap gap-4 items-center text-base font-medium mb-2">
                     <span class="flex items-center gap-1 text-blue-700"><span class="text-xl">⚽</span> ${totalGoals} Tore</span>
@@ -191,7 +191,7 @@ export async function renderStatsTab(containerId = "app") {
             </div>
 
             <!-- Sperren -->
-            <div class="rounded-xl shadow border bg-white p-4 mb-2">
+            <div class="rounded-xl shadow border bg-gray-800 p-4 mb-2">
                 <div class="flex items-center gap-2 font-bold text-lg mb-2">
                     <span class="text-xl">🚫</span>
                     <span>Sperren</span>
@@ -215,7 +215,7 @@ export async function renderStatsTab(containerId = "app") {
                     </div>
                 </div>
                 ${bans.length ? `
-                    <button id="show-bans-table" class="my-2 bg-gray-100 hover:bg-blue-200 transition text-blue-800 font-semibold py-2 px-4 rounded shadow-sm text-sm">
+                    <button id="show-bans-table" class="my-2 bg-gray-700 hover:bg-blue-200 transition text-blue-800 font-semibold py-2 px-4 rounded shadow-sm text-sm">
                         Alle Sperren anzeigen
                     </button>
                 ` : ""}
@@ -235,7 +235,7 @@ export async function renderStatsTab(containerId = "app") {
             </div>
             
             <!-- Karten (modern, mit schönen Badges & Durchschnitt) -->
-            <div class="rounded-xl shadow border bg-white p-4 mb-2 flex flex-col gap-4">
+            <div class="rounded-xl shadow border bg-gray-800 p-4 mb-2 flex flex-col gap-4">
                 <div class="font-bold text-lg mb-2">Karten</div>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <div class="flex-1">
