@@ -185,13 +185,63 @@ function renderTransactions() {
         return "bg-gray-800 dark:bg-gray-800 text-gray-100 dark:text-gray-100";
     }
 
+    // Generate unique colors for each match based on match number
+    function getMatchColorScheme(matchNumber) {
+        // Define a set of appealing color schemes for matches using available colors
+        const colorSchemes = [
+            {
+                // Blue theme  
+                container: "border-blue-400 bg-blue-50 dark:bg-blue-700",
+                header: "text-blue-800 dark:text-blue-100",
+                accent: "blue-500"
+            },
+            {
+                // Green theme
+                container: "border-green-600 bg-gray-100 dark:bg-green-600", 
+                header: "text-green-800 dark:text-green-300",
+                accent: "green-600"
+            },
+            {
+                // Red theme
+                container: "border-red-500 bg-red-50 dark:bg-red-500",
+                header: "text-red-800 dark:text-red-100", 
+                accent: "red-500"
+            },
+            {
+                // Sky theme
+                container: "border-sky-500 bg-blue-100 dark:bg-sky-500",
+                header: "text-blue-700 dark:text-blue-100",
+                accent: "sky-500"
+            },
+            {
+                // Rose theme using red colors
+                container: "border-rose-600 bg-red-100 dark:bg-rose-600",
+                header: "text-red-700 dark:text-red-100",
+                accent: "red-500"
+            },
+            {
+                // Yellow theme (original)
+                container: "border-yellow-400 bg-yellow-100 dark:bg-gray-400",
+                header: "text-yellow-800 dark:text-yellow-300",
+                accent: "gray-400"
+            }
+        ];
+        
+        // Cycle through color schemes based on match number
+        const schemeIndex = (matchNumber - 1) % colorSchemes.length;
+        return colorSchemes[schemeIndex];
+    }
+
     // Match-Transaktionen
     matchGroups.forEach(({ match, txs }) => {
         const appNr = getAppMatchNumber(match.id);
         const matchInfo = match ? ` - AEK ${match.goalsa || 0}:${match.goalsb || 0} Real (${new Date(match.date).toLocaleDateString('de-DE')})` : '';
+        const colorScheme = getMatchColorScheme(appNr || 1);
+        
         html += `
-        <div class="border-2 border-yellow-400 bg-yellow-50 dark:bg-yellow-900 rounded-lg mb-4 p-3 shadow-lg">
-            <div class="font-bold text-yellow-800 dark:text-yellow-300 pl-2 mb-2 text-lg">
+        <div class="border-2 ${colorScheme.container} rounded-lg mb-4 p-3 shadow-lg">
+            <div class="font-bold ${colorScheme.header} pl-2 mb-2 text-lg flex items-center">
+                <div class="w-3 h-3 bg-${colorScheme.accent} rounded-full mr-2 flex-shrink-0"></div>
                 Match #${appNr}${matchInfo}
             </div>
             <div class="overflow-x-auto">
