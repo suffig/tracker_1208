@@ -639,7 +639,8 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
                 option.style.display = '';
             } else {
                 const optionTeam = option.getAttribute('data-team');
-                option.style.display = optionTeam === team.toUpperCase() ? '' : 'none';
+                // Fix case-insensitive comparison
+                option.style.display = optionTeam && optionTeam.toLowerCase() === team.toLowerCase() ? '' : 'none';
             }
         });
     }
