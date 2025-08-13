@@ -98,8 +98,8 @@ export function renderKaderTab(containerId = "app") {
                 <h2 class="text-lg font-semibold dark:text-white">Team-Kader</h2>
             </div>
             <div class="space-y-4">
-                ${accordionPanelHtml('AEK', 'aek', 'bg-blue-50 dark:bg-blue-900', 'text-blue-700 dark:text-blue-200')}
-                ${accordionPanelHtml('Real', 'real', 'bg-red-50 dark:bg-red-900', 'text-red-700 dark:text-red-200')}
+                ${accordionPanelHtml('AEK', 'aek', 'bg-blue-50 dark:bg-blue-900', 'text-aek-light dark:text-aek-light')}
+                ${accordionPanelHtml('Real', 'real', 'bg-red-50 dark:bg-red-900', 'text-real-light dark:text-real-light')}
                 ${accordionPanelHtml('Ehemalige', 'ehemalige', 'bg-gray-700 dark:bg-gray-700', 'text-gray-700 dark:text-gray-200')}
             </div>
         </div>
@@ -175,7 +175,7 @@ function renderPlayerList(containerId, arr, team) {
             : "";
 
         const d = document.createElement("div");
-        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
+        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 shadow-lg hover:shadow-xl min-h-[110px] transition-all duration-300";
         d.innerHTML = `
           <div class="flex flex-col gap-2 mr-3">
             <button class="edit-btn bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg flex items-center" title="Bearbeiten">
@@ -224,7 +224,7 @@ function renderEhemaligeList(containerId = "ehemalige-players") {
 
         // Cards: Edit/Löschen links, Infos Mitte, Move zu AEK/Real rechts (blau/rot)
         const d = document.createElement("div");
-        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
+        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-xl p-4 shadow-lg hover:shadow-xl min-h-[110px] transition-all duration-300";
         d.innerHTML = `
           <div class="flex flex-col gap-2 mr-3">
             <button class="edit-btn bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg flex items-center" title="Bearbeiten">
@@ -243,13 +243,13 @@ function renderEhemaligeList(containerId = "ehemalige-players") {
             <p class="font-bold text-sm mt-1">${marktwert ? marktwert + "M" : ""}</p>
           </div>
           <div class="flex flex-col gap-2 ml-3">
-            <button class="move-aek-btn bg-sky-600 hover:bg-sky-700 text-white p-2 rounded-lg flex items-center" title="Zu AEK">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#2563eb">
+            <button class="move-aek-btn bg-aek hover:bg-aek-dark text-white p-3 rounded-xl flex items-center font-semibold transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95" title="Zu AEK">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
-            <button class="move-real-btn bg-rose-600 hover:bg-rose-700 text-white p-2 rounded-lg flex items-center" title="Zu Real">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#e11d48">
+            <button class="move-real-btn bg-real hover:bg-real-dark text-white p-3 rounded-xl flex items-center font-semibold transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95" title="Zu Real">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </button>

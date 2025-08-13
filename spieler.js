@@ -25,8 +25,8 @@ export async function renderSpielerTab(containerId = "app") {
     // Hilfsfunktion für Card-Klasse nach Team
     function getCardClass(team) {
         if (team === "Ehemalige") return "text-slate-300";
-        if (team === "AEK") return "text-blue-200";
-        return "text-red-200";
+        if (team === "AEK") return "text-aek-light";
+        return "text-real-light";
     }
 
     function getBadge(idx) {

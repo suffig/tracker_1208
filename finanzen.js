@@ -77,12 +77,12 @@ function renderFinanzenTabInner(containerId = "app") {
             <h2 class="text-lg font-semibold text-slate-100">Finanzen</h2>
         </div>
         <div class="flex flex-col sm:flex-row sm:space-x-8 space-y-2 sm:space-y-0 mb-6">
-            <div class="bg-blue-700 text-blue-100 rounded-lg p-4 flex-1 min-w-0 border border-blue-600 shadow-lg">
+            <div class="bg-aek-dark text-blue-100 rounded-xl p-4 flex-1 min-w-0 border border-aek shadow-lg">
                 <b>AEK</b><br>
                 Kontostand: <span class="font-bold text-blue-200">${(finances.aekAthen.balance || 0).toLocaleString('de-DE')} €</span><br>
                 Echtgeldschulden: <span class="font-bold text-blue-200">${(finances.aekAthen.debt || 0).toLocaleString('de-DE')} €</span>
             </div>
-            <div class="bg-red-700 text-red-100 rounded-lg p-4 flex-1 min-w-0 border border-red-600 shadow-lg">
+            <div class="bg-real-dark text-red-100 rounded-xl p-4 flex-1 min-w-0 border border-real shadow-lg">
                 <b>Real</b><br>
                 Kontostand: <span class="font-bold text-red-200">${(finances.realMadrid.balance || 0).toLocaleString('de-DE')} €</span><br>
                 Echtgeldschulden: <span class="font-bold text-red-200">${(finances.realMadrid.debt || 0).toLocaleString('de-DE')} €</span>
@@ -180,8 +180,8 @@ function renderTransactions() {
     let html = "";
 
     function getCellBgClass(team) {
-        if (team === "AEK") return "bg-blue-700 text-blue-100 border-l-4 border-blue-400";
-        if (team === "Real") return "bg-red-700 text-red-100 border-l-4 border-red-400";
+        if (team === "AEK") return "bg-aek-dark text-blue-100 border-l-4 border-aek";
+        if (team === "Real") return "bg-real-dark text-red-100 border-l-4 border-real";
         return "bg-slate-600 text-slate-100";
     }
 
@@ -288,7 +288,7 @@ function renderTransactions() {
                         </div>
                     </div>
                     <div class="text-base font-semibold text-gray-100 dark:text-gray-100 mb-1">${t.type}</div>
-                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-400 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-aek' : t.team === 'Real' ? 'text-real' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
                     ${t.info ? `<div class="text-sm text-gray-600 dark:text-gray-300">${t.info}</div>` : ''}
                 </div>
             `;
@@ -352,7 +352,7 @@ function renderTransactions() {
                         </div>
                     </div>
                     <div class="text-base font-semibold text-slate-100 mb-1">${t.type}</div>
-                    <div class="text-sm text-slate-200 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-300' : t.team === 'Real' ? 'text-red-300' : 'text-slate-300'}">${t.team}</span></div>
+                    <div class="text-sm text-slate-200 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-aek-light' : t.team === 'Real' ? 'text-real-light' : 'text-slate-300'}">${t.team}</span></div>
                     ${t.info ? `<div class="text-sm text-slate-200">${t.info}</div>` : ''}
                 </div>
             `;

@@ -37,8 +37,27 @@
     <!-- Supabase JavaScript Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
+        /* Consistent team color scheme */
         .cell-aek { background: #1e3a8a !important; color: #dbeafe !important; }
         .cell-real { background: #991b1b !important; color: #fecaca !important; }
+        
+        /* Team-specific colors for consistency across the app */
+        .text-aek { color: #2563eb !important; }
+        .text-aek-light { color: #60a5fa !important; }
+        .text-real { color: #e11d48 !important; }
+        .text-real-light { color: #fb7185 !important; }
+        
+        .bg-aek { background-color: #2563eb !important; }
+        .bg-aek-dark { background-color: #1e3a8a !important; }
+        .bg-real { background-color: #e11d48 !important; }
+        .bg-real-dark { background-color: #991b1b !important; }
+        
+        .border-aek { border-color: #2563eb !important; }
+        .border-real { border-color: #e11d48 !important; }
+        
+        /* Dropdown option styling for team distinction */
+        .team-option-aek { background-color: rgba(37, 99, 235, 0.1) !important; color: #2563eb !important; }
+        .team-option-real { background-color: rgba(225, 29, 72, 0.1) !important; color: #e11d48 !important; }
         .player-card { transition: all 0.3s ease; }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
         .modal {
