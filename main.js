@@ -536,11 +536,11 @@ async function renderLoginArea() {
                     <img src="assets/logo.png" alt="Logo" class="w-60 h-60 mb-2" />
                 </div>
                 <form id="loginform" class="login-area flex flex-col gap-4">
-                    <input type="email" id="email" required placeholder="E-Mail" class="rounded border px-6 py-3 focus:ring focus:ring-blue-200" value="${emailValue}" />
-                    <input type="password" id="pw" required placeholder="Passwort" class="rounded border px-6 py-3 focus:ring focus:ring-blue-200" value="${pwValue}" />
+                    <input type="email" id="email" required placeholder="E-Mail" class="rounded border border-gray-600 bg-gray-700 text-gray-100 placeholder-gray-400 px-6 py-3 focus:ring focus:ring-blue-300 focus:border-blue-400" value="${emailValue}" />
+                    <input type="password" id="pw" required placeholder="Passwort" class="rounded border border-gray-600 bg-gray-700 text-gray-100 placeholder-gray-400 px-6 py-3 focus:ring focus:ring-blue-300 focus:border-blue-400" value="${pwValue}" />
                     <div class="flex gap-2 w-full">
                       <button
-                        class="login-btn bg-blue-600 text-white font-bold text-lg md:text-xl py-4 w-full rounded-2xl shadow-lg hover:bg-fuchsia-500 active:scale-95 transition-all duration-150 outline-none ring-2 ring-transparent focus:ring-blue-300"
+                        class="login-btn bg-blue-600 text-white font-bold text-lg md:text-xl py-4 w-full rounded-2xl shadow-lg hover:bg-blue-700 active:scale-95 transition-all duration-150 outline-none ring-2 ring-transparent focus:ring-blue-300 border-2 border-blue-600 hover:border-blue-700"
                         style="min-width:180px;">
                         <i class="fas fa-sign-in-alt mr-2"></i> Login
                       </button>

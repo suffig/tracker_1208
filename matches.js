@@ -383,15 +383,13 @@ function openMatchForm(id) {
         });
         
         const aekSpieler = aekSorted.map(p => {
-            const sdsCount = getSdsCount(p.name, "AEK");
             const goals = p.goals || 0;
-            return `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${goals} Tore, ${sdsCount} SdS)</option>`;
+            return `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${goals} Tore)</option>`;
         }).join('');
         
         const realSpieler = realSorted.map(p => {
-            const sdsCount = getSdsCount(p.name, "Real");
             const goals = p.goals || 0;
-            return `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${goals} Tore, ${sdsCount} SdS)</option>`;
+            return `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${goals} Tore)</option>`;
         }).join('');
 
         const goalsListA = match?.goalslista || [];
