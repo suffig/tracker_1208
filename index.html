@@ -6,19 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#2563eb">
+    <meta name="theme-color" content="#1f2937">
     <meta name="description" content="Verfolge FIFA-Spiele, Spieler, Sperren und Finanzen">
     <link rel="manifest" href="/manifest.json">
     
     <!-- iOS PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="FIFA Tracker">
     <link rel="apple-touch-icon" href="/assets/logo.png">
     <link rel="apple-touch-startup-image" href="/assets/logo.png">
     
     <!-- Windows PWA Meta Tags -->
-    <meta name="msapplication-TileColor" content="#2563eb">
+    <meta name="msapplication-TileColor" content="#1f2937">
     <meta name="msapplication-TileImage" content="/assets/logo.png">
     
     <!-- Standard favicon -->
@@ -42,12 +42,12 @@
         .player-card { transition: all 0.3s ease; }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
         .modal {
-            z-index: 50; background: rgba(0,0,0,0.3); position: fixed; inset: 0;
+            z-index: 50; background: rgba(0,0,0,0.5); position: fixed; inset: 0;
             display: flex; align-items: flex-end; justify-content: center;
         }
         .modal-content {
-        background: #fff; width: 100%; color: #000 !important; max-width: 24rem; border-radius: 0.75rem 0.75rem 0 0;
-        padding: 1.5rem; box-shadow: 0 -2px 16px rgba(0,0,0,0.2); position: relative;
+        background: #1f2937; width: 100%; color: #f9fafb !important; max-width: 24rem; border-radius: 0.75rem 0.75rem 0 0;
+        padding: 1.5rem; box-shadow: 0 -2px 16px rgba(0,0,0,0.4); position: relative;
         animation: slideInFromBottom 0.2s;
 		}
         @keyframes slideInFromBottom {
@@ -92,8 +92,8 @@
                 z-index: 60 !important;
                 border-radius: 0 !important;
                 backdrop-filter: blur(8px);
-                background: rgba(255, 255, 255, 0.95) !important;
-                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
+                background: rgba(31, 41, 55, 0.95) !important;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3) !important;
             }
             
             #bottom-nav a {
@@ -113,15 +113,15 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans transition-colors">
+<body class="dark bg-gray-900 font-sans transition-colors">
 <div id="login-area"></div>
-<div class="app-container mx-auto bg-white shadow-lg relative overflow-hidden max-w-screen-xl min-h-screen" style="display:none;">
+<div class="app-container mx-auto bg-gray-900 shadow-lg relative overflow-hidden max-w-screen-xl min-h-screen" style="display:none;">
     <!-- TOP HEADER - Logo and Logout Only -->
-    <header class="bg-white border-b border-gray-200 px-4 py-2.5">
+    <header class="bg-gray-800 border-b border-gray-700 px-4 py-2.5">
       <div class="flex justify-between items-center mx-auto max-w-screen-xl">
         <a href="#" class="flex items-center">
           <img src="assets/logo.png" class="h-8 mr-3" alt="Logo" />
-          <span class="self-center text-xl font-semibold whitespace-nowrap text-gray-900">FIFA Statistik-Tracker</span>
+          <span class="self-center text-xl font-semibold whitespace-nowrap text-gray-100">FIFA Statistik-Tracker</span>
         </a>
         <div class="flex items-center gap-2">
           <!-- Logout Button oben rechts (Icon-Button) -->
@@ -134,33 +134,33 @@
     <!-- TOP HEADER END -->
 
     <!-- BOTTOM NAVIGATION - Enhanced for mobile devices -->
-    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 w-full bg-white border-t border-gray-200 shadow-lg flex justify-between items-center px-2 py-2" style="z-index:50; padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px); min-height: 64px;">
-      <a id="nav-squad" href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 w-full bg-gray-800 border-t border-gray-700 shadow-lg flex justify-between items-center px-2 py-2" style="z-index:50; padding-bottom: max(env(safe-area-inset-bottom, 8px), 8px); min-height: 64px;">
+      <a id="nav-squad" href="#" class="flex flex-col items-center text-gray-400 hover:text-blue-400 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-users text-lg"></i>
         <span class="text-xs mt-1 truncate">Kader</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-matches" href="#" class="flex flex-col items-center text-gray-600 hover:text-rose-600 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
+      <a id="nav-matches" href="#" class="flex flex-col items-center text-gray-400 hover:text-rose-400 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-futbol text-lg"></i>
         <span class="text-xs mt-1 truncate">Spiele</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-bans" href="#" class="flex flex-col items-center text-gray-600 hover:text-yellow-500 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
+      <a id="nav-bans" href="#" class="flex flex-col items-center text-gray-400 hover:text-yellow-400 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-ban text-lg"></i>
         <span class="text-xs mt-1 truncate">Sperren</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-gray-600 hover:text-green-600 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
+      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-gray-400 hover:text-green-400 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-euro-sign text-lg"></i>
         <span class="text-xs mt-1 truncate">Finanzen</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-stats" href="#" class="flex flex-col items-center text-gray-600 hover:text-purple-600 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
+      <a id="nav-stats" href="#" class="flex flex-col items-center text-gray-400 hover:text-purple-400 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-chart-bar text-lg"></i>
         <span class="text-xs mt-1 truncate">Stats</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-spieler" href="#" class="flex flex-col items-center text-gray-600 hover:text-orange-500 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
+      <a id="nav-spieler" href="#" class="flex flex-col items-center text-gray-400 hover:text-orange-400 transition-colors py-1 px-1 min-w-0 flex-1" style="touch-action: manipulation;">
         <i class="fas fa-star text-lg"></i>
         <span class="text-xs mt-1 truncate">Spieler</span>
         <span class="nav-indicator"></span>

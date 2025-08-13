@@ -67,9 +67,14 @@ const createFallbackClient = () => {
       { id: 2, team: 'Real', budget: 175000, created_at: '2024-01-01' }
     ],
     spieler_des_spiels: [
-      { id: 1, player_id: 1, match_id: 1, created_at: '2024-08-01' },
-      { id: 2, player_id: 5, match_id: 2, created_at: '2024-08-05' },
-      { id: 3, player_id: 7, match_id: 3, created_at: '2024-08-08' }
+      { id: 1, name: 'Max Müller', team: 'AEK', count: 3, created_at: '2024-08-01' },
+      { id: 2, name: 'Jan Becker', team: 'Real', count: 2, created_at: '2024-08-05' },
+      { id: 3, name: 'Tom Schmidt', team: 'AEK', count: 2, created_at: '2024-08-08' },
+      { id: 4, name: 'Paul Klein', team: 'Real', count: 1, created_at: '2024-08-10' },
+      { id: 5, name: 'Leon Wagner', team: 'AEK', count: 1, created_at: '2024-08-12' },
+      { id: 6, name: 'Lukas Wolf', team: 'Real', count: 0, created_at: '2024-08-13' },
+      { id: 7, name: 'Tim Fischer', team: 'AEK', count: 0, created_at: '2024-08-13' },
+      { id: 8, name: 'Ben Richter', team: 'Real', count: 0, created_at: '2024-08-13' }
     ]
   };
   
