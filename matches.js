@@ -356,17 +356,35 @@ function openMatchForm(id) {
             return;
         }
 
-        // Spieler-Optionen SORTIERT nach Toren (goals, absteigend) - safely
-        const aekSorted = [...matchesData.aekAthen].sort((a, b) => (b.goals || 0) - (a.goals || 0));
-        const realSorted = [...matchesData.realMadrid].sort((a, b) => (b.goals || 0) - (a.goals || 0));
+        // Helper function to get SdS count for a player
+        const getSdsCount = (playerName, team) => {
+            const sdsEntry = matchesData.spielerDesSpiels.find(sds => 
+                sds.name === playerName && sds.team === team
+            );
+            return sdsEntry ? (sdsEntry.count || 0) : 0;
+        };
+
+        // Spieler-Optionen SORTIERT nach SdS-Anzahl (absteigend) - safely
+        const aekSorted = [...matchesData.aekAthen].sort((a, b) => {
+            const aSdsCount = getSdsCount(a.name, "AEK");
+            const bSdsCount = getSdsCount(b.name, "AEK");
+            return bSdsCount - aSdsCount;
+        });
+        const realSorted = [...matchesData.realMadrid].sort((a, b) => {
+            const aSdsCount = getSdsCount(a.name, "Real");
+            const bSdsCount = getSdsCount(b.name, "Real");
+            return bSdsCount - aSdsCount;
+        });
         
-        const aekSpieler = aekSorted.map(p => 
-            `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${p.goals || 0} Tore)</option>`
-        ).join('');
+        const aekSpieler = aekSorted.map(p => {
+            const sdsCount = getSdsCount(p.name, "AEK");
+            return `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${sdsCount} SdS)</option>`;
+        }).join('');
         
-        const realSpieler = realSorted.map(p => 
-            `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${p.goals || 0} Tore)</option>`
-        ).join('');
+        const realSpieler = realSorted.map(p => {
+            const sdsCount = getSdsCount(p.name, "Real");
+            return `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${sdsCount} SdS)</option>`;
+        }).join('');
 
         const goalsListA = match?.goalslista || [];
         const goalsListB = match?.goalslistb || [];
