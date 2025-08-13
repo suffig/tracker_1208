@@ -356,17 +356,33 @@ function openMatchForm(id) {
             return;
         }
 
-        // Spieler-Optionen SORTIERT nach Toren (goals, absteigend) - safely
-        const aekSorted = [...matchesData.aekAthen].sort((a, b) => (b.goals || 0) - (a.goals || 0));
-        const realSorted = [...matchesData.realMadrid].sort((a, b) => (b.goals || 0) - (a.goals || 0));
+        // Helper function to get SdS count for a player
+        function getSdsCount(playerName, team) {
+            const sdsData = matchesData.spielerDesSpiels.find(s => s.name === playerName && s.team === team);
+            return sdsData ? (sdsData.count || 0) : 0;
+        }
+
+        // Spieler-Optionen SORTIERT nach SdS (Spieler des Spiels, absteigend) - safely
+        const aekSorted = [...matchesData.aekAthen].sort((a, b) => {
+            const aSds = getSdsCount(a.name, 'AEK');
+            const bSds = getSdsCount(b.name, 'AEK');
+            return bSds - aSds;
+        });
+        const realSorted = [...matchesData.realMadrid].sort((a, b) => {
+            const aSds = getSdsCount(a.name, 'Real');
+            const bSds = getSdsCount(b.name, 'Real');
+            return bSds - aSds;
+        });
         
-        const aekSpieler = aekSorted.map(p => 
-            `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${p.goals || 0} Tore)</option>`
-        ).join('');
+        const aekSpieler = aekSorted.map(p => {
+            const sdsCount = getSdsCount(p.name, 'AEK');
+            return `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${sdsCount} SdS)</option>`;
+        }).join('');
         
-        const realSpieler = realSorted.map(p => 
-            `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${p.goals || 0} Tore)</option>`
-        ).join('');
+        const realSpieler = realSorted.map(p => {
+            const sdsCount = getSdsCount(p.name, 'Real');
+            return `<option value="${DOM.sanitizeForAttribute(p.name)}">${DOM.sanitizeForHTML(p.name)} (${sdsCount} SdS)</option>`;
+        }).join('');
 
         const goalsListA = match?.goalslista || [];
         const goalsListB = match?.goalslistb || [];
@@ -394,11 +410,11 @@ function openMatchForm(id) {
 // Helper function to generate form HTML
 function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, aekSorted, realSorted, goalsListA, goalsListB, manofthematch) {
     return `
-    <form id="match-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-white dark:bg-gray-900 dark:text-gray-100 rounded-2xl shadow-lg py-6 relative w-full text-black dark:text-white" style="max-width:98vw;">
-        <h3 class="font-bold text-lg mb-2 text-center">${edit ? "Match bearbeiten" : "Match hinzufügen"}</h3>
+    <form id="match-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-gray-800 text-gray-100 rounded-2xl shadow-lg py-6 relative w-full border border-gray-700" style="max-width:98vw;">
+        <h3 class="font-bold text-lg mb-2 text-center text-gray-100">${edit ? "Match bearbeiten" : "Match hinzufügen"}</h3>
         <div class="flex flex-col gap-3 items-center mb-2">
             <div class="flex flex-row items-center gap-2 w-full justify-center">
-                <button type="button" id="show-date" class="flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-sky-600 border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none transition-colors" tabindex="0">
+                <button type="button" id="show-date" class="flex items-center gap-1 text-sm font-semibold text-gray-300 hover:text-sky-400 border border-gray-600 rounded-lg px-3 py-2 bg-gray-700 focus:outline-none transition-colors" tabindex="0">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
@@ -408,19 +424,19 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
             </div>
             <div class="flex flex-row items-center gap-3 w-full justify-center">
                 <div class="flex flex-col items-center">
-                    <span class="font-bold text-blue-700 text-base">AEK</span>
+                    <span class="font-bold text-blue-400 text-base">AEK</span>
                 </div>
-                <input type="number" min="0" max="50" name="goalsa" class="border rounded-lg p-3 w-16 text-center text-base focus:ring-2 focus:ring-sky-500" required placeholder="Tore" value="${match ? match.goalsa : ""}">
-                <span class="font-bold text-lg">:</span>
-                <input type="number" min="0" max="50" name="goalsb" class="border rounded-lg p-3 w-16 text-center text-base focus:ring-2 focus:ring-sky-500" required placeholder="Tore" value="${match ? match.goalsb : ""}">
+                <input type="number" min="0" max="50" name="goalsa" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-3 w-16 text-center text-base focus:ring-2 focus:ring-sky-400 focus:border-sky-400" required placeholder="Tore" value="${match ? match.goalsa : ""}">
+                <span class="font-bold text-lg text-gray-100">:</span>
+                <input type="number" min="0" max="50" name="goalsb" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-3 w-16 text-center text-base focus:ring-2 focus:ring-sky-400 focus:border-sky-400" required placeholder="Tore" value="${match ? match.goalsb : ""}">>
                 <div class="flex flex-col items-center">
-                    <span class="font-bold text-red-700 text-base">Real</span>
+                    <span class="font-bold text-red-400 text-base">Real</span>
                 </div>
             </div>
         </div>
         
-        <div id="scorersA-block" class="bg-blue-50 p-2 rounded">
-            <b>Torschützen AEK</b>
+        <div id="scorersA-block" class="bg-gray-700 border border-blue-500 p-2 rounded">
+            <b class="text-blue-400">Torschützen AEK</b>
             <div id="scorersA">
                 ${scorerFields("goalslista", goalsListA, aekSpieler)}
             </div>
@@ -430,8 +446,8 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
             </button>
         </div>
         
-        <div id="scorersB-block" class="bg-red-50 p-2 rounded">
-            <b>Torschützen Real</b>
+        <div id="scorersB-block" class="bg-gray-700 border border-red-500 p-2 rounded">
+            <b class="text-red-400">Torschützen Real</b>
             <div id="scorersB">
                 ${scorerFields("goalslistb", goalsListB, realSpieler)}
             </div>
@@ -441,29 +457,29 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
             </button>
         </div>
         
-        <div class="bg-blue-50 p-2 rounded">
-            <b>Karten AEK</b>
+        <div class="bg-gray-700 border border-blue-500 p-2 rounded">
+            <b class="text-blue-400">Karten AEK</b>
             <div class="flex space-x-2 items-center mb-1">
                 <label>🟨</label>
-                <input type="number" min="0" max="20" name="yellowa" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.yellowa || 0}">
+                <input type="number" min="0" max="20" name="yellowa" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-2 w-16 h-10 text-base focus:ring-2 focus:ring-blue-400 focus:border-blue-400" value="${match?.yellowa || 0}">
                 <label>🟥</label>
-                <input type="number" min="0" max="11" name="reda" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.reda || 0}">
+                <input type="number" min="0" max="11" name="reda" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-2 w-16 h-10 text-base focus:ring-2 focus:ring-blue-400 focus:border-blue-400" value="${match?.reda || 0}">
             </div>
         </div>
         
-        <div class="bg-red-50 p-2 rounded">
-            <b>Karten Real</b>
+        <div class="bg-gray-700 border border-red-500 p-2 rounded">
+            <b class="text-red-400">Karten Real</b>
             <div class="flex space-x-2 items-center mb-1">
                 <label>🟨</label>
-                <input type="number" min="0" max="20" name="yellowb" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.yellowb || 0}">
+                <input type="number" min="0" max="20" name="yellowb" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-2 w-16 h-10 text-base focus:ring-2 focus:ring-red-400 focus:border-red-400" value="${match?.yellowb || 0}">
                 <label>🟥</label>
-                <input type="number" min="0" max="11" name="redb" class="border rounded-lg p-2 w-16 h-10 text-base" value="${match?.redb || 0}">
+                <input type="number" min="0" max="11" name="redb" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-2 w-16 h-10 text-base focus:ring-2 focus:ring-red-400 focus:border-red-400" value="${match?.redb || 0}">
             </div>
         </div>
         
         <div>
-            <label class="font-semibold">Spieler des Spiels (SdS):</label>
-            <select name="manofthematch" class="border rounded-lg p-3 w-full h-12 text-base">
+            <label class="font-semibold text-gray-100">Spieler des Spiels (SdS):</label>
+            <select name="manofthematch" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-3 w-full h-12 text-base focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
                 <option value="">Keiner</option>
                 ${aekSorted.map(p => `<option value="${DOM.sanitizeForAttribute(p.name)}"${manofthematch===p.name?' selected':''}>${DOM.sanitizeForHTML(p.name)} (AEK)</option>`).join('')}
                 ${realSorted.map(p => `<option value="${DOM.sanitizeForAttribute(p.name)}"${manofthematch===p.name?' selected':''}>${DOM.sanitizeForHTML(p.name)} (Real)</option>`).join('')}
@@ -472,7 +488,7 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
         
         <div class="flex gap-2">
             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white w-full px-4 py-2 rounded-lg text-base active:scale-95 transition">${edit ? "Speichern" : "Anlegen"}</button>
-            <button type="button" class="bg-gray-300 hover:bg-gray-400 w-full px-4 py-2 rounded-lg text-base transition-colors" onclick="window.hideModal()">Abbrechen</button>
+            <button type="button" class="bg-gray-600 hover:bg-gray-500 text-gray-100 w-full px-4 py-2 rounded-lg text-base transition-colors" onclick="window.hideModal()">Abbrechen</button>
         </div>
     </form>
     `;
@@ -513,12 +529,12 @@ function attachMatchFormEventHandlers(edit, id) {
         const div = document.createElement("div");
         div.className = "flex space-x-2 mb-1 scorer-row";
         div.innerHTML = `
-            <select name="${name}-player" class="border rounded-lg p-2 h-10 text-base" style="min-width:100px;">
+            <select name="${name}-player" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-2 h-10 text-base focus:ring-2 focus:ring-blue-400 focus:border-blue-400" style="min-width:100px;">
                 <option value="">Spieler</option>
                 ${spielerOpts}
             </select>
-            <input type="number" min="1" name="${name}-count" placeholder="Tore" class="border rounded-lg p-2 w-16 h-10 text-base" value="1">
-            <button type="button" class="remove-goal-btn bg-red-200 text-red-700 px-2 rounded" title="Entfernen">-</button>
+            <input type="number" min="1" name="${name}-count" placeholder="Tore" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-2 w-16 h-10 text-base focus:ring-2 focus:ring-blue-400 focus:border-blue-400" value="1">
+            <button type="button" class="remove-goal-btn bg-red-600 hover:bg-red-700 text-red-100 px-2 rounded" title="Entfernen">-</button>
         `;
         div.querySelector('.remove-goal-btn').onclick = function() {
             if(container.querySelectorAll('.scorer-row').length > 1)
@@ -562,12 +578,12 @@ function scorerFields(name, arr, spielerOpts) {
     if (!arr.length) arr = [{ player: "", count: 1 }];
     return arr.map((g, i) => `
         <div class="flex space-x-2 mb-1 scorer-row">
-            <select name="${name}-player" class="border rounded-lg p-2 h-10 text-base" style="min-width:100px;">
+            <select name="${name}-player" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-2 h-10 text-base focus:ring-2 focus:ring-blue-400 focus:border-blue-400" style="min-width:100px;">
                 <option value="">Spieler</option>
                 ${spielerOpts.replace(`value="${g.player}"`, `value="${g.player}" selected`)}
             </select>
-            <input type="number" min="1" name="${name}-count" placeholder="Tore" class="border rounded-lg p-2 w-16 h-10 text-base" value="${g.count||1}">
-            <button type="button" class="remove-goal-btn bg-red-200 text-red-700 px-2 rounded" title="Entfernen" ${arr.length===1 ? 'disabled' : ''}>-</button>
+            <input type="number" min="1" name="${name}-count" placeholder="Tore" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-2 w-16 h-10 text-base focus:ring-2 focus:ring-blue-400 focus:border-blue-400" value="${g.count||1}">
+            <button type="button" class="remove-goal-btn bg-red-600 hover:bg-red-700 text-red-100 px-2 rounded" title="Entfernen" ${arr.length===1 ? 'disabled' : ''}>-</button>
         </div>
     `).join('');
 }
