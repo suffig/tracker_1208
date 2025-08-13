@@ -1,4 +1,4 @@
-import { showModal, hideModal } from './modal.js';
+import { showModal, hideModal, showSuccessAndCloseModal } from './modal.js';
 import { decrementBansAfterMatch } from './bans.js';
 import { dataManager } from './dataManager.js';
 import { loadingManager, ErrorHandler, Performance, DOM } from './utils.js';
@@ -840,7 +840,8 @@ async function submitMatchForm(event, id) {
         }
     }
 
-    hideModal();
+    const matchDisplayText = id ? "Match erfolgreich aktualisiert" : `Match ${teama} vs ${teamb} (${goalsa}:${goalsb}) erfolgreich hinzugefügt`;
+    showSuccessAndCloseModal(matchDisplayText);
     // Kein manuelles Neuladen nötig – Live-Sync!
 }
 

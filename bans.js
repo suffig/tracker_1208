@@ -1,4 +1,4 @@
-import { showModal, hideModal } from './modal.js';
+import { showModal, hideModal, showSuccessAndCloseModal } from './modal.js';
 import { supabase } from './supabaseClient.js';
 
 // --- Helper-Funktion: Spieler für Team laden ---
@@ -291,6 +291,7 @@ async function openBanForm(ban = null) {
                 totalgames,
                 reason
             });
+            showSuccessAndCloseModal("Sperre erfolgreich aktualisiert");
         } else {
             await saveBan({
                 team,
@@ -300,8 +301,8 @@ async function openBanForm(ban = null) {
                 matchesserved: 0,
                 reason
             });
+            showSuccessAndCloseModal("Sperre erfolgreich hinzugefügt");
         }
-        hideModal();
     };
 }
 
