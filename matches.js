@@ -339,6 +339,14 @@ function matchHtml(match, nr) {
     `;
 }
 
+// Helper function to get SdS count for a player - moved outside for global access
+function getSdsCount(playerName, team) {
+    const sdsEntry = matchesData.spielerDesSpiels.find(sds => 
+        sds.name === playerName && sds.team === team
+    );
+    return sdsEntry ? (sdsEntry.count || 0) : 0;
+}
+
 // --- MODERNES, KOMPAKTES POPUP, ABER MIT ALLER ALTER LOGIK ---
 // Optimized match form with better error handling and validation
 function openMatchForm(id) {
@@ -355,14 +363,6 @@ function openMatchForm(id) {
             ErrorHandler.showUserError('Keine Spielerdaten verfügbar. Bitte laden Sie die Seite neu.');
             return;
         }
-
-        // Helper function to get SdS count for a player
-        const getSdsCount = (playerName, team) => {
-            const sdsEntry = matchesData.spielerDesSpiels.find(sds => 
-                sds.name === playerName && sds.team === team
-            );
-            return sdsEntry ? (sdsEntry.count || 0) : 0;
-        };
 
         // Spieler-Optionen SORTIERT nach Toren (absteigend), dann nach SdS-Anzahl (absteigend) - safely
         const aekSorted = [...matchesData.aekAthen].sort((a, b) => {
@@ -409,7 +409,7 @@ function openMatchForm(id) {
         showModal(generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, aekSorted, realSorted, goalsListA, goalsListB, manofthematch));
         
         // Attach event handlers safely
-        attachMatchFormEventHandlers(edit, match?.id);
+        attachMatchFormEventHandlers(edit, match?.id, aekSpieler, realSpieler);
         
     } catch (error) {
         console.error('Error opening match form:', error);
@@ -526,7 +526,7 @@ DOM.sanitizeForAttribute = function(str) {
 };
 
 // Helper function to attach event handlers to the match form
-function attachMatchFormEventHandlers(edit, id) {
+function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
     // Datum-Show/Hide (wie gehabt)
     document.getElementById('show-date').onclick = function() {
         document.getElementById('date-input').classList.toggle('hidden');
