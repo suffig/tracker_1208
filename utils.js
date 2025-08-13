@@ -172,23 +172,56 @@ export class ErrorHandler {
         console.error(`${operation} failed:`, error);
         
         let userMessage = 'Ein unerwarteter Fehler ist aufgetreten.';
+        let errorType = 'error';
         
         if (error.message) {
+            const message = error.message.toLowerCase();
+            
             if (error.message.includes('nicht verfügbar')) {
                 // Fallback service message - show as-is since it's already user-friendly
                 userMessage = error.message;
-            } else if (error.message.includes('auth')) {
+                errorType = 'warning';
+            } else if (message.includes('auth') || message.includes('unauthorized') || message.includes('forbidden')) {
                 userMessage = 'Authentifizierungsfehler. Bitte melden Sie sich erneut an.';
-            } else if (error.message.includes('network') || error.message.includes('fetch')) {
+            } else if (message.includes('network') || message.includes('fetch') || message.includes('timeout')) {
                 userMessage = 'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.';
-            } else if (error.message.includes('constraint') || error.message.includes('duplicate')) {
+            } else if (message.includes('constraint') || message.includes('duplicate') || message.includes('unique')) {
                 userMessage = 'Diese Daten existieren bereits oder verletzen Datenbankregeln.';
-            } else if (error.message.includes('Validierungsfehler')) {
+            } else if (message.includes('validierung') || error.message.includes('Validierungsfehler')) {
                 userMessage = error.message;
+                errorType = 'warning';
+            } else if (message.includes('cdn') || message.includes('blocked')) {
+                userMessage = 'CDN blockiert - Anwendung läuft im Demo-Modus.';
+                errorType = 'info';
+            } else if (message.includes('session') || message.includes('token')) {
+                userMessage = 'Session abgelaufen. Bitte melden Sie sich erneut an.';
+            } else if (message.includes('permission') || message.includes('denied')) {
+                userMessage = 'Keine Berechtigung für diese Aktion.';
+            } else if (message.includes('not found') || message.includes('404')) {
+                userMessage = 'Die angeforderten Daten wurden nicht gefunden.';
+                errorType = 'warning';
+            } else if (message.includes('server') || message.includes('500') || message.includes('503')) {
+                userMessage = 'Server temporär nicht verfügbar. Bitte versuchen Sie es später erneut.';
+            } else if (message.includes('offline')) {
+                userMessage = 'Keine Internetverbindung. Funktionen sind eingeschränkt.';
+                errorType = 'warning';
             }
         }
 
-        this.showUserError(userMessage);
+        // Add context about current connection state
+        if (typeof window !== 'undefined' && window.connectionMonitor) {
+            const status = window.connectionMonitor.getStatus();
+            if (!status.connected) {
+                if (status.connectionType === 'fallback') {
+                    userMessage += ' (Demo-Modus aktiv)';
+                    errorType = 'info';
+                } else if (status.connectionType === 'offline') {
+                    userMessage += ' (Offline)';
+                }
+            }
+        }
+
+        this.showUserError(userMessage, errorType);
         return userMessage;
     }
 
