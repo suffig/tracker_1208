@@ -24,9 +24,9 @@ export async function renderSpielerTab(containerId = "app") {
 
     // Hilfsfunktion für Card-Klasse nach Team
     function getCardClass(team) {
-        if (team === "Ehemalige") return "text-gray-400";
-        if (team === "AEK") return "text-blue-900";
-        return "text-red-900";
+        if (team === "Ehemalige") return "text-slate-300";
+        if (team === "AEK") return "text-blue-200";
+        return "text-red-200";
     }
 
     function getBadge(idx) {
@@ -66,12 +66,12 @@ export async function renderSpielerTab(containerId = "app") {
 				<div class="text-md font-semibold mb-2">Top 3 Torschützen</div>
 				<div class="flex flex-row gap-3 w-full overflow-x-auto pb-2">
 					${top3.map((s, idx) => `
-						<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-lg flex flex-col items-center border-4 border-opacity-80
+						<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-lg flex flex-col items-center border-4 border-opacity-90
 							${idx === 0 
-								? 'border-yellow-400 bg-gradient-to-br from-yellow-800 to-yellow-900 shadow-yellow-400/50'
+								? 'border-yellow-400 bg-gradient-to-br from-yellow-800 to-yellow-900 shadow-yellow-400/50 ring-2 ring-yellow-400/50'
 								: idx === 1
-									? 'border-gray-300 bg-gradient-to-br from-gray-600 to-gray-700 shadow-gray-400/50'
-									: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50'}">
+									? 'border-gray-300 bg-gradient-to-br from-gray-600 to-gray-700 shadow-gray-400/50 ring-2 ring-gray-300/50'
+									: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50 ring-2 ring-orange-400/50'}">
 							<div class="text-2xl font-extrabold mb-1">${getBadge(idx)}</div>
 							<div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClass(s.team)}">${s.name}</div>
 							<div class="text-xs text-base mb-1 ${getCardClass(s.team)}">${s.team}</div>
@@ -102,15 +102,15 @@ export async function renderSpielerTab(containerId = "app") {
                         let tClass = "";
                         let borderClass = "";
                         if (s.team === "Ehemalige") {
-                            tClass = "bg-gray-700 text-gray-200 shadow-sm";
-                            borderClass = "border-l-4 border-gray-500";
+                            tClass = "bg-slate-600 text-slate-200 shadow-sm";
+                            borderClass = "border-l-4 border-slate-400";
                         }
                         else if (s.team === "AEK") {
-                            tClass = "bg-blue-800 text-blue-100 shadow-sm";
+                            tClass = "bg-blue-700 text-blue-100 shadow-sm";
                             borderClass = "border-l-4 border-blue-400";
                         }
                         else {
-                            tClass = "bg-red-800 text-red-100 shadow-sm";
+                            tClass = "bg-red-700 text-red-100 shadow-sm";
                             borderClass = "border-l-4 border-red-400";
                         }
                         return `
@@ -164,12 +164,12 @@ export async function renderSpielerTab(containerId = "app") {
                 <div class="text-md font-semibold mb-2">Top 3 Spieler des Spiels</div>
                 <div class="flex flex-row gap-3 w-full overflow-x-auto pb-2">
                     ${top3.map((s, idx) => `
-					<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-lg flex flex-col items-center border-4 border-opacity-80
+					<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-lg flex flex-col items-center border-4 border-opacity-90
 						${idx === 0 
-							? 'border-yellow-400 bg-gradient-to-br from-yellow-800 to-yellow-900 shadow-yellow-400/50'
+							? 'border-yellow-400 bg-gradient-to-br from-yellow-800 to-yellow-900 shadow-yellow-400/50 ring-2 ring-yellow-400/50'
 							: idx === 1
-								? 'border-gray-300 bg-gradient-to-br from-gray-600 to-gray-700 shadow-gray-400/50'
-								: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50'}">
+								? 'border-gray-300 bg-gradient-to-br from-gray-600 to-gray-700 shadow-gray-400/50 ring-2 ring-gray-300/50'
+								: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50 ring-2 ring-orange-400/50'}">
                             <div class="text-2xl font-extrabold mb-1">${getBadge(idx)}</div>
                             <div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClass(s.team)}">${s.name}</div>
                             <div class="text-xs text-base mb-1 ${getCardClass(s.team)}">${s.team}</div>
@@ -200,15 +200,15 @@ export async function renderSpielerTab(containerId = "app") {
                         let tClass = "";
                         let borderClass = "";
                         if (s.team === "Ehemalige") {
-                            tClass = "bg-gray-700 text-gray-200 shadow-sm";
-                            borderClass = "border-l-4 border-gray-500";
+                            tClass = "bg-slate-600 text-slate-200 shadow-sm";
+                            borderClass = "border-l-4 border-slate-400";
                         }
                         else if (s.team === "AEK") {
-                            tClass = "bg-blue-800 text-blue-100 shadow-sm";
+                            tClass = "bg-blue-700 text-blue-100 shadow-sm";
                             borderClass = "border-l-4 border-blue-400";
                         }
                         else {
-                            tClass = "bg-red-800 text-red-100 shadow-sm";
+                            tClass = "bg-red-700 text-red-100 shadow-sm";
                             borderClass = "border-l-4 border-red-400";
                         }
                         return `
