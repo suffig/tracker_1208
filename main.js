@@ -122,7 +122,7 @@ function showConnectionDetails() {
                         <div class="bg-gray-700 p-3 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <span class="font-medium">Status:</span>
-                                <span class="px-2 py-1 rounded text-sm ${status.connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                <span class="px-2 py-1 rounded text-sm ${status.connected ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : 'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200'}">
                                     ${status.connected ? '✅ Verbunden' : '❌ Getrennt'}
                                 </span>
                             </div>
@@ -391,7 +391,7 @@ async function renderCurrentTab() {
         
         const { data: { session } } = await supabase.auth.getSession();
         if (!session) {
-            appDiv.innerHTML = `<div class="text-red-700 text-center py-6">Nicht angemeldet. Bitte einloggen.</div>`;
+            appDiv.innerHTML = `<div class="text-red-700 dark:text-red-300 text-center py-6">Nicht angemeldet. Bitte einloggen.</div>`;
             return;
         }
         
@@ -417,7 +417,7 @@ async function renderCurrentTab() {
     } catch (error) {
         console.error('Error rendering tab:', error);
         ErrorHandler.handleDatabaseError(error, 'Tab laden');
-        appDiv.innerHTML = `<div class="text-red-700 text-center py-6">Fehler beim Laden des Tabs. Bitte versuchen Sie es erneut.</div>`;
+        appDiv.innerHTML = `<div class="text-red-700 dark:text-red-300 text-center py-6">Fehler beim Laden des Tabs. Bitte versuchen Sie es erneut.</div>`;
     }
 }
 
@@ -532,20 +532,40 @@ async function renderLoginArea() {
             if (document.getElementById('email')) emailValue = document.getElementById('email').value;
             if (document.getElementById('pw')) pwValue = document.getElementById('pw').value;
             loginDiv.innerHTML = `
-                <div class="flex flex-col items-center mb-3">
-                    <img src="assets/logo.png" alt="Logo" class="w-60 h-60 mb-2" />
-                </div>
-                <form id="loginform" class="login-area flex flex-col gap-4">
-                    <input type="email" id="email" required placeholder="E-Mail" class="rounded border border-gray-600 bg-gray-700 text-gray-100 placeholder-gray-400 px-6 py-3 focus:ring focus:ring-blue-300 focus:border-blue-400" value="${emailValue}" />
-                    <input type="password" id="pw" required placeholder="Passwort" class="rounded border border-gray-600 bg-gray-700 text-gray-100 placeholder-gray-400 px-6 py-3 focus:ring focus:ring-blue-300 focus:border-blue-400" value="${pwValue}" />
-                    <div class="flex gap-2 w-full">
-                      <button
-                        class="login-btn bg-blue-600 text-white font-bold text-lg md:text-xl py-4 w-full rounded-2xl shadow-lg hover:bg-blue-700 active:scale-95 transition-all duration-150 outline-none ring-2 ring-transparent focus:ring-blue-300 border-2 border-blue-600 hover:border-blue-700"
-                        style="min-width:180px;">
-                        <i class="fas fa-sign-in-alt mr-2"></i> Login
-                      </button>
+                <div class="min-h-screen bg-gray-900 flex flex-col items-center justify-center px-4 py-8">
+                    <div class="w-full max-w-md">
+                        <div class="flex flex-col items-center mb-8">
+                            <img src="assets/logo.png" alt="Logo" class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mb-4" />
+                            <h1 class="text-2xl sm:text-3xl font-bold text-gray-100 text-center">FIFA Statistik-Tracker</h1>
+                            <p class="text-gray-400 text-center mt-2">Melden Sie sich an, um fortzufahren</p>
+                        </div>
+                        <form id="loginform" class="login-area flex flex-col gap-6">
+                            <div class="space-y-4">
+                                <input 
+                                    type="email" 
+                                    id="email" 
+                                    required 
+                                    placeholder="E-Mail" 
+                                    autocomplete="email"
+                                    class="w-full rounded-lg border-2 border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400 px-4 py-4 text-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 outline-none" 
+                                    value="${emailValue}" />
+                                <input 
+                                    type="password" 
+                                    id="pw" 
+                                    required 
+                                    placeholder="Passwort" 
+                                    autocomplete="current-password"
+                                    class="w-full rounded-lg border-2 border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400 px-4 py-4 text-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 outline-none" 
+                                    value="${pwValue}" />
+                            </div>
+                            <button
+                                type="submit"
+                                class="login-btn w-full bg-blue-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg hover:bg-blue-700 active:scale-95 transition-all duration-150 outline-none ring-2 ring-transparent focus:ring-blue-300 border-2 border-blue-600 hover:border-blue-700 min-h-[56px]">
+                                <i class="fas fa-sign-in-alt mr-2"></i> Anmelden
+                            </button>
+                        </form>
                     </div>
-                </form>
+                </div>
             `;
             appContainer.style.display = 'none';
             if (logoutBtn) logoutBtn.style.display = "none";
@@ -591,7 +611,7 @@ async function renderLoginArea() {
                         console.error("❌ Login failed:", error);
                         if (loginBtn) {
                             loginBtn.disabled = false;
-                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Login';
+                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Anmelden';
                         }
                     }
                 };
