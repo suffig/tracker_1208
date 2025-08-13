@@ -14,7 +14,7 @@ export async function renderStatsTab(containerId = "app") {
     ]);
     if (errorBans || errorMatches || errorPlayers) {
         document.getElementById(containerId).innerHTML =
-            `<div class="text-red-700 p-4">Fehler beim Laden der Statistiken: ${errorBans?.message || ''} ${errorMatches?.message || ''} ${errorPlayers?.message || ''}</div>`;
+            `<div class="text-red-700 dark:text-red-300 p-4">Fehler beim Laden der Statistiken: ${errorBans?.message || ''} ${errorMatches?.message || ''} ${errorPlayers?.message || ''}</div>`;
         return;
     }
 
@@ -207,7 +207,7 @@ export async function renderStatsTab(containerId = "app") {
                     </div>
                     <div>
                         <div class="flex flex-wrap items-center gap-4 mt-2">
-                            <span class="inline-flex items-center bg-red-100 text-red-900 rounded px-3 py-1 font-bold text-base min-w-[80px]">Real</span>
+                            <span class="inline-flex items-center bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-200 rounded px-3 py-1 font-bold text-base min-w-[80px]">Real</span>
                             <span class="flex items-center gap-1"><span class="text-amber-600">🔒</span> <b>${totalBansReal}</b> Sperren</span>
                             <span class="flex items-center gap-1"><span>⏱️</span> Ø <b>${avgBanDurationReal}</b> Spiele</span>
                         </div>
@@ -244,7 +244,7 @@ export async function renderStatsTab(containerId = "app") {
                             <span class="inline-flex items-center bg-yellow-100 text-yellow-900 rounded-full px-3 py-1 font-semibold shadow-sm border border-yellow-200">
                                 <span class="mr-1">🟨</span>Gelb: <span class="ml-1">${gelbA}</span>
                             </span>
-                            <span class="inline-flex items-center bg-red-100 text-red-700 rounded-full px-3 py-1 font-semibold shadow-sm border border-red-200">
+                            <span class="inline-flex items-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-full px-3 py-1 font-semibold shadow-sm border border-red-200 dark:border-red-600">
                                 <span class="mr-1">🟥</span>Rot: <span class="ml-1">${rotA}</span>
                             </span>
                         </div>
@@ -252,7 +252,7 @@ export async function renderStatsTab(containerId = "app") {
                             <span class="inline-flex items-center bg-yellow-50 text-yellow-900 rounded-full px-3 py-1 text-xs font-medium border border-yellow-100 shadow-sm">
                                 Ø GK/Spiel: <b class="ml-1">${avgGelbA}</b>
                             </span>
-                            <span class="inline-flex items-center bg-red-50 text-red-700 rounded-full px-3 py-1 text-xs font-medium border border-red-100 shadow-sm">
+                            <span class="inline-flex items-center bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-full px-3 py-1 text-xs font-medium border border-red-100 dark:border-red-600 shadow-sm">
                                 Ø RK/Spiel: <b class="ml-1">${avgRotA}</b>
                             </span>
                         </div>
@@ -263,7 +263,7 @@ export async function renderStatsTab(containerId = "app") {
                             <span class="inline-flex items-center bg-yellow-100 text-yellow-900 rounded-full px-3 py-1 font-semibold shadow-sm border border-yellow-200">
                                 <span class="mr-1">🟨</span>Gelb: <span class="ml-1">${gelbB}</span>
                             </span>
-                            <span class="inline-flex items-center bg-red-100 text-red-700 rounded-full px-3 py-1 font-semibold shadow-sm border border-red-200">
+                            <span class="inline-flex items-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-full px-3 py-1 font-semibold shadow-sm border border-red-200 dark:border-red-600">
                                 <span class="mr-1">🟥</span>Rot: <span class="ml-1">${rotB}</span>
                             </span>
                         </div>
@@ -271,7 +271,7 @@ export async function renderStatsTab(containerId = "app") {
                             <span class="inline-flex items-center bg-yellow-50 text-yellow-900 rounded-full px-3 py-1 text-xs font-medium border border-yellow-100 shadow-sm">
                                 Ø GK/Spiel: <b class="ml-1">${avgGelbB}</b>
                             </span>
-                            <span class="inline-flex items-center bg-red-50 text-red-700 rounded-full px-3 py-1 text-xs font-medium border border-red-100 shadow-sm">
+                            <span class="inline-flex items-center bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200 rounded-full px-3 py-1 text-xs font-medium border border-red-100 dark:border-red-600 shadow-sm">
                                 Ø RK/Spiel: <b class="ml-1">${avgRotB}</b>
                             </span>
                         </div>

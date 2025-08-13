@@ -41,7 +41,7 @@ export async function renderSpielerTab(containerId = "app") {
         const { data: players, error: errP } = await supabase.from('players').select('*');
         if (errP) {
             document.getElementById('spieler-content').innerHTML =
-                `<div class="text-red-700 p-4">Fehler beim Laden der Daten: ${errP?.message || ''}</div>`;
+                `<div class="text-red-700 dark:text-red-300 p-4">Fehler beim Laden der Daten: ${errP?.message || ''}</div>`;
             return;
         }
 
@@ -127,7 +127,7 @@ export async function renderSpielerTab(containerId = "app") {
         const { data: sdsArr, error } = await supabase.from('spieler_des_spiels').select('*');
         if (error) {
             document.getElementById('spieler-content').innerHTML =
-                `<div class="text-red-700 p-4">Fehler beim Laden der Spieler des Spiels: ${error.message}</div>`;
+                `<div class="text-red-700 dark:text-red-300 p-4">Fehler beim Laden der Spieler des Spiels: ${error.message}</div>`;
             return;
         }
         // Hole alle Spieler für aktuelle Teams

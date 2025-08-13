@@ -76,10 +76,10 @@ async function loadPlayersAndFinances(renderFn = renderPlayerLists) {
         console.error('Error loading data:', error);
         const errorDiv = document.createElement('div');
         errorDiv.innerHTML = `
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <div class="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-600 text-red-700 dark:text-red-200 px-4 py-3 rounded mb-4">
                 <strong>Fehler beim Laden der Daten.</strong> 
                 ${isDatabaseAvailable() ? 'Bitte versuchen Sie es erneut.' : 'Keine Datenbankverbindung.'}
-                <button onclick="this.parentElement.remove()" class="float-right font-bold">×</button>
+                <button onclick="this.parentElement.remove()" class="float-right font-bold text-red-700 dark:text-red-200 hover:text-red-900 dark:hover:text-red-100">×</button>
             </div>
         `;
         const appDiv = document.getElementById('app');
