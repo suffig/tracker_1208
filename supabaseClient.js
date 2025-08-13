@@ -47,20 +47,25 @@ const createFallbackClient = () => {
       { id: 10, name: 'Chris Meyer', team: 'Ehemalige', position: 'ZM', value: 70000, created_at: '2024-01-10' }
     ],
     matches: [
-      { id: 1, team1: 'AEK', team2: 'Real', score1: 2, score2: 1, date: '2024-08-01', created_at: '2024-08-01' },
-      { id: 2, team1: 'Real', team2: 'AEK', score1: 1, score2: 3, date: '2024-08-05', created_at: '2024-08-05' },
-      { id: 3, team1: 'AEK', team2: 'Real', score1: 0, score2: 2, date: '2024-08-08', created_at: '2024-08-08' },
-      { id: 4, team1: 'Real', team2: 'AEK', score1: 2, score2: 2, date: '2024-08-10', created_at: '2024-08-10' }
+      { id: 1, goalsa: 2, goalsb: 1, date: '2024-08-12', created_at: '2024-08-12', manofthematch: 'Max Müller', goalslista: ['Max Müller', 'Tom Schmidt'], goalslistb: ['Jan Becker'] },
+      { id: 2, goalsa: 1, goalsb: 3, date: '2024-08-10', created_at: '2024-08-10', manofthematch: 'Jan Becker', goalslista: ['Leon Wagner'], goalslistb: ['Jan Becker', 'Paul Klein', 'Lukas Wolf'] },
+      { id: 3, goalsa: 0, goalsb: 2, date: '2024-08-08', created_at: '2024-08-08', manofthematch: 'Ben Richter', goalslista: [], goalslistb: ['Jan Becker', 'Ben Richter'] },
+      { id: 4, goalsa: 2, goalsb: 2, date: '2024-08-05', created_at: '2024-08-05', manofthematch: 'Max Müller', goalslista: ['Max Müller', 'Tim Fischer'], goalslistb: ['Jan Becker', 'Paul Klein'] }
     ],
     bans: [
       { id: 1, player_id: 1, matches_remaining: 2, reason: 'Gelb-Rot Karte', created_at: '2024-08-01' },
       { id: 2, player_id: 5, matches_remaining: 1, reason: 'Unsportlichkeit', created_at: '2024-08-05' }
     ],
     transactions: [
-      { id: 1, amount: -50000, description: 'Spielerkauf: Max Müller', team: 'AEK', created_at: '2024-01-01' },
-      { id: 2, amount: 30000, description: 'Spielerverkauf: Klaus Meyer', team: 'AEK', created_at: '2024-01-15' },
-      { id: 3, amount: -45000, description: 'Spielerkauf: Jan Becker', team: 'Real', created_at: '2024-01-05' },
-      { id: 4, amount: 25000, description: 'Sponsoring Einnahme', team: 'Real', created_at: '2024-01-20' }
+      { id: 1, amount: -50000, info: 'Spielerkauf: Max Müller', team: 'AEK', date: '2024-08-10', type: 'Spielerkauf', match_id: null },
+      { id: 2, amount: 30000, info: 'Spielerverkauf: Klaus Meyer', team: 'AEK', date: '2024-08-11', type: 'Spielerverkauf', match_id: null },
+      { id: 3, amount: -45000, info: 'Spielerkauf: Jan Becker', team: 'Real', date: '2024-08-10', type: 'Spielerkauf', match_id: null },
+      { id: 4, amount: 25000, info: 'Sponsoring Einnahme', team: 'Real', date: '2024-08-11', type: 'Sonstiges', match_id: null },
+      { id: 5, amount: 5000, info: 'Match-Sieg Preisgeld', team: 'AEK', date: '2024-08-12', type: 'Preisgeld', match_id: 1 },
+      { id: 6, amount: 3000, info: 'Match-Niederlage Preisgeld', team: 'Real', date: '2024-08-12', type: 'Preisgeld', match_id: 1 },
+      { id: 7, amount: 1500, info: 'SdS Bonus: Max Müller', team: 'AEK', date: '2024-08-12', type: 'SdS Bonus', match_id: 1 },
+      { id: 8, amount: 2000, info: 'Liga-Bonus', team: 'AEK', date: '2024-08-13', type: 'Sonstiges', match_id: null },
+      { id: 9, amount: -1000, info: 'Kartenstrafe', team: 'Real', date: '2024-08-13', type: 'Strafe', match_id: null }
     ],
     finances: [
       { id: 1, team: 'AEK', budget: 150000, created_at: '2024-01-01' },

@@ -364,22 +364,22 @@ function openMatchForm(id) {
             return;
         }
 
-        // Spieler-Optionen SORTIERT nach Toren (absteigend), dann nach SdS-Anzahl (absteigend) - safely
+        // Spieler-Optionen SORTIERT nach SdS-Anzahl (absteigend), dann nach Toren (absteigend) - safely
         const aekSorted = [...matchesData.aekAthen].sort((a, b) => {
-            const aGoals = a.goals || 0;
-            const bGoals = b.goals || 0;
-            if (aGoals !== bGoals) return bGoals - aGoals; // Sort by goals first
             const aSdsCount = getSdsCount(a.name, "AEK");
             const bSdsCount = getSdsCount(b.name, "AEK");
-            return bSdsCount - aSdsCount; // Then by SdS count
-        });
-        const realSorted = [...matchesData.realMadrid].sort((a, b) => {
+            if (aSdsCount !== bSdsCount) return bSdsCount - aSdsCount; // Sort by SdS count first
             const aGoals = a.goals || 0;
             const bGoals = b.goals || 0;
-            if (aGoals !== bGoals) return bGoals - aGoals; // Sort by goals first
+            return bGoals - aGoals; // Then by goals
+        });
+        const realSorted = [...matchesData.realMadrid].sort((a, b) => {
             const aSdsCount = getSdsCount(a.name, "Real");
             const bSdsCount = getSdsCount(b.name, "Real");
-            return bSdsCount - aSdsCount; // Then by SdS count
+            if (aSdsCount !== bSdsCount) return bSdsCount - aSdsCount; // Sort by SdS count first
+            const aGoals = a.goals || 0;
+            const bGoals = b.goals || 0;
+            return bGoals - aGoals; // Then by goals
         });
         
         const aekSpieler = aekSorted.map(p => {
@@ -485,15 +485,29 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
         
         <div class="bg-gray-700 border border-gray-600 p-3 rounded-lg">
             <label class="font-semibold text-gray-100 block mb-2">Spieler des Spiels (SdS):</label>
-            <select name="manofthematch" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-3 w-full h-12 text-base">
+            
+            <!-- Team Filter Toggle -->
+            <div class="mb-3 flex gap-2">
+                <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm font-semibold transition-colors active">
+                    Alle
+                </button>
+                <button type="button" id="sds-filter-aek" class="sds-filter-btn bg-gray-600 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">
+                    AEK
+                </button>
+                <button type="button" id="sds-filter-real" class="sds-filter-btn bg-gray-600 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">
+                    Real
+                </button>
+            </div>
+            
+            <select name="manofthematch" id="manofthematch-select" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-3 w-full h-12 text-base">
                 <option value="">Keiner</option>
                 ${aekSorted.map(p => {
                     const sdsCount = getSdsCount(p.name, "AEK");
-                    return `<option value="${DOM.sanitizeForAttribute(p.name)}"${manofthematch===p.name?' selected':''}>${DOM.sanitizeForHTML(p.name)} (AEK, ${sdsCount} SdS)</option>`;
+                    return `<option value="${DOM.sanitizeForAttribute(p.name)}" data-team="AEK"${manofthematch===p.name?' selected':''}>${DOM.sanitizeForHTML(p.name)} (AEK, ${sdsCount} SdS)</option>`;
                 }).join('')}
                 ${realSorted.map(p => {
                     const sdsCount = getSdsCount(p.name, "Real");
-                    return `<option value="${DOM.sanitizeForAttribute(p.name)}"${manofthematch===p.name?' selected':''}>${DOM.sanitizeForHTML(p.name)} (Real, ${sdsCount} SdS)</option>`;
+                    return `<option value="${DOM.sanitizeForAttribute(p.name)}" data-team="Real"${manofthematch===p.name?' selected':''}>${DOM.sanitizeForHTML(p.name)} (Real, ${sdsCount} SdS)</option>`;
                 }).join('')}
             </select>
         </div>
@@ -582,6 +596,54 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
     document.querySelector('input[name="goalsa"]').addEventListener('input', toggleScorerFields);
     document.querySelector('input[name="goalsb"]').addEventListener('input', toggleScorerFields);
     toggleScorerFields();
+
+    // Team filtering for "Spieler des Spiels" dropdown
+    function filterSdsDropdown(team) {
+        const select = document.getElementById('manofthematch-select');
+        const options = select.querySelectorAll('option');
+        
+        // Update button states
+        document.querySelectorAll('.sds-filter-btn').forEach(btn => {
+            btn.classList.remove('active', 'bg-blue-600', 'bg-red-600');
+            btn.classList.add('bg-gray-600');
+        });
+        
+        // Set active button styling
+        const activeBtn = document.getElementById(`sds-filter-${team}`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            if (team === 'aek') {
+                activeBtn.classList.remove('bg-gray-600');
+                activeBtn.classList.add('bg-blue-600');
+            } else if (team === 'real') {
+                activeBtn.classList.remove('bg-gray-600');
+                activeBtn.classList.add('bg-red-600');
+            }
+        }
+        
+        // Filter options
+        options.forEach(option => {
+            if (option.value === '') {
+                option.style.display = ''; // Always show "Keiner" option
+                return;
+            }
+            
+            if (team === 'all') {
+                option.style.display = '';
+            } else {
+                const optionTeam = option.getAttribute('data-team');
+                option.style.display = optionTeam === team.toUpperCase() ? '' : 'none';
+            }
+        });
+    }
+    
+    // Add event listeners for team filter buttons
+    document.getElementById('sds-filter-all').addEventListener('click', () => filterSdsDropdown('all'));
+    document.getElementById('sds-filter-aek').addEventListener('click', () => filterSdsDropdown('aek'));
+    document.getElementById('sds-filter-real').addEventListener('click', () => filterSdsDropdown('real'));
+    
+    // Initialize with "All" filter
+    filterSdsDropdown('all');
 
     document.getElementById("match-form").onsubmit = (e) => submitMatchForm(e, id);
 }

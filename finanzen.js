@@ -31,6 +31,7 @@ async function loadFinancesAndTransactions(renderFn = renderFinanzenTabInner) {
         alert("Fehler beim Laden der Transaktionen: " + transError.message);
     }
     transactions = transData || [];
+    console.log('Loaded transactions:', transactions.length, transactions);
     renderFn("app");
 }
 
@@ -109,9 +110,18 @@ let selectedDateIdx = 0;
 function groupTransactionsByDate(transactions) {
     const groups = {};
     for (const t of transactions) {
-        if (!t.date) continue;
-        if (!groups[t.date]) groups[t.date] = [];
-        groups[t.date].push(t);
+        // Handle both old (created_at) and new (date) field names
+        const dateField = t.date || t.created_at;
+        if (!dateField) continue;
+        if (!groups[dateField]) groups[dateField] = [];
+        // Normalize transaction structure for consistent rendering
+        const normalizedTransaction = {
+            ...t,
+            date: dateField,
+            info: t.info || t.description || 'Keine Beschreibung',
+            type: t.type || 'Sonstiges'
+        };
+        groups[dateField].push(normalizedTransaction);
     }
     return Object.keys(groups).sort((a, b) => b.localeCompare(a)).map(date => ({
         date,
@@ -121,12 +131,14 @@ function groupTransactionsByDate(transactions) {
 
 function renderTransactions() {
     const container = document.getElementById('transactions-list');
+    console.log('renderTransactions called with:', transactions.length, 'transactions');
     if (!transactions.length) {
         container.innerHTML = `<div class="text-gray-400 text-sm">Keine Transaktionen vorhanden.</div>`;
         return;
     }
 
     transactionGroups = groupTransactionsByDate(transactions);
+    console.log('Transaction groups created:', transactionGroups.length, transactionGroups);
     if (selectedDateIdx >= transactionGroups.length) selectedDateIdx = 0;
     if (selectedDateIdx < 0) selectedDateIdx = 0;
 
