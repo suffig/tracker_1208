@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#1f2937">
+    <meta name="theme-color" content="#d1d5db">
     <meta name="description" content="Verfolge FIFA-Spiele, Spieler, Sperren und Finanzen">
     <link rel="manifest" href="/manifest.json">
     
@@ -18,7 +18,7 @@
     <link rel="apple-touch-startup-image" href="/assets/logo.png">
     
     <!-- Windows PWA Meta Tags -->
-    <meta name="msapplication-TileColor" content="#1f2937">
+    <meta name="msapplication-TileColor" content="#d1d5db">
     <meta name="msapplication-TileImage" content="/assets/logo.png">
     
     <!-- Standard favicon -->
@@ -175,16 +175,16 @@
         }
     </style>
 </head>
-<body class="dark bg-gray-900 font-sans transition-colors min-h-screen">
+<body class="bg-gray-200 font-sans transition-colors min-h-screen">
 <div id="login-area"></div>
-<div class="app-container mx-auto bg-gray-900 shadow-lg relative overflow-hidden max-w-screen-xl min-h-screen" style="display:none;">
+<div class="app-container mx-auto bg-gray-300 shadow-lg relative overflow-hidden max-w-screen-xl min-h-screen" style="display:none;">
     <!-- TOP HEADER - Logo and Logout Only -->
-    <header class="bg-gray-900 border-b-2 border-gray-700 px-4 py-3 shadow-xl">
+    <header class="bg-gray-400 border-b-2 border-gray-500 px-4 py-3 shadow-xl">
       <div class="flex justify-between items-center mx-auto max-w-screen-xl">
         <a href="#" class="flex items-center">
           <img src="assets/logo.png" class="h-10 mr-3" alt="Logo" />
-          <span class="self-center text-lg sm:text-xl font-bold whitespace-nowrap text-gray-100 hidden sm:block">FIFA Statistik-Tracker</span>
-          <span class="self-center text-lg font-bold whitespace-nowrap text-gray-100 block sm:hidden">FIFA Tracker</span>
+          <span class="self-center text-lg sm:text-xl font-bold whitespace-nowrap text-gray-800 hidden sm:block">FIFA Statistik-Tracker</span>
+          <span class="self-center text-lg font-bold whitespace-nowrap text-gray-800 block sm:hidden">FIFA Tracker</span>
         </a>
         <div class="flex items-center gap-2">
           <!-- Logout Button oben rechts (Icon-Button) -->
@@ -198,40 +198,40 @@
     <!-- TOP HEADER END -->
 
     <!-- BOTTOM NAVIGATION - Enhanced for mobile devices -->
-    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 w-full bg-gray-900 border-t-2 border-gray-700 shadow-2xl flex justify-between items-center px-1 py-3" style="z-index:50; padding-bottom: max(env(safe-area-inset-bottom, 12px), 12px); min-height: 72px;">
-      <a id="nav-squad" href="#" class="flex flex-col items-center text-gray-400 hover:text-blue-400 active:text-blue-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-800 active:bg-gray-700" style="touch-action: manipulation;">
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 w-full bg-gray-400 border-t-2 border-gray-500 shadow-2xl flex justify-between items-center px-1 py-3" style="z-index:50; padding-bottom: max(env(safe-area-inset-bottom, 12px), 12px); min-height: 72px;">
+      <a id="nav-squad" href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 active:text-blue-500 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-300 active:bg-gray-200" style="touch-action: manipulation;">
         <i class="fas fa-users text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Kader</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-matches" href="#" class="flex flex-col items-center text-gray-400 hover:text-rose-400 active:text-rose-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-800 active:bg-gray-700" style="touch-action: manipulation;">
+      <a id="nav-matches" href="#" class="flex flex-col items-center text-gray-600 hover:text-rose-600 active:text-rose-500 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-300 active:bg-gray-200" style="touch-action: manipulation;">
         <i class="fas fa-futbol text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Spiele</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-bans" href="#" class="flex flex-col items-center text-gray-400 hover:text-yellow-400 active:text-yellow-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-800 active:bg-gray-700" style="touch-action: manipulation;">
+      <a id="nav-bans" href="#" class="flex flex-col items-center text-gray-600 hover:text-yellow-600 active:text-yellow-500 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-300 active:bg-gray-200" style="touch-action: manipulation;">
         <i class="fas fa-ban text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Sperren</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-gray-400 hover:text-green-400 active:text-green-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-800 active:bg-gray-700" style="touch-action: manipulation;">
+      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-gray-600 hover:text-green-600 active:text-green-500 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-300 active:bg-gray-200" style="touch-action: manipulation;">
         <i class="fas fa-euro-sign text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Finanzen</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-stats" href="#" class="flex flex-col items-center text-gray-400 hover:text-purple-400 active:text-purple-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-800 active:bg-gray-700" style="touch-action: manipulation;">
+      <a id="nav-stats" href="#" class="flex flex-col items-center text-gray-600 hover:text-purple-600 active:text-purple-500 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-300 active:bg-gray-200" style="touch-action: manipulation;">
         <i class="fas fa-chart-bar text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Stats</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-spieler" href="#" class="flex flex-col items-center text-gray-400 hover:text-orange-400 active:text-orange-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-800 active:bg-gray-700" style="touch-action: manipulation;">
+      <a id="nav-spieler" href="#" class="flex flex-col items-center text-gray-600 hover:text-orange-600 active:text-orange-500 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-gray-300 active:bg-gray-200" style="touch-action: manipulation;">
         <i class="fas fa-star text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Spieler</span>
         <span class="nav-indicator"></span>
       </a>
     </nav>
 
-    <main class="p-3 pb-28 lg:pb-8 relative min-h-[calc(100vh-140px)] bg-gray-900">
+    <main class="p-3 pb-28 lg:pb-8 relative min-h-[calc(100vh-140px)] bg-gray-300">
         <!-- Loader -->
         <div id="tab-loader" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-10 flex items-center justify-center z-50" style="display:none;">
             <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"></div>

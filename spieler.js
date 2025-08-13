@@ -66,12 +66,12 @@ export async function renderSpielerTab(containerId = "app") {
 				<div class="text-md font-semibold mb-2">Top 3 Torschützen</div>
 				<div class="flex flex-row gap-3 w-full overflow-x-auto pb-2">
 					${top3.map((s, idx) => `
-						<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-md flex flex-col items-center border-2 border-opacity-60
+						<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-lg flex flex-col items-center border-4 border-opacity-80
 							${idx === 0 
-								? 'border-yellow-400 bg-yellow-900'
+								? 'border-yellow-400 bg-gradient-to-br from-yellow-800 to-yellow-900 shadow-yellow-400/50'
 								: idx === 1
-									? 'border-gray-400 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 bg-gray-700'
-									: 'border-orange-400 bg-orange-900'}">
+									? 'border-gray-300 bg-gradient-to-br from-gray-600 to-gray-700 shadow-gray-400/50'
+									: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50'}">
 							<div class="text-2xl font-extrabold mb-1">${getBadge(idx)}</div>
 							<div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClass(s.team)}">${s.name}</div>
 							<div class="text-xs text-base mb-1 ${getCardClass(s.team)}">${s.team}</div>
@@ -100,15 +100,25 @@ export async function renderSpielerTab(containerId = "app") {
                 <tbody>
                     ${rest.map((s, idx) => {
                         let tClass = "";
-                        if (s.team === "Ehemalige") tClass = "bg-gray-700 text-gray-400";
-                        else if (s.team === "AEK") tClass = "bg-blue-900 text-blue-100";
-                        else tClass = "bg-red-900 text-red-100";
+                        let borderClass = "";
+                        if (s.team === "Ehemalige") {
+                            tClass = "bg-gray-700 text-gray-200 shadow-sm";
+                            borderClass = "border-l-4 border-gray-500";
+                        }
+                        else if (s.team === "AEK") {
+                            tClass = "bg-blue-800 text-blue-100 shadow-sm";
+                            borderClass = "border-l-4 border-blue-400";
+                        }
+                        else {
+                            tClass = "bg-red-800 text-red-100 shadow-sm";
+                            borderClass = "border-l-4 border-red-400";
+                        }
                         return `
-                            <tr>
-                                <td class="p-2 text-center font-bold ${tClass} rounded">${idx + 4}</td>
-                                <td class="p-2 font-semibold ${tClass} rounded">${s.name}</td>
-                                <td class="p-2 ${tClass} rounded">${s.team}</td>
-                                <td class="p-2 font-bold ${tClass} rounded">${s.goals}</td>
+                            <tr class="${borderClass}">
+                                <td class="p-3 text-center font-bold ${tClass} rounded-r">${idx + 4}</td>
+                                <td class="p-3 font-semibold ${tClass}">${s.name}</td>
+                                <td class="p-3 ${tClass} font-medium">${s.team}</td>
+                                <td class="p-3 font-bold ${tClass} text-center">${s.goals}</td>
                             </tr>
                         `;
                     }).join('')}
@@ -154,12 +164,12 @@ export async function renderSpielerTab(containerId = "app") {
                 <div class="text-md font-semibold mb-2">Top 3 Spieler des Spiels</div>
                 <div class="flex flex-row gap-3 w-full overflow-x-auto pb-2">
                     ${top3.map((s, idx) => `
-					<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-md flex flex-col items-center border-2 border-opacity-60
+					<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-lg flex flex-col items-center border-4 border-opacity-80
 						${idx === 0 
-							? 'border-yellow-400 bg-yellow-50'
+							? 'border-yellow-400 bg-gradient-to-br from-yellow-800 to-yellow-900 shadow-yellow-400/50'
 							: idx === 1
-								? 'border-gray-400 bg-gradient-to-r from-gray-700 via-gray-800 to-gray-700 bg-gray-700'
-								: 'border-orange-400 bg-orange-50'}">
+								? 'border-gray-300 bg-gradient-to-br from-gray-600 to-gray-700 shadow-gray-400/50'
+								: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50'}">
                             <div class="text-2xl font-extrabold mb-1">${getBadge(idx)}</div>
                             <div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClass(s.team)}">${s.name}</div>
                             <div class="text-xs text-base mb-1 ${getCardClass(s.team)}">${s.team}</div>
@@ -188,15 +198,25 @@ export async function renderSpielerTab(containerId = "app") {
                 <tbody>
                     ${rest.map((s, idx) => {
                         let tClass = "";
-                        if (s.team === "Ehemalige") tClass = "bg-gray-700 text-gray-400";
-                        else if (s.team === "AEK") tClass = "bg-blue-900 text-blue-100";
-                        else tClass = "bg-red-900 text-red-100";
+                        let borderClass = "";
+                        if (s.team === "Ehemalige") {
+                            tClass = "bg-gray-700 text-gray-200 shadow-sm";
+                            borderClass = "border-l-4 border-gray-500";
+                        }
+                        else if (s.team === "AEK") {
+                            tClass = "bg-blue-800 text-blue-100 shadow-sm";
+                            borderClass = "border-l-4 border-blue-400";
+                        }
+                        else {
+                            tClass = "bg-red-800 text-red-100 shadow-sm";
+                            borderClass = "border-l-4 border-red-400";
+                        }
                         return `
-                            <tr>
-                                <td class="p-2 text-center font-bold ${tClass} rounded">${idx + 4}</td>
-                                <td class="p-2 font-semibold ${tClass} rounded">${s.name}</td>
-                                <td class="p-2 ${tClass} rounded">${s.team}</td>
-                                <td class="p-2 font-bold ${tClass} rounded">${s.count}</td>
+                            <tr class="${borderClass}">
+                                <td class="p-3 text-center font-bold ${tClass} rounded-r">${idx + 4}</td>
+                                <td class="p-3 font-semibold ${tClass}">${s.name}</td>
+                                <td class="p-3 ${tClass} font-medium">${s.team}</td>
+                                <td class="p-3 font-bold ${tClass} text-center">${s.count}</td>
                             </tr>
                         `;
                     }).join('')}

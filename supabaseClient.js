@@ -35,16 +35,16 @@ const createFallbackClient = () => {
   // Sample data for demo mode
   const sampleData = {
     players: [
-      { id: 1, name: 'Max Müller', team: 'AEK', position: 'ST', value: 120000, created_at: '2024-01-01' },
-      { id: 2, name: 'Tom Schmidt', team: 'AEK', position: 'TH', value: 100000, created_at: '2024-01-02' },
-      { id: 3, name: 'Leon Wagner', team: 'AEK', position: 'IV', value: 90000, created_at: '2024-01-03' },
-      { id: 4, name: 'Tim Fischer', team: 'AEK', position: 'ZM', value: 85000, created_at: '2024-01-04' },
-      { id: 5, name: 'Jan Becker', team: 'Real', position: 'ST', value: 110000, created_at: '2024-01-05' },
-      { id: 6, name: 'Paul Klein', team: 'Real', position: 'TH', value: 95000, created_at: '2024-01-06' },
-      { id: 7, name: 'Lukas Wolf', team: 'Real', position: 'IV', value: 88000, created_at: '2024-01-07' },
-      { id: 8, name: 'Ben Richter', team: 'Real', position: 'ZM', value: 92000, created_at: '2024-01-08' },
-      { id: 9, name: 'Alex Weber', team: 'Ehemalige', position: 'ST', value: 75000, created_at: '2024-01-09' },
-      { id: 10, name: 'Chris Meyer', team: 'Ehemalige', position: 'ZM', value: 70000, created_at: '2024-01-10' }
+      { id: 1, name: 'Max Müller', team: 'AEK', position: 'ST', value: 120000, goals: 3, created_at: '2024-01-01' },
+      { id: 2, name: 'Tom Schmidt', team: 'AEK', position: 'TH', value: 100000, goals: 1, created_at: '2024-01-02' },
+      { id: 3, name: 'Leon Wagner', team: 'AEK', position: 'IV', value: 90000, goals: 1, created_at: '2024-01-03' },
+      { id: 4, name: 'Tim Fischer', team: 'AEK', position: 'ZM', value: 85000, goals: 1, created_at: '2024-01-04' },
+      { id: 5, name: 'Jan Becker', team: 'Real', position: 'ST', value: 110000, goals: 4, created_at: '2024-01-05' },
+      { id: 6, name: 'Paul Klein', team: 'Real', position: 'TH', value: 95000, goals: 1, created_at: '2024-01-06' },
+      { id: 7, name: 'Lukas Wolf', team: 'Real', position: 'IV', value: 88000, goals: 1, created_at: '2024-01-07' },
+      { id: 8, name: 'Ben Richter', team: 'Real', position: 'ZM', value: 92000, goals: 1, created_at: '2024-01-08' },
+      { id: 9, name: 'Alex Weber', team: 'Ehemalige', position: 'ST', value: 75000, goals: 2, created_at: '2024-01-09' },
+      { id: 10, name: 'Chris Meyer', team: 'Ehemalige', position: 'ZM', value: 70000, goals: 0, created_at: '2024-01-10' }
     ],
     matches: [
       { id: 1, goalsa: 2, goalsb: 1, date: '2024-08-12', created_at: '2024-08-12', manofthematch: 'Max Müller', goalslista: ['Max Müller', 'Tom Schmidt'], goalslistb: ['Jan Becker'] },
