@@ -42,7 +42,7 @@
         .player-card { transition: all 0.3s ease; }
         .player-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
         .modal {
-            z-index: 50; background: rgba(0,0,0,0.5); position: fixed; inset: 0;
+            z-index: 70; background: rgba(0,0,0,0.6); position: fixed; inset: 0;
             display: flex; align-items: flex-end; justify-content: center;
         }
         .modal-content {
@@ -58,8 +58,8 @@
             .modal-content {
                 width: 98vw !important; min-width: 0 !important; max-width: 98vw !important;
                 border-radius: 12px 12px 0 0 !important; padding: 1rem !important;
-                left: 0 !important; right: 0 !important; top: auto !important; bottom: 0 !important;
-                position: absolute !important; max-height: 95vh !important; overflow-y: auto !important;
+                left: 0 !important; right: 0 !important; top: auto !important; bottom: 80px !important;
+                position: absolute !important; max-height: calc(95vh - 80px) !important; overflow-y: auto !important;
             }
             .modal {
                 align-items: flex-end !important; justify-content: center !important;
