@@ -74,22 +74,22 @@ function renderFinanzenTabInner(containerId = "app") {
     const app = document.getElementById(containerId);
     app.innerHTML = `
         <div class="mb-4">
-            <h2 class="text-lg font-semibold dark:text-white">Finanzen</h2>
+            <h2 class="text-lg font-semibold text-slate-100">Finanzen</h2>
         </div>
         <div class="flex flex-col sm:flex-row sm:space-x-8 space-y-2 sm:space-y-0 mb-6">
-            <div class="bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-200 rounded-lg p-4 flex-1 min-w-0">
+            <div class="bg-blue-700 text-blue-100 rounded-lg p-4 flex-1 min-w-0 border border-blue-600 shadow-lg">
                 <b>AEK</b><br>
-                Kontostand: <span class="font-bold">${(finances.aekAthen.balance || 0).toLocaleString('de-DE')} €</span><br>
-                Echtgeldschulden: <span class="font-bold">${(finances.aekAthen.debt || 0).toLocaleString('de-DE')} €</span>
+                Kontostand: <span class="font-bold text-blue-200">${(finances.aekAthen.balance || 0).toLocaleString('de-DE')} €</span><br>
+                Echtgeldschulden: <span class="font-bold text-blue-200">${(finances.aekAthen.debt || 0).toLocaleString('de-DE')} €</span>
             </div>
-            <div class="bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-200 rounded-lg p-4 flex-1 min-w-0">
+            <div class="bg-red-700 text-red-100 rounded-lg p-4 flex-1 min-w-0 border border-red-600 shadow-lg">
                 <b>Real</b><br>
-                Kontostand: <span class="font-bold">${(finances.realMadrid.balance || 0).toLocaleString('de-DE')} €</span><br>
-                Echtgeldschulden: <span class="font-bold">${(finances.realMadrid.debt || 0).toLocaleString('de-DE')} €</span>
+                Kontostand: <span class="font-bold text-red-200">${(finances.realMadrid.balance || 0).toLocaleString('de-DE')} €</span><br>
+                Echtgeldschulden: <span class="font-bold text-red-200">${(finances.realMadrid.debt || 0).toLocaleString('de-DE')} €</span>
             </div>
         </div>
         <div class="mb-4 flex flex-col sm:flex-row sm:justify-between items-stretch gap-2">
-            <h3 class="text-md font-semibold dark:text-white">Transaktionen</h3>
+            <h3 class="text-md font-semibold text-slate-100">Transaktionen</h3>
             <button id="add-trans-btn" class="bg-green-600 hover:bg-green-700 text-white w-full sm:w-auto px-4 py-3 rounded-lg text-base flex items-center justify-center gap-2 font-semibold transition shadow">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 <span>Transaktion hinzufügen</span>
@@ -180,9 +180,9 @@ function renderTransactions() {
     let html = "";
 
     function getCellBgClass(team) {
-        if (team === "AEK") return "bg-blue-900 dark:bg-blue-900 text-blue-100 dark:text-blue-100 border-l-4 border-blue-500";
-        if (team === "Real") return "bg-red-900 dark:bg-red-900 text-red-100 dark:text-red-100 border-l-4 border-red-500";
-        return "bg-gray-800 dark:bg-gray-800 text-gray-100 dark:text-gray-100";
+        if (team === "AEK") return "bg-blue-700 text-blue-100 border-l-4 border-blue-400";
+        if (team === "Real") return "bg-red-700 text-red-100 border-l-4 border-red-400";
+        return "bg-slate-600 text-slate-100";
     }
 
     // Generate unique colors for each match based on match number
@@ -303,27 +303,28 @@ function renderTransactions() {
     // Normale Transaktionen (ohne Match)
     if (nonMatchTransactions.length) {
         html += `
-        <div class="border-2 border-gray-400 bg-gray-800 dark:bg-gray-800 rounded-lg mb-4 p-3 shadow-lg">
-            <div class="font-bold text-gray-800 dark:text-gray-200 pl-2 mb-2 text-lg">
+        <div class="border-2 border-slate-500 bg-slate-600 rounded-lg mb-4 p-3 shadow-lg">
+            <div class="font-bold text-slate-100 pl-2 mb-2 text-lg flex items-center">
+                <div class="w-3 h-3 bg-slate-400 rounded-full mr-2 flex-shrink-0"></div>
                 Sonstige Transaktionen
             </div>
             <div class="overflow-x-auto">
                 <!-- Desktop Table View -->
-                <table class="hidden md:table w-full text-sm dark:bg-gray-700 dark:text-gray-100 bg-gray-800 rounded-lg overflow-hidden shadow">
-                    <thead class="bg-gray-700 dark:bg-gray-600">
+                <table class="hidden md:table w-full text-sm bg-slate-700 text-slate-100 rounded-lg overflow-hidden shadow">
+                    <thead class="bg-slate-600">
                         <tr>
-                            <th class="p-3 text-left font-semibold">Datum</th>
-                            <th class="p-3 text-left font-semibold">Typ</th>
-                            <th class="p-3 text-left font-semibold">Team</th>
-                            <th class="p-3 text-left font-semibold">Info</th>
-                            <th class="p-3 text-left font-semibold">Betrag (€)</th>
+                            <th class="p-3 text-left font-semibold text-slate-200">Datum</th>
+                            <th class="p-3 text-left font-semibold text-slate-200">Typ</th>
+                            <th class="p-3 text-left font-semibold text-slate-200">Team</th>
+                            <th class="p-3 text-left font-semibold text-slate-200">Info</th>
+                            <th class="p-3 text-left font-semibold text-slate-200">Betrag (€)</th>
                         </tr>
                     </thead>
                     <tbody>
         `;
         nonMatchTransactions.forEach(t => {
             html += `
-                <tr class="border-b border-gray-600 dark:border-gray-600 hover:bg-gray-700 dark:hover:bg-gray-600 transition-colors">
+                <tr class="border-b border-slate-600 hover:bg-slate-600 transition-colors">
                     <td class="p-3 ${getCellBgClass(t.team)}">${new Date(t.date).toLocaleDateString('de-DE')}</td>
                     <td class="p-3 ${getCellBgClass(t.team)}">${t.type}</td>
                     <td class="p-3 ${getCellBgClass(t.team)} font-semibold">${t.team}</td>
@@ -343,16 +344,16 @@ function renderTransactions() {
         `;
         nonMatchTransactions.forEach(t => {
             html += `
-                <div class="bg-gray-800 dark:bg-gray-700 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-500' : t.team === 'Real' ? 'border-red-500' : 'border-gray-400'}">
+                <div class="bg-slate-600 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-400' : t.team === 'Real' ? 'border-red-400' : 'border-slate-400'}">
                     <div class="flex justify-between items-start mb-2">
-                        <div class="text-sm text-gray-400 dark:text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
-                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-400 dark:text-green-400' : 'text-red-400 dark:text-red-400'}">
+                        <div class="text-sm text-slate-300">${new Date(t.date).toLocaleDateString('de-DE')}</div>
+                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-400' : 'text-red-400'}">
                             ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}€
                         </div>
                     </div>
-                    <div class="text-base font-semibold text-gray-100 dark:text-gray-100 mb-1">${t.type}</div>
-                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-400 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
-                    ${t.info ? `<div class="text-sm text-gray-600 dark:text-gray-300">${t.info}</div>` : ''}
+                    <div class="text-base font-semibold text-slate-100 mb-1">${t.type}</div>
+                    <div class="text-sm text-slate-200 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-300' : t.team === 'Real' ? 'text-red-300' : 'text-slate-300'}">${t.team}</span></div>
+                    ${t.info ? `<div class="text-sm text-slate-200">${t.info}</div>` : ''}
                 </div>
             `;
         });
