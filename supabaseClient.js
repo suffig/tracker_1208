@@ -65,7 +65,16 @@ const createFallbackClient = () => {
       { id: 6, amount: 3000, info: 'Match-Niederlage Preisgeld', team: 'Real', date: '2024-08-12', type: 'Preisgeld', match_id: 1 },
       { id: 7, amount: 1500, info: 'SdS Bonus: Max Müller', team: 'AEK', date: '2024-08-12', type: 'SdS Bonus', match_id: 1 },
       { id: 8, amount: 2000, info: 'Liga-Bonus', team: 'AEK', date: '2024-08-13', type: 'Sonstiges', match_id: null },
-      { id: 9, amount: -1000, info: 'Kartenstrafe', team: 'Real', date: '2024-08-13', type: 'Strafe', match_id: null }
+      { id: 9, amount: -1000, info: 'Kartenstrafe', team: 'Real', date: '2024-08-13', type: 'Strafe', match_id: null },
+      { id: 10, amount: 3000, info: 'Match-Niederlage Preisgeld', team: 'AEK', date: '2024-08-10', type: 'Preisgeld', match_id: 2 },
+      { id: 11, amount: 5000, info: 'Match-Sieg Preisgeld', team: 'Real', date: '2024-08-10', type: 'Preisgeld', match_id: 2 },
+      { id: 12, amount: 1500, info: 'SdS Bonus: Jan Becker', team: 'Real', date: '2024-08-10', type: 'SdS Bonus', match_id: 2 },
+      { id: 13, amount: 3000, info: 'Match-Niederlage Preisgeld', team: 'AEK', date: '2024-08-08', type: 'Preisgeld', match_id: 3 },
+      { id: 14, amount: 5000, info: 'Match-Sieg Preisgeld', team: 'Real', date: '2024-08-08', type: 'Preisgeld', match_id: 3 },
+      { id: 15, amount: 1500, info: 'SdS Bonus: Ben Richter', team: 'Real', date: '2024-08-08', type: 'SdS Bonus', match_id: 3 },
+      { id: 16, amount: 4000, info: 'Unentschieden Preisgeld', team: 'AEK', date: '2024-08-05', type: 'Preisgeld', match_id: 4 },
+      { id: 17, amount: 4000, info: 'Unentschieden Preisgeld', team: 'Real', date: '2024-08-05', type: 'Preisgeld', match_id: 4 },
+      { id: 18, amount: 1500, info: 'SdS Bonus: Max Müller', team: 'AEK', date: '2024-08-05', type: 'SdS Bonus', match_id: 4 }
     ],
     finances: [
       { id: 1, team: 'AEK', budget: 150000, created_at: '2024-01-01' },
