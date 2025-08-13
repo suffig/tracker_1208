@@ -74,7 +74,7 @@ function updateConnectionStatus(status) {
         
         if (status.networkOffline) {
             indicator.textContent = 'Offline';
-            indicator.className = baseClass + ' bg-gray-500 text-white';
+            indicator.className = baseClass + ' bg-gray-7000 text-white';
             indicator.title = 'Keine Internetverbindung. Klicken für Details.';
         } else if (status.sessionExpired) {
             indicator.textContent = 'Session abgelaufen';
@@ -113,13 +113,13 @@ function showConnectionDetails() {
             <div class="modal" id="connection-details-modal">
                 <div class="modal-content">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Verbindungsstatus</h3>
+                        <h3 class="text-lg font-semibold text-gray-100">Verbindungsstatus</h3>
                         <button onclick="closeConnectionDetails()" class="text-gray-500 hover:text-gray-700">✕</button>
                     </div>
                     
                     <div class="space-y-4">
                         <!-- Connection Status -->
-                        <div class="bg-gray-50 p-3 rounded-lg">
+                        <div class="bg-gray-700 p-3 rounded-lg">
                             <div class="flex items-center justify-between">
                                 <span class="font-medium">Status:</span>
                                 <span class="px-2 py-1 rounded text-sm ${status.connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">

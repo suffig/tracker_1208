@@ -298,7 +298,7 @@ function matchHtml(match, nr) {
         return `<span class="inline-block px-2 rounded ${tClass} ${color} font-bold">${isPos ? '+' : ''}${amount.toLocaleString('de-DE')} €</span>`;
     }
     return `
-    <div class="bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2 mt-1 text-gray-900 dark:text-gray-100">
+    <div class="bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2 mt-1 text-gray-100 dark:text-gray-100">
       <div class="flex justify-between items-center mb-1">
         <div>
           <span class="font-bold">#${nr} ${match.date}:</span>
@@ -406,8 +406,10 @@ function openMatchForm(id) {
         // Show modal with enhanced form
         showModal(generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, aekSorted, realSorted, goalsListA, goalsListB, manofthematch));
         
-        // Attach event handlers safely
-        attachMatchFormEventHandlers(edit, match?.id, aekSpieler, realSpieler);
+        // Attach event handlers safely with a small delay to ensure DOM is ready
+        setTimeout(() => {
+            attachMatchFormEventHandlers(edit, match?.id, aekSpieler, realSpieler);
+        }, 50);
         
     } catch (error) {
         console.error('Error opening match form:', error);
@@ -488,7 +490,7 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
             
             <!-- Team Filter Toggle -->
             <div class="mb-3 flex gap-2">
-                <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded text-sm font-semibold transition-colors active">
+                <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-7000 text-white px-3 py-1 rounded text-sm font-semibold transition-colors active">
                     Alle
                 </button>
                 <button type="button" id="sds-filter-aek" class="sds-filter-btn bg-gray-600 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">
@@ -514,7 +516,7 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
         
         <div class="flex gap-2">
             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white w-full px-4 py-2 rounded-lg text-base active:scale-95 transition">${edit ? "Speichern" : "Anlegen"}</button>
-            <button type="button" class="bg-gray-600 hover:bg-gray-500 text-gray-100 w-full px-4 py-2 rounded-lg text-base transition-colors" onclick="window.hideModal()">Abbrechen</button>
+            <button type="button" class="bg-gray-600 hover:bg-gray-7000 text-gray-100 w-full px-4 py-2 rounded-lg text-base transition-colors" onclick="window.hideModal()">Abbrechen</button>
         </div>
     </form>
     `;
@@ -600,6 +602,11 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
     // Team filtering for "Spieler des Spiels" dropdown
     function filterSdsDropdown(team) {
         const select = document.getElementById('manofthematch-select');
+        if (!select) {
+            console.error('manofthematch-select element not found');
+            return;
+        }
+        
         const options = select.querySelectorAll('option');
         
         // Update button states
@@ -632,18 +639,27 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
                 option.style.display = '';
             } else {
                 const optionTeam = option.getAttribute('data-team');
-                option.style.display = optionTeam === team.toUpperCase() ? '' : 'none';
+                // Fix case-insensitive comparison
+                option.style.display = optionTeam && optionTeam.toLowerCase() === team.toLowerCase() ? '' : 'none';
             }
         });
     }
     
-    // Add event listeners for team filter buttons
-    document.getElementById('sds-filter-all').addEventListener('click', () => filterSdsDropdown('all'));
-    document.getElementById('sds-filter-aek').addEventListener('click', () => filterSdsDropdown('aek'));
-    document.getElementById('sds-filter-real').addEventListener('click', () => filterSdsDropdown('real'));
+    // Add event listeners for team filter buttons with error checking
+    const allBtn = document.getElementById('sds-filter-all');
+    const aekBtn = document.getElementById('sds-filter-aek');
+    const realBtn = document.getElementById('sds-filter-real');
     
-    // Initialize with "All" filter
-    filterSdsDropdown('all');
+    if (allBtn && aekBtn && realBtn) {
+        allBtn.addEventListener('click', () => filterSdsDropdown('all'));
+        aekBtn.addEventListener('click', () => filterSdsDropdown('aek'));
+        realBtn.addEventListener('click', () => filterSdsDropdown('real'));
+        
+        // Initialize with "All" filter
+        filterSdsDropdown('all');
+    } else {
+        console.error('Team filter buttons not found:', { allBtn, aekBtn, realBtn });
+    }
 
     document.getElementById("match-form").onsubmit = (e) => submitMatchForm(e, id);
 }

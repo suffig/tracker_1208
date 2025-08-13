@@ -49,7 +49,7 @@ export function renderBansTab(containerId = "app") {
         <div class="mb-4">
             <h2 class="text-lg font-semibold dark:text-white">Sperren</h2>
             <div class="flex space-x-2 mt-4 mb-6">
-                <button id="add-ban-btn" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-black px-4 py-3 rounded-lg text-base flex items-center gap-2 font-semibold transition shadow">
+                <button id="add-ban-btn" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white px-4 py-3 rounded-lg text-base flex items-center gap-2 font-semibold transition shadow">
                     <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Sperre hinzufügen
                 </button>
@@ -103,7 +103,7 @@ function renderBanList(list, containerId, active) {
         const player = playersCache.find(p => p.id === ban.player_id);
         let tClass;
         if (!player) {
-            tClass = "bg-gray-50 dark:bg-gray-700 text-gray-400";
+            tClass = "bg-gray-700 dark:bg-gray-700 text-gray-400";
         } else if (player.team === "Ehemalige") {
             tClass = "bg-gray-200 dark:bg-gray-700 text-gray-500";
         } else if (player.team === "AEK") {
@@ -204,7 +204,7 @@ async function openBanForm(ban = null) {
         : BAN_TYPES.find(t => t.value === initialType)?.duration || 1;
 
     showModal(`
-        <form id="ban-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-white dark:bg-gray-800 dark:text-gray-100 rounded-lg text-black dark:text-white">
+        <form id="ban-form" class="space-y-4 px-2 max-w-[420px] mx-auto bg-gray-800 dark:bg-gray-800 dark:text-gray-100 rounded-lg text-white dark:text-white">
             <h3 class="font-bold text-lg mb-2">${edit ? 'Sperre bearbeiten' : 'Sperre hinzufügen'}</h3>
             <div>
                 <label class="font-semibold">Team:</label>
