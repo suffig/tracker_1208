@@ -29,41 +29,245 @@ let inactivityCleanupTimer = null;
 
 console.log("main.js gestartet");
 
-// --- Connection status indicator ---
+// --- Connection status indicator with enhanced messaging ---
 function updateConnectionStatus(status) {
     let indicator = document.getElementById('connection-status');
     if (!indicator) {
         indicator = document.createElement('div');
         indicator.id = 'connection-status';
-        indicator.className = 'fixed top-2 right-2 z-50 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300';
+        indicator.className = 'fixed top-2 right-2 z-50 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer';
+        indicator.title = 'Klicken für Details';
         document.body.appendChild(indicator);
+        
+        // Add click handler for detailed status
+        indicator.addEventListener('click', showConnectionDetails);
     }
+    
+    // Clear previous classes
+    indicator.className = indicator.className.replace(/bg-\w+-\d+/g, '').replace(/text-\w+-\d+/g, '');
+    
     if (status.connected) {
-        indicator.textContent = status.reconnected ? 'Verbindung wiederhergestellt' : 'Online';
-        indicator.className = indicator.className.replace(/bg-\w+-\d+/g, '') + ' bg-green-500 text-white';
+        const baseClass = 'fixed top-2 right-2 z-50 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer';
+        
+        if (status.connectionType === 'fallback') {
+            indicator.textContent = status.reconnected ? 'Demo-Modus wiederhergestellt' : 'Demo-Modus';
+            indicator.className = baseClass + ' bg-blue-500 text-white';
+            indicator.title = 'Demo-Modus aktiv - Simulierte Daten. Klicken für Details.';
+        } else {
+            indicator.textContent = status.reconnected ? 'Verbindung wiederhergestellt' : 'Online';
+            indicator.className = baseClass + ' bg-green-500 text-white';
+            indicator.title = 'Datenbankverbindung aktiv. Klicken für Details.';
+        }
+        
         if (status.reconnected) {
+            // Show temporary success message
             setTimeout(() => {
-                indicator.textContent = 'Online';
+                if (status.connectionType === 'fallback') {
+                    indicator.textContent = 'Demo-Modus';
+                } else {
+                    indicator.textContent = 'Online';
+                }
             }, 3000);
         }
     } else {
+        const baseClass = 'fixed top-2 right-2 z-50 px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 cursor-pointer';
+        
         if (status.networkOffline) {
             indicator.textContent = 'Offline';
-            indicator.className = indicator.className.replace(/bg-\w+-\d+/g, '') + ' bg-gray-500 text-white';
+            indicator.className = baseClass + ' bg-gray-500 text-white';
+            indicator.title = 'Keine Internetverbindung. Klicken für Details.';
         } else if (status.sessionExpired) {
-            indicator.textContent = 'Session abgelaufen – bitte neu anmelden';
-            indicator.className = indicator.className.replace(/bg-\w+-\d+/g, '') + ' bg-red-700 text-white';
+            indicator.textContent = 'Session abgelaufen';
+            indicator.className = baseClass + ' bg-red-700 text-white';
+            indicator.title = 'Bitte neu anmelden. Klicken für Details.';
         } else if (status.reconnecting) {
-            indicator.textContent = `Verbinde... (${status.attempt}/5)`;
-            indicator.className = indicator.className.replace(/bg-\w+-\d+/g, '') + ' bg-yellow-500 text-white';
+            indicator.textContent = `Verbinde... (${status.attempt || 0}/5)`;
+            indicator.className = baseClass + ' bg-yellow-500 text-white';
+            indicator.title = 'Wiederverbindung läuft... Klicken für Details.';
         } else if (status.maxAttemptsReached) {
             indicator.textContent = 'Verbindung unterbrochen';
-            indicator.className = indicator.className.replace(/bg-\w+-\d+/g, '') + ' bg-red-500 text-white';
+            indicator.className = baseClass + ' bg-red-500 text-white';
+            indicator.title = 'Maximale Wiederverbindungsversuche erreicht. Klicken für Details.';
         } else {
             indicator.textContent = 'Verbindung verloren';
-            indicator.className = indicator.className.replace(/bg-\w+-\d+/g, '') + ' bg-red-500 text-white';
+            indicator.className = baseClass + ' bg-red-500 text-white';
+            indicator.title = 'Datenbankverbindung verloren. Klicken für Details.';
         }
     }
+    
+    // Store current status for details view
+    indicator.dataset.status = JSON.stringify(status);
+}
+
+// Show detailed connection information in a modal
+function showConnectionDetails() {
+    const indicator = document.getElementById('connection-status');
+    if (!indicator || !indicator.dataset.status) return;
+    
+    try {
+        const status = JSON.parse(indicator.dataset.status);
+        const diagnostics = connectionMonitor.getDiagnostics();
+        
+        // Create modal HTML
+        const modalHTML = `
+            <div class="modal" id="connection-details-modal">
+                <div class="modal-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900">Verbindungsstatus</h3>
+                        <button onclick="closeConnectionDetails()" class="text-gray-500 hover:text-gray-700">✕</button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- Connection Status -->
+                        <div class="bg-gray-50 p-3 rounded-lg">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium">Status:</span>
+                                <span class="px-2 py-1 rounded text-sm ${status.connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                    ${status.connected ? '✅ Verbunden' : '❌ Getrennt'}
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between mt-2">
+                                <span class="font-medium">Typ:</span>
+                                <span class="text-sm text-gray-600">${getConnectionTypeText(diagnostics.connectionType)}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Error Message -->
+                        ${status.message ? `
+                            <div class="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
+                                <div class="font-medium text-yellow-800">Nachricht:</div>
+                                <div class="text-sm text-yellow-700">${status.message}</div>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Metrics -->
+                        ${diagnostics.metrics.totalConnections > 0 ? `
+                            <div class="bg-blue-50 p-3 rounded-lg">
+                                <div class="font-medium text-blue-800 mb-2">Verbindungsstatistiken:</div>
+                                <div class="text-sm text-blue-700 space-y-1">
+                                    <div>Erfolgsrate: ${diagnostics.metrics.successRate}%</div>
+                                    <div>Durchschnittliche Antwortzeit: ${Math.round(diagnostics.metrics.averageResponseTime)}ms</div>
+                                    <div>Letzte Antwortzeit: ${Math.round(diagnostics.metrics.lastResponseTime)}ms</div>
+                                    <div>Verbindungsgeschwindigkeit: ${getSpeedText(diagnostics.connectionSpeed)}</div>
+                                </div>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Recommendations -->
+                        ${diagnostics.recommendations.length > 0 ? `
+                            <div class="bg-indigo-50 p-3 rounded-lg">
+                                <div class="font-medium text-indigo-800 mb-2">Empfehlungen:</div>
+                                <ul class="text-sm text-indigo-700 space-y-1">
+                                    ${diagnostics.recommendations.map(rec => `<li>• ${rec}</li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                        
+                        <!-- Actions -->
+                        <div class="flex space-x-2 pt-2">
+                            <button onclick="testConnection()" class="flex-1 bg-blue-500 text-white px-3 py-2 rounded text-sm hover:bg-blue-600">
+                                🔄 Verbindung testen
+                            </button>
+                            <button onclick="retryConnection()" class="flex-1 bg-green-500 text-white px-3 py-2 rounded text-sm hover:bg-green-600">
+                                🔌 Neu verbinden
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Remove existing modal
+        const existingModal = document.getElementById('connection-details-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // Add new modal
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+    } catch (error) {
+        console.error('Error showing connection details:', error);
+    }
+}
+
+function getConnectionTypeText(type) {
+    switch (type) {
+        case 'real': return '🔗 Echte Datenbankverbindung';
+        case 'fallback': return '🔄 Demo-Modus (Simulierte Daten)';
+        case 'offline': return '📴 Offline';
+        case 'expired': return '🔐 Session abgelaufen';
+        case 'disconnected': return '❌ Verbindung unterbrochen';
+        default: return '❓ Unbekannt';
+    }
+}
+
+function getSpeedText(speed) {
+    switch (speed) {
+        case 'fast': return '🚀 Schnell (<100ms)';
+        case 'medium': return '⚡ Mittel (100-500ms)';
+        case 'slow': return '🐌 Langsam (500ms-1s)';
+        case 'very-slow': return '🦴 Sehr langsam (>1s)';
+        default: return '❓ Unbekannt';
+    }
+}
+
+function closeConnectionDetails() {
+    const modal = document.getElementById('connection-details-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+async function testConnection() {
+    const testButton = document.querySelector('[onclick="testConnection()"]');
+    if (testButton) {
+        testButton.textContent = '🔄 Teste...';
+        testButton.disabled = true;
+    }
+    
+    try {
+        const connected = await connectionMonitor.checkConnection();
+        if (testButton) {
+            testButton.textContent = connected ? '✅ Erfolgreich' : '❌ Fehlgeschlagen';
+            setTimeout(() => {
+                testButton.textContent = '🔄 Verbindung testen';
+                testButton.disabled = false;
+            }, 2000);
+        }
+    } catch (error) {
+        if (testButton) {
+            testButton.textContent = '❌ Fehler';
+            setTimeout(() => {
+                testButton.textContent = '🔄 Verbindung testen';
+                testButton.disabled = false;
+            }, 2000);
+        }
+    }
+}
+
+async function retryConnection() {
+    const retryButton = document.querySelector('[onclick="retryConnection()"]');
+    if (retryButton) {
+        retryButton.textContent = '🔄 Verbinde...';
+        retryButton.disabled = true;
+    }
+    
+    // Reset connection attempts and try again
+    connectionMonitor.reconnectAttempts = 0;
+    connectionMonitor.reconnectDelay = 1000;
+    
+    await connectionMonitor.attemptReconnection();
+    
+    if (retryButton) {
+        setTimeout(() => {
+            retryButton.textContent = '🔌 Neu verbinden';
+            retryButton.disabled = false;
+        }, 2000);
+    }
+    
+    // Close modal after retry
+    setTimeout(closeConnectionDetails, 1000);
 }
 
 // --- Session expiry UI handler (for supabaseClient.js event dispatch) ---
@@ -301,64 +505,126 @@ async function renderLoginArea() {
         return;
     }
     const logoutBtn = document.getElementById('logout-btn');
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
-        loginDiv.innerHTML = "";
-        appContainer.style.display = '';
-        if (logoutBtn) logoutBtn.style.display = "";
-        setupLogoutButton();
-        setupTabButtons();
-        connectionMonitor.addListener(updateConnectionStatus);
-        if (!tabButtonsInitialized) {
-            switchTab(currentTab);
+    
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log("Current session:", session ? "Active" : "None", session?.user?.email || "No user");
+        
+        if (session) {
+            console.log("✅ User authenticated, showing main app");
+            loginDiv.innerHTML = "";
+            appContainer.style.display = '';
+            if (logoutBtn) logoutBtn.style.display = "";
+            setupLogoutButton();
+            setupTabButtons();
+            connectionMonitor.addListener(updateConnectionStatus);
+            if (!tabButtonsInitialized) {
+                switchTab(currentTab);
+            } else {
+                renderCurrentTab();
+            }
+            subscribeAllLiveSync();
         } else {
-            renderCurrentTab();
+            console.log("❌ No session, showing login form");
+            // Das Loginformular NICHT komplett neu bauen, sondern Felder erhalten!
+            let emailValue = "";
+            let pwValue = "";
+            if (document.getElementById('email')) emailValue = document.getElementById('email').value;
+            if (document.getElementById('pw')) pwValue = document.getElementById('pw').value;
+            loginDiv.innerHTML = `
+                <div class="flex flex-col items-center mb-3">
+                    <img src="assets/logo.png" alt="Logo" class="w-60 h-60 mb-2" />
+                </div>
+                <form id="loginform" class="login-area flex flex-col gap-4">
+                    <input type="email" id="email" required placeholder="E-Mail" class="rounded border px-6 py-3 focus:ring focus:ring-blue-200" value="${emailValue}" />
+                    <input type="password" id="pw" required placeholder="Passwort" class="rounded border px-6 py-3 focus:ring focus:ring-blue-200" value="${pwValue}" />
+                    <div class="flex gap-2 w-full">
+                      <button
+                        class="login-btn bg-blue-600 text-white font-bold text-lg md:text-xl py-4 w-full rounded-2xl shadow-lg hover:bg-fuchsia-500 active:scale-95 transition-all duration-150 outline-none ring-2 ring-transparent focus:ring-blue-300"
+                        style="min-width:180px;">
+                        <i class="fas fa-sign-in-alt mr-2"></i> Login
+                      </button>
+                    </div>
+                </form>
+            `;
+            appContainer.style.display = 'none';
+            if (logoutBtn) logoutBtn.style.display = "none";
+            liveSyncInitialized = false;
+            tabButtonsInitialized = false;
+            cleanupRealtimeSubscriptions();
+            if (inactivityCleanupTimer) {
+                clearTimeout(inactivityCleanupTimer);
+                inactivityCleanupTimer = null;
+            }
+            connectionMonitor.removeListener(updateConnectionStatus);
+            
+            // Setup login form handler with better event management
+            const loginForm = document.getElementById('loginform');
+            if (loginForm) {
+                // Remove any existing listeners by cloning the form
+                const newForm = loginForm.cloneNode(true);
+                loginForm.parentNode.replaceChild(newForm, loginForm);
+                
+                newForm.onsubmit = async e => {
+                    e.preventDefault();
+                    const emailInput = document.getElementById('email');
+                    const passwordInput = document.getElementById('pw');
+                    const loginBtn = document.querySelector('.login-btn');
+                    
+                    if (!emailInput || !passwordInput) {
+                        console.error("Login form inputs not found");
+                        return;
+                    }
+                    
+                    console.log("🔑 Attempting login with:", emailInput.value);
+                    
+                    // Show loading state
+                    if (loginBtn) {
+                        loginBtn.disabled = true;
+                        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Anmelden...';
+                    }
+                    
+                    try {
+                        await signIn(emailInput.value, passwordInput.value);
+                        console.log("✅ Login successful, waiting for auth state change");
+                    } catch (error) {
+                        console.error("❌ Login failed:", error);
+                        if (loginBtn) {
+                            loginBtn.disabled = false;
+                            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i> Login';
+                        }
+                    }
+                };
+            }
         }
-        subscribeAllLiveSync();
-    } else {
-        // Das Loginformular NICHT komplett neu bauen, sondern Felder erhalten!
-        let emailValue = "";
-        let pwValue = "";
-        if (document.getElementById('email')) emailValue = document.getElementById('email').value;
-        if (document.getElementById('pw')) pwValue = document.getElementById('pw').value;
+    } catch (error) {
+        console.error("Error in renderLoginArea:", error);
+        // Show error state
         loginDiv.innerHTML = `
-            <div class="flex flex-col items-center mb-3">
-                <img src="assets/logo.png" alt="Logo" class="w-60 h-60 mb-2" />
+            <div class="text-center text-red-600 p-4">
+                <h3>Anmeldefehler</h3>
+                <p>Es gab ein Problem beim Laden der Anmeldung: ${error.message}</p>
+                <button onclick="location.reload()" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">
+                    Seite neu laden
+                </button>
             </div>
-            <form id="loginform" class="login-area flex flex-col gap-4">
-                <input type="email" id="email" required placeholder="E-Mail" class="rounded border px-6 py-3 focus:ring focus:ring-blue-200" value="${emailValue}" />
-                <input type="password" id="pw" required placeholder="Passwort" class="rounded border px-6 py-3 focus:ring focus:ring-blue-200" value="${pwValue}" />
-				<div class="flex gap-2 w-full">
-				  <button
-					class="login-btn bg-blue-600 text-white font-bold text-lg md:text-xl py-4 w-full rounded-2xl shadow-lg hover:bg-fuchsia-500 active:scale-95 transition-all duration-150 outline-none ring-2 ring-transparent focus:ring-blue-300"
-					style="min-width:180px;">
-					<i class="fas fa-sign-in-alt mr-2"></i> Login
-				  </button>
-				</div>
-            </form>
         `;
-        appContainer.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = "none";
-        liveSyncInitialized = false;
-        tabButtonsInitialized = false;
-        cleanupRealtimeSubscriptions();
-        if (inactivityCleanupTimer) {
-            clearTimeout(inactivityCleanupTimer);
-            inactivityCleanupTimer = null;
-        }
-        connectionMonitor.removeListener(updateConnectionStatus);
-        const loginForm = document.getElementById('loginform');
-        if (loginForm) {
-            loginForm.onsubmit = async e => {
-                e.preventDefault();
-                await signIn(email.value, pw.value);
-            };
-        }
     }
 }
 
-// Nur HIER wird der Render-Flow getriggert!
-supabase.auth.onAuthStateChange((_event, _session) => renderLoginArea());
+// Enhanced auth state change listener
+supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log(`🔐 Auth state changed: ${event}`, session?.user?.email || 'No user');
+    
+    // Add a small delay to ensure DOM is ready
+    setTimeout(async () => {
+        try {
+            await renderLoginArea();
+        } catch (error) {
+            console.error('Error handling auth state change:', error);
+        }
+    }, 100);
+});
 window.addEventListener('DOMContentLoaded', async () => {
 	console.log("DOMContentLoaded!");
     
