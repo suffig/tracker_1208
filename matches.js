@@ -490,13 +490,13 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
             
             <!-- Team Filter Toggle -->
             <div class="mb-3 flex gap-2">
-                <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-7000 text-white px-3 py-1 rounded text-sm font-semibold transition-colors active">
+                <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent">
                     Alle
                 </button>
-                <button type="button" id="sds-filter-aek" class="sds-filter-btn bg-gray-600 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">
+                <button type="button" id="sds-filter-aek" class="sds-filter-btn bg-gray-600 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent">
                     AEK
                 </button>
-                <button type="button" id="sds-filter-real" class="sds-filter-btn bg-gray-600 hover:bg-red-600 text-white px-3 py-1 rounded text-sm font-semibold transition-colors">
+                <button type="button" id="sds-filter-real" class="sds-filter-btn bg-gray-600 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent">
                     Real
                 </button>
             </div>
@@ -609,22 +609,23 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
         
         const options = select.querySelectorAll('option');
         
-        // Update button states
+        // Update button states with enhanced visual feedback
         document.querySelectorAll('.sds-filter-btn').forEach(btn => {
-            btn.classList.remove('active', 'bg-blue-600', 'bg-red-600');
-            btn.classList.add('bg-gray-600');
+            btn.classList.remove('active', 'bg-blue-600', 'bg-red-600', 'bg-gray-400', 'border-blue-400', 'border-red-400', 'border-gray-400', 'shadow-lg');
+            btn.classList.add('bg-gray-600', 'border-transparent');
         });
         
-        // Set active button styling
+        // Set active button styling with clearer indicators
         const activeBtn = document.getElementById(`sds-filter-${team}`);
         if (activeBtn) {
-            activeBtn.classList.add('active');
+            activeBtn.classList.add('active', 'shadow-lg');
+            activeBtn.classList.remove('bg-gray-600', 'border-transparent');
             if (team === 'aek') {
-                activeBtn.classList.remove('bg-gray-600');
-                activeBtn.classList.add('bg-blue-600');
+                activeBtn.classList.add('bg-blue-600', 'border-blue-400');
             } else if (team === 'real') {
-                activeBtn.classList.remove('bg-gray-600');
-                activeBtn.classList.add('bg-red-600');
+                activeBtn.classList.add('bg-red-600', 'border-red-400');
+            } else if (team === 'all') {
+                activeBtn.classList.add('bg-gray-400', 'border-gray-400');
             }
         }
         
