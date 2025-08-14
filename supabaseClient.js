@@ -47,10 +47,10 @@ const createFallbackClient = () => {
       { id: 10, name: 'Chris Meyer', team: 'Ehemalige', position: 'ZM', value: 70000, goals: 0, created_at: '2024-01-10' }
     ],
     matches: [
-      { id: 1, goalsa: 2, goalsb: 1, date: '2024-08-12', created_at: '2024-08-12', manofthematch: 'Max Müller', goalslista: ['Max Müller', 'Tom Schmidt'], goalslistb: ['Jan Becker'] },
-      { id: 2, goalsa: 1, goalsb: 3, date: '2024-08-10', created_at: '2024-08-10', manofthematch: 'Jan Becker', goalslista: ['Leon Wagner'], goalslistb: ['Jan Becker', 'Paul Klein', 'Lukas Wolf'] },
-      { id: 3, goalsa: 0, goalsb: 2, date: '2024-08-08', created_at: '2024-08-08', manofthematch: 'Ben Richter', goalslista: [], goalslistb: ['Jan Becker', 'Ben Richter'] },
-      { id: 4, goalsa: 2, goalsb: 2, date: '2024-08-05', created_at: '2024-08-05', manofthematch: 'Max Müller', goalslista: ['Max Müller', 'Tim Fischer'], goalslistb: ['Jan Becker', 'Paul Klein'] }
+      { id: 1, teama: 'AEK', teamb: 'Real', goalsa: 2, goalsb: 1, date: '2024-08-12', created_at: '2024-08-12', manofthematch: 'Max Müller', goalslista: ['Max Müller', 'Tom Schmidt'], goalslistb: ['Jan Becker'] },
+      { id: 2, teama: 'AEK', teamb: 'Real', goalsa: 1, goalsb: 3, date: '2024-08-10', created_at: '2024-08-10', manofthematch: 'Jan Becker', goalslista: ['Leon Wagner'], goalslistb: ['Jan Becker', 'Paul Klein', 'Lukas Wolf'] },
+      { id: 3, teama: 'AEK', teamb: 'Real', goalsa: 0, goalsb: 2, date: '2024-08-08', created_at: '2024-08-08', manofthematch: 'Ben Richter', goalslista: [], goalslistb: ['Jan Becker', 'Ben Richter'] },
+      { id: 4, teama: 'AEK', teamb: 'Real', goalsa: 2, goalsb: 2, date: '2024-08-05', created_at: '2024-08-05', manofthematch: 'Max Müller', goalslista: ['Max Müller', 'Tim Fischer'], goalslistb: ['Jan Becker', 'Paul Klein'] }
     ],
     bans: [
       { id: 1, player_id: 1, matches_remaining: 2, reason: 'Gelb-Rot Karte', created_at: '2024-08-01' },

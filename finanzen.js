@@ -240,9 +240,17 @@ function renderTransactions() {
         
         html += `
         <div class="border-2 ${colorScheme.container} rounded-lg mb-4 p-3 shadow-lg">
-            <div class="font-bold ${colorScheme.header} pl-2 mb-2 text-lg flex items-center">
-                <div class="w-3 h-3 bg-${colorScheme.accent} rounded-full mr-2 flex-shrink-0"></div>
-                Match #${appNr}${matchInfo}
+            <div class="font-bold ${colorScheme.header} pl-2 mb-3 text-lg flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-${colorScheme.accent} rounded-full mr-3 flex-shrink-0"></div>
+                    <div>
+                        <div class="text-xl font-extrabold">Match #${appNr}</div>
+                        <div class="text-sm font-normal opacity-90">${matchInfo}</div>
+                    </div>
+                </div>
+                <div class="text-sm bg-${colorScheme.accent} text-white px-3 py-1 rounded-full font-semibold">
+                    ${txs.length} Transaktion${txs.length !== 1 ? 'en' : ''}
+                </div>
             </div>
             <div class="overflow-x-auto">
                 <!-- Desktop Table View -->
@@ -304,9 +312,17 @@ function renderTransactions() {
     if (nonMatchTransactions.length) {
         html += `
         <div class="border-2 border-slate-500 bg-slate-600 rounded-lg mb-4 p-3 shadow-lg">
-            <div class="font-bold text-slate-100 pl-2 mb-2 text-lg flex items-center">
-                <div class="w-3 h-3 bg-slate-400 rounded-full mr-2 flex-shrink-0"></div>
-                Sonstige Transaktionen
+            <div class="font-bold text-slate-100 pl-2 mb-3 text-lg flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-4 h-4 bg-slate-400 rounded-full mr-3 flex-shrink-0"></div>
+                    <div>
+                        <div class="text-xl font-extrabold">Sonstige Transaktionen</div>
+                        <div class="text-sm font-normal opacity-90">Nicht match-bezogene Buchungen</div>
+                    </div>
+                </div>
+                <div class="text-sm bg-slate-400 text-slate-900 px-3 py-1 rounded-full font-semibold">
+                    ${nonMatchTransactions.length} Buchung${nonMatchTransactions.length !== 1 ? 'en' : ''}
+                </div>
             </div>
             <div class="overflow-x-auto">
                 <!-- Desktop Table View -->
