@@ -29,6 +29,15 @@ export async function renderSpielerTab(containerId = "app") {
         return "text-red-200";
     }
 
+    // Hilfsfunktion für bessere Kontraste in Top 3 Cards
+    function getCardClassForTop3(team, position) {
+        if (team === "Ehemalige") return "text-slate-100 font-bold";
+        if (team === "AEK") return "text-blue-100 font-bold"; 
+        // Für Real Madrid: bei Gold/Bronze dunkler rot, bei Silber helleres rot für besseren Kontrast
+        if (position === 1) return "text-red-100 font-bold"; // Silber background
+        return "text-red-100 font-bold"; // Gold/Bronze background
+    }
+
     function getBadge(idx) {
         if (idx === 0) return `<span class="inline-block text-2xl align-middle mr-1">🥇</span>`;
         if (idx === 1) return `<span class="inline-block text-2xl align-middle mr-1">🥈</span>`;
@@ -73,9 +82,9 @@ export async function renderSpielerTab(containerId = "app") {
 									? 'border-gray-300 bg-gradient-to-br from-gray-600 to-gray-700 shadow-gray-400/50 ring-2 ring-gray-300/50'
 									: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50 ring-2 ring-orange-400/50'}">
 							<div class="text-2xl font-extrabold mb-1">${getBadge(idx)}</div>
-							<div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClass(s.team)}">${s.name}</div>
-							<div class="text-xs text-base mb-1 ${getCardClass(s.team)}">${s.team}</div>
-							<div class="text-2xl text-base font-bold ${getCardClass(s.team)}">${s.goals}</div>
+							<div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClassForTop3(s.team, idx)}">${s.name}</div>
+							<div class="text-xs text-base mb-1 ${getCardClassForTop3(s.team, idx)}">${s.team}</div>
+							<div class="text-2xl text-base font-bold ${getCardClassForTop3(s.team, idx)}">${s.goals}</div>
 						</div>
 					`).join('')}
 				</div>
@@ -171,9 +180,9 @@ export async function renderSpielerTab(containerId = "app") {
 								? 'border-gray-300 bg-gradient-to-br from-gray-600 to-gray-700 shadow-gray-400/50 ring-2 ring-gray-300/50'
 								: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50 ring-2 ring-orange-400/50'}">
                             <div class="text-2xl font-extrabold mb-1">${getBadge(idx)}</div>
-                            <div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClass(s.team)}">${s.name}</div>
-                            <div class="text-xs text-base mb-1 ${getCardClass(s.team)}">${s.team}</div>
-                            <div class="text-2xl text-base font-bold ${getCardClass(s.team)}">${s.count}</div>
+                            <div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClassForTop3(s.team, idx)}">${s.name}</div>
+                            <div class="text-xs text-base mb-1 ${getCardClassForTop3(s.team, idx)}">${s.team}</div>
+                            <div class="text-2xl text-base font-bold ${getCardClassForTop3(s.team, idx)}">${s.count}</div>
                         </div>
                     `).join('')}
                 </div>
