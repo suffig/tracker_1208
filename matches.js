@@ -491,15 +491,15 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
             <!-- Team Filter Toggle with enhanced visual indicators -->
             <div class="mb-3 flex gap-2">
                 <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
-                    <i class="fas fa-users text-xs"></i>
+                    <span class="w-3 h-3 bg-gray-400 rounded-full flex-shrink-0 indicator-circle"></span>
                     Alle
                 </button>
                 <button type="button" id="sds-filter-aek" class="sds-filter-btn bg-gray-600 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
-                    <span class="w-3 h-3 bg-blue-400 rounded-full flex-shrink-0"></span>
+                    <span class="w-3 h-3 bg-blue-400 rounded-full flex-shrink-0 indicator-circle"></span>
                     AEK
                 </button>
                 <button type="button" id="sds-filter-real" class="sds-filter-btn bg-gray-600 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
-                    <span class="w-3 h-3 bg-red-400 rounded-full flex-shrink-0"></span>
+                    <span class="w-3 h-3 bg-red-400 rounded-full flex-shrink-0 indicator-circle"></span>
                     Real
                 </button>
             </div>
@@ -616,6 +616,11 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
         document.querySelectorAll('.sds-filter-btn').forEach(btn => {
             btn.classList.remove('active', 'bg-blue-600', 'bg-red-600', 'bg-gray-400', 'border-blue-400', 'border-red-400', 'border-gray-400', 'shadow-lg');
             btn.classList.add('bg-gray-600', 'border-transparent');
+            // Reset indicator circles to default colors
+            const indicator = btn.querySelector('.indicator-circle');
+            if (indicator) {
+                indicator.classList.remove('bg-white', 'bg-blue-100', 'bg-red-100', 'bg-gray-100', 'border', 'border-white');
+            }
         });
         
         // Set active button styling with clearer indicators
@@ -623,12 +628,29 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
         if (activeBtn) {
             activeBtn.classList.add('active', 'shadow-lg');
             activeBtn.classList.remove('bg-gray-600', 'border-transparent');
+            const indicator = activeBtn.querySelector('.indicator-circle');
+            
             if (team === 'aek') {
                 activeBtn.classList.add('bg-blue-600', 'border-blue-400');
+                // Make indicator more visible on blue background
+                if (indicator) {
+                    indicator.classList.remove('bg-blue-400');
+                    indicator.classList.add('bg-white', 'border', 'border-blue-200');
+                }
             } else if (team === 'real') {
                 activeBtn.classList.add('bg-red-600', 'border-red-400');
+                // Make indicator more visible on red background
+                if (indicator) {
+                    indicator.classList.remove('bg-red-400');
+                    indicator.classList.add('bg-white', 'border', 'border-red-200');
+                }
             } else if (team === 'all') {
                 activeBtn.classList.add('bg-gray-400', 'border-gray-400');
+                // Make indicator more visible on gray background
+                if (indicator) {
+                    indicator.classList.remove('bg-gray-400');
+                    indicator.classList.add('bg-white', 'border', 'border-gray-200');
+                }
             }
         }
         

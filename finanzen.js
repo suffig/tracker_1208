@@ -228,9 +228,9 @@ function renderTransactions() {
             },
             {
                 // Yellow theme (original)
-                container: "border-yellow-400 bg-yellow-100 dark:bg-gray-400",
+                container: "border-yellow-400 bg-yellow-100 dark:bg-yellow-900",
                 header: "text-yellow-800 dark:text-yellow-300",
-                accent: "gray-400"
+                accent: "yellow-400"
             }
         ];
         
