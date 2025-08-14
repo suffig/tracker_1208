@@ -180,9 +180,16 @@ function renderTransactions() {
     let html = "";
 
     function getCellBgClass(team) {
-        if (team === "AEK") return "bg-blue-700 text-blue-100 border-l-4 border-blue-400";
-        if (team === "Real") return "bg-red-700 text-red-100 border-l-4 border-red-400";
-        return "bg-slate-600 text-slate-100";
+        if (team === "AEK") return "bg-blue-700 text-blue-100 border-l-4 border-blue-400 shadow-sm";
+        if (team === "Real") return "bg-red-700 text-red-100 border-l-4 border-red-400 shadow-sm";
+        return "bg-slate-600 text-slate-100 shadow-sm";
+    }
+
+    // Enhanced function to get team indicator styling
+    function getTeamIndicatorClass(team) {
+        if (team === "AEK") return "w-3 h-3 bg-blue-400 rounded-full inline-block mr-2";
+        if (team === "Real") return "w-3 h-3 bg-red-400 rounded-full inline-block mr-2";
+        return "w-3 h-3 bg-slate-400 rounded-full inline-block mr-2";
     }
 
     // Generate unique colors for each match based on match number
@@ -268,13 +275,16 @@ function renderTransactions() {
         `;
         txs.forEach(t => {
             html += `
-                <tr class="border-b border-gray-600 dark:border-gray-600 hover:bg-gray-700 dark:hover:bg-gray-700 transition-colors">
-                    <td class="p-3 ${getCellBgClass(t.team)}">${new Date(t.date).toLocaleDateString('de-DE')}</td>
+                <tr class="border-b border-gray-600 hover:bg-gray-700 transition-colors">
+                    <td class="p-3 ${getCellBgClass(t.team)} rounded-l">${new Date(t.date).toLocaleDateString('de-DE')}</td>
                     <td class="p-3 ${getCellBgClass(t.team)}">${t.type}</td>
-                    <td class="p-3 ${getCellBgClass(t.team)} font-semibold">${t.team}</td>
+                    <td class="p-3 ${getCellBgClass(t.team)} font-semibold flex items-center">
+                        <span class="${getTeamIndicatorClass(t.team)}"></span>
+                        ${t.team}
+                    </td>
                     <td class="p-3 ${getCellBgClass(t.team)}">${t.info || '-'}</td>
-                    <td class="p-3 font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-400 dark:text-green-400' : 'text-red-400 dark:text-red-400'}">
-                        ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}
+                    <td class="p-3 font-bold ${getCellBgClass(t.team)} ${t.amount >= 0 ? 'text-green-400' : 'text-red-400'} rounded-r">
+                        ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}€
                     </td>
                 </tr>
             `;
@@ -283,21 +293,30 @@ function renderTransactions() {
                     </tbody>
                 </table>
                 
-                <!-- Mobile Card View -->
+                <!-- Mobile Card View with enhanced team colors -->
                 <div class="md:hidden space-y-3">
         `;
         txs.forEach(t => {
+            const teamColorClass = t.team === 'AEK' ? 'border-blue-500 bg-blue-900' : 
+                                   t.team === 'Real' ? 'border-red-500 bg-red-900' : 
+                                   'border-gray-400 bg-gray-700';
+            const teamTextClass = t.team === 'AEK' ? 'text-blue-300' : 
+                                   t.team === 'Real' ? 'text-red-300' : 
+                                   'text-gray-300';
             html += `
-                <div class="bg-gray-800 dark:bg-gray-700 rounded-lg p-4 shadow border-l-4 ${t.team === 'AEK' ? 'border-blue-500' : t.team === 'Real' ? 'border-red-500' : 'border-gray-400'}">
+                <div class="rounded-lg p-4 shadow border-l-4 ${teamColorClass}">
                     <div class="flex justify-between items-start mb-2">
-                        <div class="text-sm text-gray-400 dark:text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
-                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-400 dark:text-green-400' : 'text-red-400 dark:text-red-400'}">
+                        <div class="text-sm text-gray-400">${new Date(t.date).toLocaleDateString('de-DE')}</div>
+                        <div class="text-lg font-bold ${t.amount >= 0 ? 'text-green-400' : 'text-red-400'}">
                             ${t.amount >= 0 ? '+' : ''}${t.amount.toLocaleString('de-DE')}€
                         </div>
                     </div>
-                    <div class="text-base font-semibold text-gray-100 dark:text-gray-100 mb-1">${t.type}</div>
-                    <div class="text-sm text-gray-600 dark:text-gray-300 mb-1">Team: <span class="font-semibold ${t.team === 'AEK' ? 'text-blue-600 dark:text-blue-400' : t.team === 'Real' ? 'text-red-400 dark:text-red-400' : 'text-gray-600 dark:text-gray-400'}">${t.team}</span></div>
-                    ${t.info ? `<div class="text-sm text-gray-600 dark:text-gray-300">${t.info}</div>` : ''}
+                    <div class="text-base font-semibold text-gray-100 mb-1">${t.type}</div>
+                    <div class="text-sm mb-1 flex items-center">
+                        <span class="${getTeamIndicatorClass(t.team)}"></span>
+                        <span class="font-semibold ${teamTextClass}">${t.team}</span>
+                    </div>
+                    ${t.info ? `<div class="text-sm text-gray-300">${t.info}</div>` : ''}
                 </div>
             `;
         });

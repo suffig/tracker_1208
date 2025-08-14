@@ -488,15 +488,18 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
         <div class="bg-gray-700 border border-gray-600 p-3 rounded-lg">
             <label class="font-semibold text-gray-100 block mb-2">Spieler des Spiels (SdS):</label>
             
-            <!-- Team Filter Toggle -->
+            <!-- Team Filter Toggle with enhanced visual indicators -->
             <div class="mb-3 flex gap-2">
-                <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent">
+                <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
+                    <i class="fas fa-users text-xs"></i>
                     Alle
                 </button>
-                <button type="button" id="sds-filter-aek" class="sds-filter-btn bg-gray-600 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent">
+                <button type="button" id="sds-filter-aek" class="sds-filter-btn bg-gray-600 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
+                    <span class="w-3 h-3 bg-blue-400 rounded-full flex-shrink-0"></span>
                     AEK
                 </button>
-                <button type="button" id="sds-filter-real" class="sds-filter-btn bg-gray-600 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent">
+                <button type="button" id="sds-filter-real" class="sds-filter-btn bg-gray-600 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
+                    <span class="w-3 h-3 bg-red-400 rounded-full flex-shrink-0"></span>
                     Real
                 </button>
             </div>
@@ -516,7 +519,7 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
         
         <div class="flex gap-2">
             <button type="submit" class="bg-green-600 hover:bg-green-700 text-white w-full px-4 py-2 rounded-lg text-base active:scale-95 transition">${edit ? "Speichern" : "Anlegen"}</button>
-            <button type="button" class="bg-gray-600 hover:bg-gray-7000 text-gray-100 w-full px-4 py-2 rounded-lg text-base transition-colors" onclick="window.hideModal()">Abbrechen</button>
+            <button type="button" class="bg-gray-600 hover:bg-gray-700 text-gray-100 w-full px-4 py-2 rounded-lg text-base transition-colors" onclick="window.hideModal()">Abbrechen</button>
         </div>
     </form>
     `;
