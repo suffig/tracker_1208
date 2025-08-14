@@ -22,6 +22,13 @@ export async function renderSpielerTab(containerId = "app") {
     // Initialanzeige
     renderTorschuetzen();
 
+    // Enhanced helper function for team indicators
+    function getTeamIndicator(team) {
+        if (team === "Ehemalige") return '<span class="w-3 h-3 bg-slate-400 rounded-full inline-block mr-2"></span>';
+        if (team === "AEK") return '<span class="w-3 h-3 bg-blue-400 rounded-full inline-block mr-2"></span>';
+        return '<span class="w-3 h-3 bg-red-400 rounded-full inline-block mr-2"></span>';
+    }
+
     // Hilfsfunktion für Card-Klasse nach Team
     function getCardClass(team) {
         if (team === "Ehemalige") return "text-slate-300";
@@ -72,7 +79,7 @@ export async function renderSpielerTab(containerId = "app") {
 		if (top3.length) {
 			top3Html = `
 			<div class="mb-4">
-				<div class="text-md font-semibold mb-2">Top 3 Torschützen</div>
+				<div class="text-md font-semibold mb-2 text-gray-200">🏆 Top 3 Torschützen</div>
 				<div class="flex flex-row gap-3 w-full overflow-x-auto pb-2">
 					${top3.map((s, idx) => `
 						<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-lg flex flex-col items-center border-4 border-opacity-90
@@ -83,8 +90,10 @@ export async function renderSpielerTab(containerId = "app") {
 									: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50 ring-2 ring-orange-400/50'}">
 							<div class="text-2xl font-extrabold mb-1">${getBadge(idx)}</div>
 							<div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClassForTop3(s.team, idx)}">${s.name}</div>
-							<div class="text-xs text-base mb-1 ${getCardClassForTop3(s.team, idx)}">${s.team}</div>
-							<div class="text-2xl text-base font-bold ${getCardClassForTop3(s.team, idx)}">${s.goals}</div>
+							<div class="text-xs text-base mb-1 ${getCardClassForTop3(s.team, idx)} flex items-center justify-center">
+								${getTeamIndicator(s.team)}${s.team}
+							</div>
+							<div class="text-2xl text-base font-bold ${getCardClassForTop3(s.team, idx)}">${s.goals} ⚽</div>
 						</div>
 					`).join('')}
 				</div>
@@ -92,18 +101,18 @@ export async function renderSpielerTab(containerId = "app") {
 			`;
 		}
 
-        // Restliche als Tabelle
+        // Restliche als Tabelle mit verbessertem Team-Styling
         let tableHtml = '';
         if (rest.length) {
             tableHtml = `
             <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
+            <table class="w-full text-sm bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                <thead class="bg-gray-700">
                     <tr>
-                        <th class="p-2 text-left">#</th>
-                        <th class="p-2 text-left">Spieler</th>
-                        <th class="p-2 text-left">Team</th>
-                        <th class="p-2 text-left">Tore</th>
+                        <th class="p-3 text-left font-semibold text-gray-200">#</th>
+                        <th class="p-3 text-left font-semibold text-gray-200">Spieler</th>
+                        <th class="p-3 text-left font-semibold text-gray-200">Team</th>
+                        <th class="p-3 text-left font-semibold text-gray-200">Tore</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -123,10 +132,12 @@ export async function renderSpielerTab(containerId = "app") {
                             borderClass = "border-l-4 border-red-400";
                         }
                         return `
-                            <tr class="${borderClass}">
-                                <td class="p-3 text-center font-bold ${tClass} rounded-r">${idx + 4}</td>
+                            <tr class="${borderClass} hover:scale-[1.01] transition-transform">
+                                <td class="p-3 text-center font-bold ${tClass}">${idx + 4}</td>
                                 <td class="p-3 font-semibold ${tClass}">${s.name}</td>
-                                <td class="p-3 ${tClass} font-medium">${s.team}</td>
+                                <td class="p-3 ${tClass} font-medium flex items-center">
+                                    ${getTeamIndicator(s.team)}${s.team}
+                                </td>
                                 <td class="p-3 font-bold ${tClass} text-center">${s.goals}</td>
                             </tr>
                         `;
@@ -170,7 +181,7 @@ export async function renderSpielerTab(containerId = "app") {
         if (top3.length) {
             top3Html = `
             <div class="mb-4">
-                <div class="text-md font-semibold mb-2">Top 3 Spieler des Spiels</div>
+                <div class="text-md font-semibold mb-2 text-gray-200">⭐ Top 3 Spieler des Spiels</div>
                 <div class="flex flex-row gap-3 w-full overflow-x-auto pb-2">
                     ${top3.map((s, idx) => `
 					<div class="flex-1 min-w-0 max-w-xs w-full p-4 rounded-2xl shadow-lg flex flex-col items-center border-4 border-opacity-90
@@ -181,8 +192,10 @@ export async function renderSpielerTab(containerId = "app") {
 								: 'border-orange-400 bg-gradient-to-br from-orange-800 to-orange-900 shadow-orange-400/50 ring-2 ring-orange-400/50'}">
                             <div class="text-2xl font-extrabold mb-1">${getBadge(idx)}</div>
                             <div class="font-bold mb-0.5 text-base truncate w-full text-center ${getCardClassForTop3(s.team, idx)}">${s.name}</div>
-                            <div class="text-xs text-base mb-1 ${getCardClassForTop3(s.team, idx)}">${s.team}</div>
-                            <div class="text-2xl text-base font-bold ${getCardClassForTop3(s.team, idx)}">${s.count}</div>
+                            <div class="text-xs text-base mb-1 ${getCardClassForTop3(s.team, idx)} flex items-center justify-center">
+                                ${getTeamIndicator(s.team)}${s.team}
+                            </div>
+                            <div class="text-2xl text-base font-bold ${getCardClassForTop3(s.team, idx)}">${s.count} ⭐</div>
                         </div>
                     `).join('')}
                 </div>
@@ -190,18 +203,18 @@ export async function renderSpielerTab(containerId = "app") {
             `;
         }
 
-        // Restliche als Tabelle
+        // Restliche als Tabelle mit verbessertem Team-Styling
         let tableHtml = '';
         if (rest.length) {
             tableHtml = `
             <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
+            <table class="w-full text-sm bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+                <thead class="bg-gray-700">
                     <tr>
-                        <th class="p-2 text-left">#</th>
-                        <th class="p-2 text-left">Spieler</th>
-                        <th class="p-2 text-left">Team</th>
-                        <th class="p-2 text-left">Anzahl SdS</th>
+                        <th class="p-3 text-left font-semibold text-gray-200">#</th>
+                        <th class="p-3 text-left font-semibold text-gray-200">Spieler</th>
+                        <th class="p-3 text-left font-semibold text-gray-200">Team</th>
+                        <th class="p-3 text-left font-semibold text-gray-200">Anzahl SdS</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -221,10 +234,12 @@ export async function renderSpielerTab(containerId = "app") {
                             borderClass = "border-l-4 border-red-400";
                         }
                         return `
-                            <tr class="${borderClass}">
-                                <td class="p-3 text-center font-bold ${tClass} rounded-r">${idx + 4}</td>
+                            <tr class="${borderClass} hover:scale-[1.01] transition-transform">
+                                <td class="p-3 text-center font-bold ${tClass}">${idx + 4}</td>
                                 <td class="p-3 font-semibold ${tClass}">${s.name}</td>
-                                <td class="p-3 ${tClass} font-medium">${s.team}</td>
+                                <td class="p-3 ${tClass} font-medium flex items-center">
+                                    ${getTeamIndicator(s.team)}${s.team}
+                                </td>
                                 <td class="p-3 font-bold ${tClass} text-center">${s.count}</td>
                             </tr>
                         `;
