@@ -243,13 +243,13 @@ function renderEhemaligeList(containerId = "ehemalige-players") {
             <p class="font-bold text-sm mt-1">${marktwert ? marktwert + "M" : ""}</p>
           </div>
           <div class="flex flex-col gap-2 ml-3">
-            <button class="move-aek-btn bg-sky-600 hover:bg-sky-700 text-white p-2 rounded-lg flex items-center" title="Zu AEK">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#2563eb">
+            <button class="move-aek-btn bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center" title="Zu AEK">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#ffffff">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
-            <button class="move-real-btn bg-rose-600 hover:bg-rose-700 text-white p-2 rounded-lg flex items-center" title="Zu Real">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#e11d48">
+            <button class="move-real-btn bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg flex items-center" title="Zu Real">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#ffffff">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
             </button>
