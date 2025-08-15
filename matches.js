@@ -486,22 +486,27 @@ function generateMatchFormHTML(edit, dateVal, match, aekSpieler, realSpieler, ae
         </div>
         
         <div class="bg-gray-700 border border-gray-600 p-3 rounded-lg">
-            <label class="font-semibold text-gray-100 block mb-2">Spieler des Spiels (SdS):</label>
+            <label class="font-semibold text-gray-100 block mb-3">Spieler des Spiels (SdS):</label>
             
-            <!-- Team Filter Toggle with enhanced visual indicators -->
-            <div class="mb-3 flex gap-2">
-                <button type="button" id="sds-filter-all" class="sds-filter-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
-                    <span class="w-3 h-3 bg-gray-400 rounded-full flex-shrink-0 indicator-circle"></span>
-                    Alle
-                </button>
-                <button type="button" id="sds-filter-aek" class="sds-filter-btn bg-gray-600 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
-                    <span class="w-3 h-3 bg-blue-400 rounded-full flex-shrink-0 indicator-circle"></span>
-                    AEK
-                </button>
-                <button type="button" id="sds-filter-real" class="sds-filter-btn bg-gray-600 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-2 border-transparent flex items-center gap-1">
-                    <span class="w-3 h-3 bg-red-400 rounded-full flex-shrink-0 indicator-circle"></span>
-                    Real
-                </button>
+            <!-- Modern Team Slider -->
+            <div class="mb-4">
+                <div class="relative flex items-center justify-between bg-gray-800 rounded-lg p-1 border border-gray-600">
+                    <input type="range" id="team-slider" min="0" max="1" value="0" step="1" 
+                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                    <div class="flex w-full relative">
+                        <div id="slider-track" class="absolute top-1/2 left-0 w-full h-8 bg-gray-600 rounded-md transform -translate-y-1/2"></div>
+                        <div id="slider-thumb" class="absolute top-1/2 left-1 w-1/2 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded transform -translate-y-1/2 transition-all duration-300 ease-out shadow-lg"></div>
+                        <div class="flex w-full relative z-20 pointer-events-none">
+                            <div class="flex-1 text-center py-2">
+                                <span class="text-sm font-semibold text-blue-200">⚪ AEK</span>
+                            </div>
+                            <div class="flex-1 text-center py-2">
+                                <span class="text-sm font-semibold text-red-200">🔴 Real</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400 text-center mt-2">Schieben Sie den Regler zur Teamauswahl</div>
             </div>
             
             <select name="manofthematch" id="manofthematch-select" class="border border-gray-600 bg-gray-700 text-gray-100 rounded-lg p-3 w-full h-12 text-base">
@@ -602,7 +607,7 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
     document.querySelector('input[name="goalsb"]').addEventListener('input', toggleScorerFields);
     toggleScorerFields();
 
-    // Team filtering for "Spieler des Spiels" dropdown
+    // Team filtering with slider for "Spieler des Spiels" dropdown
     function filterSdsDropdown(team) {
         const select = document.getElementById('manofthematch-select');
         if (!select) {
@@ -612,80 +617,54 @@ function attachMatchFormEventHandlers(edit, id, aekSpieler, realSpieler) {
         
         const options = select.querySelectorAll('option');
         
-        // Update button states with enhanced visual feedback
-        document.querySelectorAll('.sds-filter-btn').forEach(btn => {
-            btn.classList.remove('active', 'bg-blue-600', 'bg-red-600', 'bg-gray-400', 'border-blue-400', 'border-red-400', 'border-gray-400', 'shadow-lg');
-            btn.classList.add('bg-gray-600', 'border-transparent');
-            // Reset indicator circles to default colors
-            const indicator = btn.querySelector('.indicator-circle');
-            if (indicator) {
-                indicator.classList.remove('bg-white', 'bg-blue-100', 'bg-red-100', 'bg-gray-100', 'border', 'border-white');
-            }
-        });
-        
-        // Set active button styling with clearer indicators
-        const activeBtn = document.getElementById(`sds-filter-${team}`);
-        if (activeBtn) {
-            activeBtn.classList.add('active', 'shadow-lg');
-            activeBtn.classList.remove('bg-gray-600', 'border-transparent');
-            const indicator = activeBtn.querySelector('.indicator-circle');
-            
-            if (team === 'aek') {
-                activeBtn.classList.add('bg-blue-600', 'border-blue-400');
-                // Make indicator more visible on blue background
-                if (indicator) {
-                    indicator.classList.remove('bg-blue-400');
-                    indicator.classList.add('bg-white', 'border', 'border-blue-200');
-                }
-            } else if (team === 'real') {
-                activeBtn.classList.add('bg-red-600', 'border-red-400');
-                // Make indicator more visible on red background
-                if (indicator) {
-                    indicator.classList.remove('bg-red-400');
-                    indicator.classList.add('bg-white', 'border', 'border-red-200');
-                }
-            } else if (team === 'all') {
-                activeBtn.classList.add('bg-gray-400', 'border-gray-400');
-                // Make indicator more visible on gray background
-                if (indicator) {
-                    indicator.classList.remove('bg-gray-400');
-                    indicator.classList.add('bg-white', 'border', 'border-gray-200');
-                }
-            }
-        }
-        
-        // Filter options
+        // Filter options - only show AEK or Real players, never "all"
         options.forEach(option => {
             if (option.value === '') {
                 option.style.display = ''; // Always show "Keiner" option
                 return;
             }
             
-            if (team === 'all') {
-                option.style.display = '';
-            } else {
-                const optionTeam = option.getAttribute('data-team');
-                // Fix case-insensitive comparison
-                option.style.display = optionTeam && optionTeam.toLowerCase() === team.toLowerCase() ? '' : 'none';
-            }
+            const optionTeam = option.getAttribute('data-team');
+            // Only show players from the selected team
+            option.style.display = optionTeam && optionTeam.toLowerCase() === team.toLowerCase() ? '' : 'none';
         });
     }
     
-    // Add event listeners for team filter buttons with error checking
-    const allBtn = document.getElementById('sds-filter-all');
-    const aekBtn = document.getElementById('sds-filter-aek');
-    const realBtn = document.getElementById('sds-filter-real');
-    
-    if (allBtn && aekBtn && realBtn) {
-        allBtn.addEventListener('click', () => filterSdsDropdown('all'));
-        aekBtn.addEventListener('click', () => filterSdsDropdown('aek'));
-        realBtn.addEventListener('click', () => filterSdsDropdown('real'));
+    // Slider functionality for team selection
+    function initializeTeamSlider() {
+        const slider = document.getElementById('team-slider');
+        const thumb = document.getElementById('slider-thumb');
         
-        // Initialize with "All" filter
-        filterSdsDropdown('all');
-    } else {
-        console.error('Team filter buttons not found:', { allBtn, aekBtn, realBtn });
+        if (!slider || !thumb) {
+            console.error('Slider elements not found');
+            return;
+        }
+        
+        function updateSliderAppearance(value) {
+            const isAek = value === '0';
+            
+            if (isAek) {
+                thumb.style.left = '4px';
+                thumb.className = 'absolute top-1/2 w-1/2 h-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded transform -translate-y-1/2 transition-all duration-300 ease-out shadow-lg';
+                filterSdsDropdown('aek');
+            } else {
+                thumb.style.left = 'calc(50% - 4px)';
+                thumb.className = 'absolute top-1/2 w-1/2 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded transform -translate-y-1/2 transition-all duration-300 ease-out shadow-lg';
+                filterSdsDropdown('real');
+            }
+        }
+        
+        // Handle slider changes
+        slider.addEventListener('input', (e) => {
+            updateSliderAppearance(e.target.value);
+        });
+        
+        // Initialize with AEK selected
+        updateSliderAppearance('0');
     }
+    
+    // Initialize the team slider
+    initializeTeamSlider();
 
     document.getElementById("match-form").onsubmit = (e) => submitMatchForm(e, id);
 }
