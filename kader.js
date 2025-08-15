@@ -22,16 +22,16 @@ let openPanel = null; // "aek", "real", "ehemalige" oder null
 
 // --- Hilfsfunktion: Positionsfarbe (Dark Theme optimiert) ---
 function getPositionColor(pos) {
-    // Defensiv: Blau, Mittelfeld: Grün, Angriff: Orange/Rot
+    // Modern gradient-based position colors
 	const th  = ["TH"];
     const def = ["IV", "LV", "RV", "ZDM"];
     const mid = ["ZM", "ZOM", "LM", "RM"];
     const att = ["LF", "RF", "ST"];
-	if (th.includes(pos)) return "bg-green-800 text-green-200 border-green-600 dark:bg-green-900 dark:text-green-300 dark:border-green-700";
-    if (def.includes(pos)) return "bg-blue-800 text-blue-200 border-blue-600 dark:bg-blue-900 dark:text-blue-300 dark:border-blue-700";
-    if (mid.includes(pos)) return "bg-yellow-800 text-yellow-200 border-yellow-600 dark:bg-yellow-900 dark:text-yellow-300 dark:border-yellow-700";
-    if (att.includes(pos)) return "bg-red-800 text-red-200 border-red-600 dark:bg-red-900 dark:text-red-300 dark:border-red-700";
-    return "bg-gray-700 text-gray-200 border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700";
+	if (th.includes(pos)) return "bg-gradient-to-r from-green-600 to-green-700 text-green-100 border border-green-500/50 shadow-lg";
+    if (def.includes(pos)) return "bg-gradient-to-r from-blue-600 to-blue-700 text-blue-100 border border-blue-500/50 shadow-lg";
+    if (mid.includes(pos)) return "bg-gradient-to-r from-yellow-600 to-yellow-700 text-yellow-100 border border-yellow-500/50 shadow-lg";
+    if (att.includes(pos)) return "bg-gradient-to-r from-red-600 to-red-700 text-red-100 border border-red-500/50 shadow-lg";
+    return "bg-gradient-to-r from-slate-600 to-slate-700 text-slate-100 border border-slate-500/50 shadow-lg";
 }
 
 
@@ -94,13 +94,16 @@ export function renderKaderTab(containerId = "app") {
 
     app.innerHTML = `
         <div class="max-w-[480px] mx-auto w-full px-2">
-            <div class="flex flex-col sm:flex-row justify-between mb-4 gap-2">
-                <h2 class="text-lg font-semibold dark:text-white">Team-Kader</h2>
+            <div class="flex flex-col sm:flex-row justify-between mb-6 gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent mb-2">Team-Kader</h2>
+                    <p class="text-slate-400 text-sm font-medium">Verwalte deine Teams und Spieler</p>
+                </div>
             </div>
             <div class="space-y-4">
-                ${accordionPanelHtml('AEK', 'aek', 'bg-blue-50 dark:bg-blue-900', 'text-blue-700 dark:text-blue-200')}
-                ${accordionPanelHtml('Real', 'real', 'bg-red-50 dark:bg-red-900', 'text-red-700 dark:text-red-200')}
-                ${accordionPanelHtml('Ehemalige', 'ehemalige', 'bg-gray-700 dark:bg-gray-700', 'text-gray-700 dark:text-gray-200')}
+                ${modernAccordionPanelHtml('AEK', 'aek', 'from-blue-600 to-blue-700', 'from-blue-500/10 to-blue-600/10', 'text-blue-100', '⚪')}
+                ${modernAccordionPanelHtml('Real Madrid', 'real', 'from-red-600 to-red-700', 'from-red-500/10 to-red-600/10', 'text-red-100', '🔴')}
+                ${modernAccordionPanelHtml('Ehemalige', 'ehemalige', 'from-slate-600 to-slate-700', 'from-slate-500/10 to-slate-600/10', 'text-slate-100', '👥')}
             </div>
         </div>
     `;
@@ -112,26 +115,46 @@ export function renderKaderTab(containerId = "app") {
     });
 }
 
-function accordionPanelHtml(team, key, bgClass, textClass) {
+function modernAccordionPanelHtml(team, key, gradientFrom, bgGradient, textClass, icon) {
     const isOpen = openPanel === key;
     return `
-        <div class="${bgClass} rounded-lg border border-gray-300">
-            <button id="panel-toggle-${key}" class="flex justify-between items-center w-full px-3 py-3 ${textClass} font-medium transition" style="font-size:1.1rem;">
-                <span>${team}</span>
-                <span class="ml-2">${isOpen ? "▼" : "▶"}</span>
+        <div class="relative overflow-hidden rounded-2xl border border-slate-600/50 bg-gradient-to-r ${bgGradient} backdrop-blur-sm shadow-xl">
+            <div class="absolute inset-0 bg-gradient-to-r ${gradientFrom} opacity-10"></div>
+            <button id="panel-toggle-${key}" class="relative z-10 flex justify-between items-center w-full px-6 py-5 ${textClass} font-bold transition-all duration-300 hover:bg-white/5 active:scale-[0.99] group" style="font-size:1.2rem;">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">${icon}</span>
+                    <div class="text-left">
+                        <span class="block">${team}</span>
+                        <span class="text-xs opacity-75 font-medium">${getTeamSubtitle(key)}</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs opacity-60 hidden sm:block">${isOpen ? 'Zuklappen' : 'Öffnen'}</span>
+                    <span class="ml-2 transition-transform duration-300 ${isOpen ? 'rotate-90' : ''} group-hover:scale-110">${isOpen ? "🔽" : "▶"}</span>
+                </div>
             </button>
-            <div id="panel-content-${key}" class="transition-all duration-200" style="${isOpen ? '' : 'display:none;'}">
-                <div class="pt-2 pb-1">
-                    <button id="add-player-${key}" class="bg-sky-600 hover:bg-sky-700 text-white w-full px-4 py-3 rounded-lg text-base flex items-center justify-center gap-2 font-semibold transition shadow mb-2">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                        <span>Spieler hinzufügen</span>
+            <div id="panel-content-${key}" class="relative z-10 transition-all duration-300 overflow-hidden" style="${isOpen ? '' : 'display:none;'}">
+                <div class="px-6 pb-6">
+                    <button id="add-player-${key}" class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white w-full px-4 py-3 rounded-xl text-base flex items-center justify-center gap-3 font-bold transition-all duration-200 shadow-lg hover:shadow-xl active:scale-[0.98] border border-green-500/50 relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <svg class="h-5 w-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <span class="relative z-10">Spieler hinzufügen</span>
                     </button>
-                    <div id="team-${key}-players" class="space-y-2 mt-2"></div>
-                    ${team !== 'Ehemalige' ? `<div class="text-xs mt-2 ${textClass}">Gesamter Marktwert: <span id="${key}-marktwert"></span></div>` : ''}
+                    <div id="team-${key}-players" class="space-y-3 mt-4"></div>
+                    ${team !== 'Ehemalige' ? `<div class="text-sm mt-4 ${textClass} bg-slate-800/30 rounded-lg p-3 border border-slate-600/30">📊 Gesamter Marktwert: <span id="${key}-marktwert" class="font-bold"></span></div>` : ''}
                 </div>
             </div>
         </div>
     `;
+}
+
+function getTeamSubtitle(key) {
+    switch(key) {
+        case 'aek': return 'Aktive Spieler';
+        case 'real': return 'Aktive Spieler';
+        case 'ehemalige': return 'Ehemalige Spieler';
+        default: return 'Team';
+    }
 }
 
 function renderPlayerLists() {
@@ -175,25 +198,31 @@ function renderPlayerList(containerId, arr, team) {
             : "";
 
         const d = document.createElement("div");
-        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
+        d.className = "player-card relative overflow-hidden bg-gradient-to-r from-slate-800/50 to-slate-700/50 backdrop-blur-sm border border-slate-600/50 rounded-xl p-4 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group min-h-[110px]";
         d.innerHTML = `
-          <div class="flex flex-col gap-2 mr-3">
-            <button class="edit-btn bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg flex items-center" title="Bearbeiten">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 17H6v-3L16.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414L9 17z" />
-              </svg>
-            </button>
-          </div>
-          <div class="flex-1 flex flex-col">
-            <p class="font-medium flex items-center">${posBadge}${player.name}</p>
-            <p class="font-bold text-sm mt-1">${marktwert}M</p>
-          </div>
-          <div class="flex flex-col gap-2 ml-3">
-            <button class="move-btn bg-gray-400 hover:bg-gray-7000 text-white p-2 rounded-lg flex items-center" title="Zu Ehemalige">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </button>
+          <div class="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div class="relative z-10 flex items-center">
+            <div class="flex flex-col gap-2 mr-4">
+              <button class="edit-btn bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white p-2.5 rounded-lg flex items-center shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 border border-blue-500/50" title="Bearbeiten">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 17H6v-3L16.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414L9 17z" />
+                </svg>
+              </button>
+            </div>
+            <div class="flex-1 flex flex-col">
+              <div class="flex items-center gap-2 mb-2">${posBadge}<span class="font-bold text-slate-100 text-lg">${player.name}</span></div>
+              <div class="flex items-center gap-2">
+                <span class="text-sm text-slate-400 font-medium">💰</span>
+                <span class="font-bold text-green-400 text-base">${marktwert}M €</span>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2 ml-4">
+              <button class="move-btn bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-slate-200 p-2.5 rounded-lg flex items-center shadow-lg hover:shadow-xl transition-all duration-200 active:scale-95 border border-slate-500/50" title="Zu Ehemalige">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+              </button>
+            </div>
           </div>
         `;
         d.querySelector('.edit-btn').onclick = () => openPlayerForm(team, player.id);
