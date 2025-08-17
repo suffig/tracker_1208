@@ -140,16 +140,33 @@ export async function renderMatchesTab(containerId = "app") {
     }
 
     app.innerHTML = `
-        <div class="flex flex-col sm:flex-row sm:justify-between mb-4 gap-2">
-            <h2 class="text-lg font-semibold">Matches</h2>
-            <button id="add-match-btn" class="bg-green-600 text-white w-full sm:w-auto px-4 py-2 rounded-lg text-base flex items-center justify-center gap-2 active:scale-95 transition">
-                <i class="fas fa-plus"></i> <span>Match hinzufügen</span>
-            </button>
-        </div>
-        <div id="matches-list" class="space-y-3">
-            <div class="flex items-center justify-center py-8">
-                <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                <span class="ml-2 text-gray-600">Lädt Matches...</span>
+        <div class="max-w-2xl mx-auto w-full px-4">
+            <!-- Modern Header -->
+            <div class="flex flex-col sm:flex-row sm:justify-between items-start mb-6">
+                <div class="mb-4 sm:mb-0">
+                    <h2 class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">Matches</h2>
+                    <p class="text-gray-400 font-medium">Verwalte Spielergebnisse und Statistiken</p>
+                </div>
+                <button id="add-match-btn" class="group relative w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white px-6 py-4 rounded-2xl text-base flex items-center justify-center gap-3 font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-white/0 to-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                    <svg class="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="relative z-10">Match hinzufügen</span>
+                </button>
+            </div>
+            
+            <!-- Matches Container -->
+            <div id="matches-list" class="space-y-4">
+                <div class="flex items-center justify-center py-12">
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="relative">
+                            <div class="w-12 h-12 border-4 border-slate-600 border-t-emerald-500 border-r-emerald-400 rounded-full animate-spin"></div>
+                            <div class="absolute inset-0 w-12 h-12 border-4 border-transparent border-b-emerald-400 border-l-emerald-300 rounded-full animate-spin opacity-50" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+                        </div>
+                        <span class="text-gray-400 font-medium">Lädt Matches...</span>
+                    </div>
+                </div>
             </div>
         </div>
     `;
@@ -179,7 +196,23 @@ function renderMatchesList() {
 
     try {
         if (!matchesData.matches.length) {
-            container.innerHTML = `<div class="text-gray-400 text-sm text-center py-4">Noch keine Matches eingetragen.</div>`;
+            container.innerHTML = `
+                <div class="text-center py-16">
+                    <div class="w-20 h-20 bg-gradient-to-br from-slate-800/80 to-slate-700/60 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                        <svg class="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M10.5 6L9 3l-1.5 3M16.5 6L15 3l-1.5 3m7 0V9a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Noch keine Matches</h3>
+                    <p class="text-gray-400 mb-6">Erstelle dein erstes Match um zu beginnen</p>
+                    <button onclick="document.getElementById('add-match-btn').click()" class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-semibold rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Erstes Match erstellen
+                    </button>
+                </div>
+            `;
             return;
         }
 
@@ -196,10 +229,30 @@ function renderMatchesList() {
 
         // Überschrift mit Datum, schön formatiert
         const dateStr = matchViewDate ? matchViewDate.split('-').reverse().join('.') : '';
-        let html = `<div class="text-center font-semibold text-base mb-2">Spiele am <span class="text-sky-700 dark:text-sky-400">${dateStr}</span></div>`;
+        let html = `
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-xl border border-slate-600/30 rounded-2xl">
+                    <svg class="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span class="text-white font-bold text-lg">Spiele am</span>
+                    <span class="text-blue-400 font-bold text-lg">${dateStr}</span>
+                </div>
+            </div>
+        `;
 
         if (!filteredMatches.length) {
-            html += `<div class="text-gray-400 text-sm text-center py-4">Keine Spiele für diesen Tag.</div>`;
+            html += `
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-400 font-medium">Keine Spiele für diesen Tag</p>
+                    <p class="text-gray-500 text-sm mt-1">Füge ein neues Match hinzu oder wähle ein anderes Datum</p>
+                </div>
+            `;
         } else {
             html += filteredMatches.map(match => {
                 // Durchgehende Nummerierung, unabhängig vom Tag!
@@ -226,13 +279,33 @@ function renderMatchesList() {
 // Separate function for navigation buttons
 function renderNavigationButtons(uniqueDates) {
     const currIdx = uniqueDates.indexOf(matchViewDate);
-    let navHtml = `<div class="flex gap-2 justify-center mt-4">`;
+    let navHtml = `<div class="flex gap-3 justify-center mt-8">`;
     
     if (currIdx < uniqueDates.length - 1) {
-        navHtml += `<button id="older-matches-btn" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-gray-400">Ältere Spiele anzeigen</button>`;
+        navHtml += `
+            <button id="older-matches-btn" class="group relative px-6 py-3 bg-gradient-to-r from-slate-700/80 to-slate-600/80 hover:from-slate-700 hover:to-slate-600 text-white font-semibold rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 border border-slate-500/30 hover:border-slate-400/50 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-white/0 to-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                <span class="relative z-10 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Ältere Spiele
+                </span>
+            </button>
+        `;
     }
     if (currIdx > 0) {
-        navHtml += `<button id="newer-matches-btn" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded-lg font-semibold transition-colors hover:bg-gray-400">Neuere Spiele anzeigen</button>`;
+        navHtml += `
+            <button id="newer-matches-btn" class="group relative px-6 py-3 bg-gradient-to-r from-slate-700/80 to-slate-600/80 hover:from-slate-700 hover:to-slate-600 text-white font-semibold rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 border border-slate-500/30 hover:border-slate-400/50 overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-white/0 to-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                <span class="relative z-10 flex items-center gap-2">
+                    Neuere Spiele
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                </span>
+            </button>
+        `;
     }
     
     navHtml += `</div>`;
@@ -286,56 +359,145 @@ function attachMatchEventListeners(uniqueDates) {
 
 function matchHtml(match, nr) {
     function goalsHtml(goals) {
-        if (!goals || !goals.length) return `<span class="text-gray-400 text-xs">(keine Torschützen)</span>`;
+        if (!goals || !goals.length) return `<span class="text-gray-400 text-xs italic">(keine Torschützen)</span>`;
         return goals
-            .map(g => `<span class="inline-block bg-gray-700 dark:bg-gray-600 text-gray-200 dark:text-gray-300 rounded px-2 mx-0.5">${g.player} (${g.count})</span>`)
+            .map(g => `<span class="inline-flex items-center px-3 py-1 bg-slate-700/50 border border-slate-600/50 text-gray-300 rounded-full text-xs font-medium mr-2 mb-1">${g.player} (${g.count})</span>`)
             .join('');
     }
+    
     function prizeHtml(amount, team) {
         const isPos = amount >= 0;
-        const tClass = team === "AEK" ? "bg-blue-800 dark:bg-blue-900" : "bg-red-800 dark:bg-red-900";
-        const color = isPos ? "text-green-200 dark:text-green-300" : "text-red-200 dark:text-red-300";
-        return `<span class="inline-block px-2 rounded ${tClass} ${color} font-bold">${isPos ? '+' : ''}${amount.toLocaleString('de-DE')} €</span>`;
+        const teamClass = team === "AEK" ? "from-blue-600/20 to-blue-800/20 border-blue-500/30" : "from-red-600/20 to-red-800/20 border-red-500/30";
+        const textColor = isPos ? "text-emerald-400" : "text-red-400";
+        return `<span class="inline-flex items-center px-3 py-1 bg-gradient-to-r ${teamClass} border rounded-full text-xs font-bold ${textColor}">${isPos ? '+' : ''}${amount.toLocaleString('de-DE')} €</span>`;
     }
+    
+    function cardHtml(type, count, bgClass) {
+        if (count <= 0) return '';
+        return `<span class="inline-flex items-center px-2 py-1 ${bgClass} rounded-full text-xs font-bold mr-2">${count}</span>`;
+    }
+    
     return `
-    <div class="bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2 mt-1 text-gray-100 dark:text-gray-100">
-      <div class="flex justify-between items-center mb-1">
-        <div>
-          <span class="font-bold">#${nr} ${match.date}:</span>
-          <span>${match.teama} <b>${match.goalsa}</b> : <b>${match.goalsb}</b> ${match.teamb}</span>
+        <div class="match-card group relative overflow-hidden bg-gradient-to-br from-slate-800/60 to-slate-700/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:bg-gradient-to-br hover:from-slate-800/80 hover:to-slate-700/60">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="white" fill-opacity="0.03"%3E%3Cpath d="M30 30c0-16.569-13.431-30-30-30v30h30z"/%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
+            
+            <div class="relative z-10">
+                <!-- Header Section -->
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                                #${nr}
+                            </div>
+                            <div class="text-lg font-bold text-white">${match.date}</div>
+                        </div>
+                        
+                        <!-- Score Display -->
+                        <div class="flex items-center justify-center gap-4 p-4 bg-slate-900/50 rounded-xl border border-slate-600/30">
+                            <div class="text-center">
+                                <div class="text-blue-400 font-bold text-lg mb-1">${match.teama}</div>
+                                <div class="text-3xl font-bold text-white">${match.goalsa}</div>
+                            </div>
+                            <div class="text-gray-400 text-2xl font-bold">:</div>
+                            <div class="text-center">
+                                <div class="text-red-400 font-bold text-lg mb-1">${match.teamb}</div>
+                                <div class="text-3xl font-bold text-white">${match.goalsb}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col gap-2 ml-4">
+                        <button class="edit-match-btn group/edit relative w-12 h-12 bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 hover:border-blue-400/50 text-blue-400 hover:text-blue-300 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95" title="Bearbeiten" data-id="${match.id}">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 17H6v-3L16.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414L9 17z" />
+                            </svg>
+                        </button>
+                        <button class="delete-match-btn group/delete relative w-12 h-12 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 hover:border-red-400/50 text-red-400 hover:text-red-300 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95" title="Löschen" data-id="${match.id}">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a2 2 0 012 2v2H8V5a2 2 0 012-2z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Goal Scorers Section -->
+                <div class="space-y-4 mb-6">
+                    <div class="bg-slate-900/30 rounded-xl p-4 border border-slate-600/20">
+                        <h4 class="text-blue-400 font-bold text-sm mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                            ${match.teama} Torschützen
+                        </h4>
+                        <div class="flex flex-wrap">${goalsHtml(match.goalslista || [])}</div>
+                    </div>
+                    
+                    <div class="bg-slate-900/30 rounded-xl p-4 border border-slate-600/20">
+                        <h4 class="text-red-400 font-bold text-sm mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7" />
+                            </svg>
+                            ${match.teamb} Torschützen
+                        </h4>
+                        <div class="flex flex-wrap">${goalsHtml(match.goalslistb || [])}</div>
+                    </div>
+                </div>
+                
+                <!-- Cards Section -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-slate-900/30 rounded-xl p-4 border border-slate-600/20">
+                        <h4 class="text-blue-400 font-bold text-sm mb-3">${match.teama} Karten</h4>
+                        <div class="flex gap-2">
+                            ${cardHtml('Gelb', match.yellowa || 0, 'bg-yellow-600/20 border border-yellow-500/30 text-yellow-400')}
+                            ${cardHtml('Rot', match.reda || 0, 'bg-red-600/20 border border-red-500/30 text-red-400')}
+                            ${(match.yellowa || 0) === 0 && (match.reda || 0) === 0 ? '<span class="text-gray-400 text-xs italic">Keine Karten</span>' : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-900/30 rounded-xl p-4 border border-slate-600/20">
+                        <h4 class="text-red-400 font-bold text-sm mb-3">${match.teamb} Karten</h4>
+                        <div class="flex gap-2">
+                            ${cardHtml('Gelb', match.yellowb || 0, 'bg-yellow-600/20 border border-yellow-500/30 text-yellow-400')}
+                            ${cardHtml('Rot', match.redb || 0, 'bg-red-600/20 border border-red-500/30 text-red-400')}
+                            ${(match.yellowb || 0) === 0 && (match.redb || 0) === 0 ? '<span class="text-gray-400 text-xs italic">Keine Karten</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom Info Section -->
+                <div class="space-y-3">
+                    <div class="bg-slate-900/30 rounded-xl p-4 border border-slate-600/20">
+                        <h4 class="text-emerald-400 font-bold text-sm mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                            </svg>
+                            Preisgelder
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            ${prizeHtml(match.prizeaek ?? 0, "AEK")}
+                            ${prizeHtml(match.prizereal ?? 0, "Real")}
+                        </div>
+                    </div>
+                    
+                    ${match.manofthematch ? `
+                        <div class="bg-gradient-to-r from-amber-600/20 to-yellow-600/20 border border-amber-500/30 rounded-xl p-4">
+                            <h4 class="text-amber-400 font-bold text-sm mb-2 flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                </svg>
+                                Spieler des Spiels
+                            </h4>
+                            <div class="text-amber-300 font-bold text-lg">${match.manofthematch}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+            
+            <!-- Hover Effect Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out rounded-2xl"></div>
         </div>
-        <div class="flex gap-2">
-          <button class="edit-match-btn bg-blue-500 text-white px-3 py-1 rounded-md text-sm flex items-center justify-center active:scale-95 transition" title="Bearbeiten" data-id="${match.id}">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="delete-match-btn bg-red-500 text-white px-3 py-1 rounded-md text-sm flex items-center justify-center active:scale-95 transition" title="Löschen" data-id="${match.id}">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-      <div class="text-xs mb-1">
-        <b>${match.teama} Torschützen:</b> ${goalsHtml(match.goalslista || [])}
-      </div>
-      <div class="text-xs mb-1">
-        <b>${match.teamb} Torschützen:</b> ${goalsHtml(match.goalslistb || [])}
-      </div>
-      <div class="text-xs">
-        <b>${match.teama} Karten:</b> <span class="inline-block bg-yellow-800 dark:bg-yellow-900 text-yellow-200 dark:text-yellow-300 rounded px-2 mx-0.5 text-xs">Gelb: ${match.yellowa || 0}</span>
-        <span class="inline-block bg-red-800 dark:bg-red-900 text-red-200 dark:text-red-300 rounded px-2 mx-0.5 text-xs">Rot: ${match.reda || 0}</span>
-      </div>
-      <div class="text-xs">
-        <b>${match.teamb} Karten:</b> <span class="inline-block bg-yellow-800 dark:bg-yellow-900 text-yellow-200 dark:text-yellow-300 rounded px-2 mx-0.5 text-xs">Gelb: ${match.yellowb || 0}</span>
-        <span class="inline-block bg-red-800 dark:bg-red-900 text-red-200 dark:text-red-300 rounded px-2 mx-0.5 text-xs">Rot: ${match.redb || 0}</span>
-      </div>
-      <div class="text-xs mt-2">
-        <b>Preisgelder:</b>
-        ${prizeHtml(match.prizeaek ?? 0, "AEK")}
-        ${prizeHtml(match.prizereal ?? 0, "Real")}
-      </div>
-      <div class="text-xs mt-1">
-        <b>Spieler des Spiels:</b> ${match.manofthematch ? match.manofthematch : '<span class="text-gray-400">-</span>'}
-      </div>
-    </div>
     `;
 }
 

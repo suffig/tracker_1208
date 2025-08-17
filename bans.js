@@ -46,26 +46,54 @@ export function renderBansTab(containerId = "app") {
     const app = document.getElementById(containerId);
 
     app.innerHTML = `
-        <div class="mb-4">
-            <h2 class="text-lg font-semibold dark:text-white">Sperren</h2>
-            <div class="flex space-x-2 mt-4 mb-6">
-                <button id="add-ban-btn" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white px-4 py-3 rounded-lg text-base flex items-center gap-2 font-semibold transition shadow">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                    Sperre hinzufügen
+        <div class="max-w-2xl mx-auto w-full px-4">
+            <!-- Modern Header -->
+            <div class="flex flex-col sm:flex-row sm:justify-between items-start mb-6">
+                <div class="mb-4 sm:mb-0">
+                    <h2 class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-2">Sperren</h2>
+                    <p class="text-gray-400 font-medium">Verwalte Spielersperren und Sanktionen</p>
+                </div>
+                <button id="add-ban-btn" class="group relative w-full sm:w-auto bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white px-6 py-4 rounded-2xl text-base flex items-center justify-center gap-3 font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-white/0 to-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
+                    <svg class="w-5 h-5 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span class="relative z-10">Sperre hinzufügen</span>
                 </button>
             </div>
-            <div>
-                <h3 class="font-bold text-base mb-2 dark:text-white">Aktive Sperren</h3>
-                <div id="bans-active-list" class="mb-8"></div>
+            
+            <!-- Active Bans Section -->
+            <div class="mb-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+                        </svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white">Aktive Sperren</h3>
+                </div>
+                <div id="bans-active-list" class="space-y-4"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Historical Bans Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div>
-                    <h3 class="font-bold text-base mb-2 text-blue-800 dark:text-blue-400">Vergangene Sperren AEK</h3>
-                    <div id="bans-history-aek"></div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">A</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-blue-400">Vergangene Sperren AEK</h3>
+                    </div>
+                    <div id="bans-history-aek" class="space-y-3"></div>
                 </div>
                 <div>
-                    <h3 class="font-bold text-base mb-2 text-red-800 dark:text-red-400">Vergangene Sperren Real</h3>
-                    <div id="bans-history-real"></div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">R</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-red-400">Vergangene Sperren Real</h3>
+                    </div>
+                    <div id="bans-history-real" class="space-y-3"></div>
                 </div>
             </div>
         </div>
@@ -95,49 +123,155 @@ function renderBanList(list, containerId, active) {
     const c = document.getElementById(containerId);
     if (!c) return;
     if (!list.length) {
-        c.innerHTML = `<div class="text-gray-400 text-sm">${active ? "Keine aktiven Sperren." : "Keine vergangenen Sperren."}</div>`;
-        return;
-    }
-    c.innerHTML = '';
-    list.forEach(ban => {
-        const player = playersCache.find(p => p.id === ban.player_id);
-        let tClass;
-        if (!player) {
-            tClass = "bg-gray-700 dark:bg-gray-700 text-gray-400";
-        } else if (player.team === "Ehemalige") {
-            tClass = "bg-gray-200 dark:bg-gray-700 text-gray-500";
-        } else if (player.team === "AEK") {
-            tClass = "bg-blue-100 dark:bg-blue-900 text-blue-900 dark:text-blue-200";
-        } else {
-            tClass = "bg-red-100 dark:bg-red-900 text-red-900 dark:text-red-200";
-        }
-        const restGames = getRestGames(ban);
-        const div = document.createElement('div');
-        div.className = `player-card border dark:border-gray-700 rounded-lg p-3 flex justify-between items-center gap-2 mb-2 ${tClass}`;
-        div.innerHTML = `
-            <div>
-                <div class="font-medium">${player ? player.name : "-"} <span class="text-xs text-gray-400">(${player ? player.team : "-"})</span></div>
-                <div class="text-xs text-gray-500">Typ: <b>${ban.type || "-"}</b></div>
-                <div class="text-xs text-gray-500">Start: <b>${ban.totalgames}</b> | Aktuell: <b>${restGames < 0 ? 0 : restGames}</b></div>
-                ${ban.reason ? `<div class="text-xs text-gray-400">Grund: ${ban.reason}</div>` : ''}
-            </div>
-            <div class="flex gap-1">
-                ${active ? `
-                <button class="edit-ban-btn bg-sky-500 hover:bg-sky-600 text-white px-3 py-2 rounded-lg" title="Bearbeiten">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-1.5a2.121 2.121 0 00-3 0l-7.5 7.5a2.121 2.121 0 000 3l3.5 3.5a2.121 2.121 0 003 0l7.5-7.5a2.121 2.121 0 000-3z"/></svg>
-                </button>
-                <button class="delete-ban-btn bg-rose-600 hover:bg-rose-700 text-white px-3 py-2 rounded-lg" title="Löschen">
-                  <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-                </button>
-                ` : ''}
+        const message = active ? "Keine aktiven Sperren" : "Keine vergangenen Sperren";
+        const icon = active ? 
+            `<svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>` :
+            `<svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>`;
+        
+        c.innerHTML = `
+            <div class="text-center py-8">
+                <div class="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    ${icon}
+                </div>
+                <p class="text-gray-400 font-medium">${message}</p>
+                <p class="text-gray-500 text-sm mt-1">${active ? 'Alle Spieler sind verfügbar' : 'Noch keine abgelaufenen Sperren'}</p>
             </div>
         `;
+        return;
+    }
+    
+    c.innerHTML = '';
+    list.forEach((ban, index) => {
+        const player = playersCache.find(p => p.id === ban.player_id);
+        
+        // Enhanced team styling
+        let teamBadge, gradientClass, borderClass;
+        if (!player) {
+            teamBadge = `<span class="px-2 py-1 bg-gray-600/20 border border-gray-500/30 text-gray-400 rounded-full text-xs font-medium">Unbekannt</span>`;
+            gradientClass = "from-gray-700/40 to-gray-600/30";
+            borderClass = "border-gray-500/30";
+        } else if (player.team === "Ehemalige") {
+            teamBadge = `<span class="px-2 py-1 bg-amber-600/20 border border-amber-500/30 text-amber-400 rounded-full text-xs font-medium">EHEMALIG</span>`;
+            gradientClass = "from-amber-700/40 to-amber-600/30";
+            borderClass = "border-amber-500/30";
+        } else if (player.team === "AEK") {
+            teamBadge = `<span class="px-2 py-1 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-full text-xs font-medium">AEK</span>`;
+            gradientClass = "from-blue-700/40 to-blue-600/30";
+            borderClass = "border-blue-500/30";
+        } else {
+            teamBadge = `<span class="px-2 py-1 bg-red-600/20 border border-red-500/30 text-red-400 rounded-full text-xs font-medium">REAL</span>`;
+            gradientClass = "from-red-700/40 to-red-600/30";
+            borderClass = "border-red-500/30";
+        }
+        
+        const restGames = getRestGames(ban);
+        const banTypeIcon = getBanTypeIcon(ban.type);
+        
+        const div = document.createElement('div');
+        div.className = `ban-card group relative overflow-hidden bg-gradient-to-br ${gradientClass} backdrop-blur-xl border ${borderClass} rounded-2xl p-5 hover:shadow-2xl transition-all duration-500 hover:scale-[1.02]`;
+        
+        div.innerHTML = `
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="white" fill-opacity="0.03"%3E%3Cpath d="M20 20c0-11.046-8.954-20-20-20v20h20z"/%3E%3C/g%3E%3C/svg%3E')] opacity-50"></div>
+            
+            <div class="relative z-10 flex items-center justify-between gap-4">
+                <!-- Left Side - Player Info -->
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-red-600/20 border border-red-500/30 rounded-xl flex items-center justify-center">
+                            ${banTypeIcon}
+                        </div>
+                        <div class="text-xs text-gray-400 font-medium">#${index + 1}</div>
+                        ${teamBadge}
+                    </div>
+                    
+                    <h3 class="font-bold text-lg text-white mb-2 truncate">${player ? player.name : "Unbekannter Spieler"}</h3>
+                    
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-400">Typ:</span>
+                            <span class="text-sm font-bold text-red-400">${ban.type || "Unbekannt"}</span>
+                        </div>
+                        
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-gray-400">Gesamt:</span>
+                                <span class="text-sm font-bold text-white">${ban.totalgames || 1}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm text-gray-400">Verbleibend:</span>
+                                <span class="text-sm font-bold ${restGames > 0 ? 'text-red-400' : 'text-green-400'}">${restGames < 0 ? 0 : restGames}</span>
+                            </div>
+                        </div>
+                        
+                        ${ban.reason ? `
+                            <div class="mt-2 p-2 bg-slate-900/30 rounded-lg border border-slate-600/20">
+                                <span class="text-xs text-gray-400">Grund:</span>
+                                <p class="text-sm text-gray-300 mt-1">${ban.reason}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                <!-- Right Side - Action Buttons -->
+                ${active ? `
+                    <div class="flex flex-col gap-2">
+                        <button class="edit-ban-btn group/edit relative w-12 h-12 bg-blue-600/20 hover:bg-blue-600/40 border border-blue-500/30 hover:border-blue-400/50 text-blue-400 hover:text-blue-300 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95" title="Bearbeiten">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 17H6v-3L16.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414L9 17z" />
+                            </svg>
+                        </button>
+                        <button class="delete-ban-btn group/delete relative w-12 h-12 bg-red-600/20 hover:bg-red-600/40 border border-red-500/30 hover:border-red-400/50 text-red-400 hover:text-red-300 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95" title="Löschen">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a2 2 0 012 2v2H8V5a2 2 0 012-2z" />
+                            </svg>
+                        </button>
+                    </div>
+                ` : `
+                    <div class="flex items-center justify-center w-12 h-12 bg-green-600/20 border border-green-500/30 text-green-400 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                `}
+            </div>
+            
+            <!-- Hover Effect Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out rounded-2xl"></div>
+        `;
+        
         if (active) {
             div.querySelector('.edit-ban-btn').onclick = () => openBanForm(ban);
             div.querySelector('.delete-ban-btn').onclick = () => deleteBan(ban.id);
         }
         c.appendChild(div);
     });
+}
+
+// Helper function to get ban type icon
+function getBanTypeIcon(type) {
+    switch(type) {
+        case "Gelb-Rote Karte":
+            return `<svg class="w-4 h-4 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>`;
+        case "Rote Karte":
+            return `<svg class="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+            </svg>`;
+        case "Verletzung":
+            return `<svg class="w-4 h-4 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>`;
+        default:
+            return `<svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728L5.636 5.636m12.728 12.728L18.364 5.636M5.636 18.364l12.728-12.728" />
+            </svg>`;
+    }
 }
 
 async function saveBan(ban) {
