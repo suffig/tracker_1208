@@ -37,50 +37,163 @@
     <!-- Supabase JavaScript Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        .cell-aek { background: #1e3a8a !important; color: #dbeafe !important; }
-        .cell-real { background: #991b1b !important; color: #fecaca !important; }
-        .player-card { transition: all 0.3s ease; }
-        .player-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1);}
+        /* Modern card and component styles */
+        .player-card, .match-card, .stats-card { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+        }
+        .player-card:hover, .match-card:hover, .stats-card:hover { 
+            transform: translateY(-4px) scale(1.02); 
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.15);
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(71, 85, 105, 0.8) 100%);
+        }
+        
+        /* Enhanced button styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(71, 85, 105, 0.8) 100%);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Enhanced form styles */
+        .form-input {
+            background: rgba(51, 65, 85, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .form-input:focus {
+            background: rgba(51, 65, 85, 0.8);
+            border-color: rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Enhanced table styles */
+        .modern-table {
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.6) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .modern-table th {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.7) 100%);
+            padding: 1rem;
+            font-weight: 600;
+        }
+        .modern-table td {
+            padding: 0.875rem 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .modern-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
         .modal {
-            z-index: 70; background: rgba(0,0,0,0.6); position: fixed; inset: 0;
-            display: flex; align-items: flex-end; justify-content: center;
+            z-index: 70; 
+            background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(8px);
+            position: fixed; 
+            inset: 0;
+            display: flex; 
+            align-items: flex-end; 
+            justify-content: center;
+            padding: 1rem;
         }
         .modal-content {
-        background: #1f2937; width: 100%; color: #f9fafb !important; max-width: 24rem; border-radius: 0.75rem 0.75rem 0 0;
-        padding: 1.5rem; box-shadow: 0 -2px 16px rgba(0,0,0,0.4); position: relative;
-        animation: slideInFromBottom 0.2s;
-		}
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            width: 100%; 
+            color: #f8fafc !important; 
+            max-width: 28rem; 
+            border-radius: 1.5rem 1.5rem 0.5rem 0.5rem;
+            padding: 2rem; 
+            box-shadow: 0 -8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.1);
+            position: relative;
+            animation: slideInFromBottom 0.3s ease-out;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
         @keyframes slideInFromBottom {
-            from { transform: translateY(80px); opacity: 0;}
-            to { transform: translateY(0); opacity: 1;}
+            from { 
+                transform: translateY(100px); 
+                opacity: 0;
+                scale: 0.95;
+            }
+            to { 
+                transform: translateY(0); 
+                opacity: 1;
+                scale: 1;
+            }
         }
         @media (max-width: 700px) {
             .modal-content {
-                width: 98vw !important; min-width: 0 !important; max-width: 98vw !important;
-                border-radius: 12px 12px 0 0 !important; padding: 1rem !important;
-                left: 0 !important; right: 0 !important; top: auto !important; bottom: 80px !important;
-                position: absolute !important; max-height: calc(95vh - 80px) !important; overflow-y: auto !important;
+                width: calc(100vw - 1rem) !important; 
+                min-width: 0 !important; 
+                max-width: calc(100vw - 1rem) !important;
+                border-radius: 1.5rem 1.5rem 0 0 !important; 
+                padding: 1.5rem !important;
+                margin: 0 !important;
+                position: absolute !important; 
+                bottom: 0 !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                max-height: calc(90vh - 100px) !important; 
+                overflow-y: auto !important;
             }
             .modal {
-                align-items: flex-end !important; justify-content: center !important;
+                align-items: flex-end !important; 
+                justify-content: center !important;
+                padding: 0 !important;
             }
         }
         .nav-indicator {
             display: block;
-            width: 10px;
-            height: 10px;
-            margin: 3px auto 0 auto;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: transparent;
             box-shadow: none;
-            transition: background 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
+            transform: scale(0);
         }
-        .nav-indicator.active.indicator-squad    { background: #2563eb; box-shadow: 0 0 8px #60a5fa; }
-        .nav-indicator.active.indicator-matches  { background: #e11d48; box-shadow: 0 0 8px #fb7185; }
-        .nav-indicator.active.indicator-bans     { background: #eab308; box-shadow: 0 0 8px #fde047; }
-        .nav-indicator.active.indicator-finanzen { background: #16a34a; box-shadow: 0 0 8px #4ade80; }
-        .nav-indicator.active.indicator-stats    { background: #8b5cf6; box-shadow: 0 0 8px #a78bfa; }
-        .nav-indicator.active.indicator-spieler  { background: orange; box-shadow: 0 0 8px #f9a825; }
+        .nav-indicator.active {
+            transform: scale(1);
+            box-shadow: 0 0 12px currentColor;
+        }
+        .nav-indicator.active.indicator-squad    { background: #3b82f6; }
+        .nav-indicator.active.indicator-matches  { background: #f43f5e; }
+        .nav-indicator.active.indicator-bans     { background: #eab308; }
+        .nav-indicator.active.indicator-finanzen { background: #22c55e; }
+        .nav-indicator.active.indicator-stats    { background: #8b5cf6; }
+        .nav-indicator.active.indicator-spieler  { background: #f97316; }
         
         /* Enhanced mobile navigation styles */
         @media (max-width: 767px) {
@@ -91,24 +204,23 @@
                 right: 0 !important;
                 z-index: 60 !important;
                 border-radius: 0 !important;
-                backdrop-filter: blur(10px);
-                background: rgba(51, 65, 85, 0.98) !important;
-                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5) !important;
+                backdrop-filter: blur(20px);
+                background: rgba(30, 41, 59, 0.95) !important;
+                box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+                border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
             }
             
-            #bottom-nav a {
-                min-height: 56px;
+            #bottom-nav .nav-item {
+                min-height: 64px;
                 justify-content: center;
-                padding: 12px 8px;
+                padding: 16px 12px;
+                border-radius: 1rem !important;
+                margin: 0 2px;
             }
             
-            #bottom-nav a i {
-                font-size: 22px !important;
-            }
-            
-            #bottom-nav a span:not(.nav-indicator) {
-                font-size: 11px !important;
-                margin-top: 4px !important;
+            #bottom-nav .nav-item:active {
+                transform: scale(0.95);
+                transition: transform 0.1s ease;
             }
             
             body.nav-open {
@@ -117,18 +229,29 @@
             
             /* Better mobile touch targets */
             .modal-content {
-                padding: 16px !important;
-                margin: 8px !important;
+                padding: 20px !important;
+                border-radius: 24px 24px 0 0 !important;
             }
             
             /* Larger touch areas for forms */
             input, button, select, textarea {
-                min-height: 48px;
+                min-height: 56px;
+                border-radius: 16px;
             }
             
             /* Better mobile typography */
             h1, h2, h3 {
                 line-height: 1.2;
+            }
+            
+            /* Enhanced card hover effects for mobile */
+            .player-card, .match-card {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(10px);
+            }
+            
+            .player-card:active {
+                transform: scale(0.98);
             }
         }
         
@@ -175,68 +298,122 @@
         }
     </style>
 </head>
-<body class="bg-slate-800 font-sans transition-colors min-h-screen">
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 font-sans transition-colors min-h-screen">
 <div id="login-area"></div>
-<div class="app-container mx-auto bg-slate-700 shadow-lg relative overflow-hidden max-w-screen-xl min-h-screen" style="display:none;">
-    <!-- TOP HEADER - Logo and Logout Only -->
-    <header class="bg-slate-600 border-b-2 border-slate-500 px-4 py-3 shadow-xl">
-      <div class="flex justify-between items-center mx-auto max-w-screen-xl">
-        <a href="#" class="flex items-center">
-          <img src="assets/logo.png" class="h-10 mr-3" alt="Logo" />
-          <span class="self-center text-lg sm:text-xl font-bold whitespace-nowrap text-slate-100 hidden sm:block">FIFA Statistik-Tracker</span>
-          <span class="self-center text-lg font-bold whitespace-nowrap text-slate-100 block sm:hidden">FIFA Tracker</span>
+<div class="app-container mx-auto bg-gradient-to-br from-slate-800/50 to-slate-700/50 backdrop-blur-xl shadow-2xl relative overflow-hidden max-w-screen-xl min-h-screen border border-slate-600/20" style="display:none;">
+    <!-- TOP HEADER - Modern Design -->
+    <header class="bg-gradient-to-r from-slate-800/80 to-slate-700/80 backdrop-blur-xl border-b border-slate-600/30 px-4 py-4 shadow-2xl relative">
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5"></div>
+      <div class="flex justify-between items-center mx-auto max-w-screen-xl relative z-10">
+        <a href="#" class="flex items-center group">
+          <div class="relative">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+              <img src="assets/logo.png" class="h-8 w-8 object-contain" alt="Logo" />
+            </div>
+            <div class="absolute -inset-1 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+          </div>
+          <div class="ml-3">
+            <span class="block text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent hidden sm:block">FIFA Statistik-Tracker</span>
+            <span class="block text-lg font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent sm:hidden">FIFA Tracker</span>
+            <span class="block text-xs text-gray-400 hidden sm:block">Professioneller Spieler-Tracker</span>
+          </div>
         </a>
-        <div class="flex items-center gap-2">
-          <!-- Logout Button oben rechts (Icon-Button) -->
-          <button id="logout-btn" title="Abmelden" class="inline-flex items-center justify-center border-2 font-sans font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed text-sm rounded-lg py-3 px-4 shadow-lg hover:shadow-xl bg-red-600 border-red-600 text-red-50 hover:bg-red-500 hover:border-red-500 active:scale-95" style="min-width:48px;">
-            <i class="fas fa-sign-out-alt text-lg"></i>
-            <span class="ml-2 hidden sm:inline">Abmelden</span>
+        <div class="flex items-center gap-3">
+          <!-- Logout Button - Modern Design -->
+          <button id="logout-btn" title="Abmelden" class="group relative inline-flex items-center justify-center px-4 py-3 text-sm font-medium transition-all duration-300 rounded-2xl bg-gradient-to-r from-red-600/80 to-red-700/80 text-white hover:from-red-600 hover:to-red-700 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 backdrop-blur-sm border border-red-500/30" style="min-width:48px;">
+            <div class="absolute inset-0 bg-gradient-to-r from-red-500/20 to-red-600/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+            <i class="fas fa-sign-out-alt text-lg relative z-10"></i>
+            <span class="ml-2 hidden sm:inline relative z-10">Abmelden</span>
           </button>
         </div>
       </div>
     </header>
     <!-- TOP HEADER END -->
 
-    <!-- BOTTOM NAVIGATION - Enhanced for mobile devices -->
-    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 w-full bg-slate-600 border-t-2 border-slate-500 shadow-2xl flex justify-between items-center px-1 py-3" style="z-index:50; padding-bottom: max(env(safe-area-inset-bottom, 12px), 12px); min-height: 72px;">
-      <a id="nav-squad" href="#" class="flex flex-col items-center text-slate-300 hover:text-blue-400 active:text-blue-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
-        <i class="fas fa-users text-xl mb-1"></i>
-        <span class="text-xs font-medium truncate">Kader</span>
-        <span class="nav-indicator"></span>
+    <!-- MODERN BOTTOM NAVIGATION -->
+    <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 w-full bg-slate-800/80 backdrop-blur-xl border-t border-slate-600/30 shadow-2xl flex justify-between items-center px-2 py-3 z-50" style="padding-bottom: max(env(safe-area-inset-bottom, 12px), 12px); min-height: 80px;">
+      <!-- Background Glow Effect -->
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent"></div>
+      
+      <a id="nav-squad" href="#" class="nav-item group flex flex-col items-center text-slate-400 hover:text-blue-400 active:text-blue-300 transition-all duration-300 py-3 px-3 min-w-0 flex-1 rounded-2xl hover:bg-slate-700/50 active:bg-slate-600/50 relative overflow-hidden" style="touch-action: manipulation;">
+        <div class="absolute inset-0 bg-gradient-to-t from-blue-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="p-2 rounded-xl bg-slate-700/50 group-hover:bg-blue-500/20 transition-all duration-300 mb-1 group-hover:scale-110">
+            <i class="fas fa-users text-xl group-hover:text-blue-400"></i>
+          </div>
+          <span class="text-xs font-medium truncate group-hover:font-semibold">Kader</span>
+          <span class="nav-indicator mt-1"></span>
+        </div>
       </a>
-      <a id="nav-matches" href="#" class="flex flex-col items-center text-slate-300 hover:text-rose-400 active:text-rose-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
-        <i class="fas fa-futbol text-xl mb-1"></i>
-        <span class="text-xs font-medium truncate">Spiele</span>
-        <span class="nav-indicator"></span>
+      
+      <a id="nav-matches" href="#" class="nav-item group flex flex-col items-center text-slate-400 hover:text-rose-400 active:text-rose-300 transition-all duration-300 py-3 px-3 min-w-0 flex-1 rounded-2xl hover:bg-slate-700/50 active:bg-slate-600/50 relative overflow-hidden" style="touch-action: manipulation;">
+        <div class="absolute inset-0 bg-gradient-to-t from-rose-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="p-2 rounded-xl bg-slate-700/50 group-hover:bg-rose-500/20 transition-all duration-300 mb-1 group-hover:scale-110">
+            <i class="fas fa-futbol text-xl group-hover:text-rose-400"></i>
+          </div>
+          <span class="text-xs font-medium truncate group-hover:font-semibold">Spiele</span>
+          <span class="nav-indicator mt-1"></span>
+        </div>
       </a>
-      <a id="nav-bans" href="#" class="flex flex-col items-center text-slate-300 hover:text-yellow-400 active:text-yellow-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
-        <i class="fas fa-ban text-xl mb-1"></i>
-        <span class="text-xs font-medium truncate">Sperren</span>
-        <span class="nav-indicator"></span>
+      
+      <a id="nav-bans" href="#" class="nav-item group flex flex-col items-center text-slate-400 hover:text-yellow-400 active:text-yellow-300 transition-all duration-300 py-3 px-3 min-w-0 flex-1 rounded-2xl hover:bg-slate-700/50 active:bg-slate-600/50 relative overflow-hidden" style="touch-action: manipulation;">
+        <div class="absolute inset-0 bg-gradient-to-t from-yellow-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="p-2 rounded-xl bg-slate-700/50 group-hover:bg-yellow-500/20 transition-all duration-300 mb-1 group-hover:scale-110">
+            <i class="fas fa-ban text-xl group-hover:text-yellow-400"></i>
+          </div>
+          <span class="text-xs font-medium truncate group-hover:font-semibold">Sperren</span>
+          <span class="nav-indicator mt-1"></span>
+        </div>
       </a>
-      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-slate-300 hover:text-green-400 active:text-green-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
-        <i class="fas fa-euro-sign text-xl mb-1"></i>
-        <span class="text-xs font-medium truncate">Finanzen</span>
-        <span class="nav-indicator"></span>
+      
+      <a id="nav-finanzen" href="#" class="nav-item group flex flex-col items-center text-slate-400 hover:text-green-400 active:text-green-300 transition-all duration-300 py-3 px-3 min-w-0 flex-1 rounded-2xl hover:bg-slate-700/50 active:bg-slate-600/50 relative overflow-hidden" style="touch-action: manipulation;">
+        <div class="absolute inset-0 bg-gradient-to-t from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="p-2 rounded-xl bg-slate-700/50 group-hover:bg-green-500/20 transition-all duration-300 mb-1 group-hover:scale-110">
+            <i class="fas fa-euro-sign text-xl group-hover:text-green-400"></i>
+          </div>
+          <span class="text-xs font-medium truncate group-hover:font-semibold">Finanzen</span>
+          <span class="nav-indicator mt-1"></span>
+        </div>
       </a>
-      <a id="nav-stats" href="#" class="flex flex-col items-center text-slate-300 hover:text-purple-400 active:text-purple-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
-        <i class="fas fa-chart-bar text-xl mb-1"></i>
-        <span class="text-xs font-medium truncate">Stats</span>
-        <span class="nav-indicator"></span>
+      
+      <a id="nav-stats" href="#" class="nav-item group flex flex-col items-center text-slate-400 hover:text-purple-400 active:text-purple-300 transition-all duration-300 py-3 px-3 min-w-0 flex-1 rounded-2xl hover:bg-slate-700/50 active:bg-slate-600/50 relative overflow-hidden" style="touch-action: manipulation;">
+        <div class="absolute inset-0 bg-gradient-to-t from-purple-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="p-2 rounded-xl bg-slate-700/50 group-hover:bg-purple-500/20 transition-all duration-300 mb-1 group-hover:scale-110">
+            <i class="fas fa-chart-bar text-xl group-hover:text-purple-400"></i>
+          </div>
+          <span class="text-xs font-medium truncate group-hover:font-semibold">Stats</span>
+          <span class="nav-indicator mt-1"></span>
+        </div>
       </a>
-      <a id="nav-spieler" href="#" class="flex flex-col items-center text-slate-300 hover:text-orange-400 active:text-orange-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
-        <i class="fas fa-star text-xl mb-1"></i>
-        <span class="text-xs font-medium truncate">Spieler</span>
-        <span class="nav-indicator"></span>
+      
+      <a id="nav-spieler" href="#" class="nav-item group flex flex-col items-center text-slate-400 hover:text-orange-400 active:text-orange-300 transition-all duration-300 py-3 px-3 min-w-0 flex-1 rounded-2xl hover:bg-slate-700/50 active:bg-slate-600/50 relative overflow-hidden" style="touch-action: manipulation;">
+        <div class="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+        <div class="relative z-10 flex flex-col items-center">
+          <div class="p-2 rounded-xl bg-slate-700/50 group-hover:bg-orange-500/20 transition-all duration-300 mb-1 group-hover:scale-110">
+            <i class="fas fa-star text-xl group-hover:text-orange-400"></i>
+          </div>
+          <span class="text-xs font-medium truncate group-hover:font-semibold">Spieler</span>
+          <span class="nav-indicator mt-1"></span>
+        </div>
       </a>
     </nav>
 
-    <main class="p-3 pb-28 lg:pb-8 relative min-h-[calc(100vh-140px)] bg-slate-700">
-        <!-- Loader -->
-        <div id="tab-loader" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-10 flex items-center justify-center z-50" style="display:none;">
-            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"></div>
+    <main class="p-4 pb-32 lg:pb-8 relative min-h-[calc(100vh-140px)] bg-gradient-to-br from-slate-700/30 to-slate-800/30">
+        <!-- Modern Loader -->
+        <div id="tab-loader" class="fixed top-0 left-0 w-full h-full bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-50" style="display:none;">
+            <div class="flex flex-col items-center gap-4">
+                <div class="relative">
+                    <div class="w-16 h-16 border-4 border-slate-600 border-t-blue-500 border-r-purple-500 rounded-full animate-spin"></div>
+                    <div class="absolute inset-0 w-16 h-16 border-4 border-transparent border-b-blue-400 border-l-purple-400 rounded-full animate-spin opacity-50" style="animation-direction: reverse; animation-duration: 1.5s;"></div>
+                </div>
+                <p class="text-white font-medium">Lade Daten...</p>
+            </div>
         </div>
-        <div id="app"></div>
+        <div id="app" class="relative z-10"></div>
     </main>
 </div>
 <div id="modal-root"></div>

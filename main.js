@@ -532,38 +532,87 @@ async function renderLoginArea() {
             if (document.getElementById('email')) emailValue = document.getElementById('email').value;
             if (document.getElementById('pw')) pwValue = document.getElementById('pw').value;
             loginDiv.innerHTML = `
-                <div class="min-h-screen bg-gray-900 flex flex-col items-center justify-center px-4 py-8">
-                    <div class="w-full max-w-md">
-                        <div class="flex flex-col items-center mb-8">
-                            <img src="assets/logo.png" alt="Logo" class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mb-4" />
-                            <h1 class="text-2xl sm:text-3xl font-bold text-gray-100 text-center">FIFA Statistik-Tracker</h1>
-                            <p class="text-gray-400 text-center mt-2">Melden Sie sich an, um fortzufahren</p>
-                        </div>
-                        <form id="loginform" class="login-area flex flex-col gap-6">
-                            <div class="space-y-4">
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    required 
-                                    placeholder="E-Mail" 
-                                    autocomplete="email"
-                                    class="w-full rounded-lg border-2 border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400 px-4 py-4 text-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 outline-none" 
-                                    value="${emailValue}" />
-                                <input 
-                                    type="password" 
-                                    id="pw" 
-                                    required 
-                                    placeholder="Passwort" 
-                                    autocomplete="current-password"
-                                    class="w-full rounded-lg border-2 border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400 px-4 py-4 text-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 outline-none" 
-                                    value="${pwValue}" />
+                <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center px-4 py-8 relative overflow-hidden">
+                    <!-- Background Pattern -->
+                    <div class="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23334155" fill-opacity="0.1"%3E%3Cpath d="m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-30"></div>
+                    
+                    <div class="w-full max-w-md relative z-10">
+                        <!-- Modern Card Container -->
+                        <div class="bg-white/5 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/10 p-8 transition-all duration-300 hover:shadow-3xl hover:bg-white/[0.07]">
+                            <!-- Logo & Title Section -->
+                            <div class="flex flex-col items-center mb-8">
+                                <div class="relative mb-6">
+                                    <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl transform hover:scale-105 transition-transform duration-300">
+                                        <img src="assets/logo.png" alt="Logo" class="w-16 h-16 object-contain" />
+                                    </div>
+                                    <div class="absolute -inset-1 bg-gradient-to-br from-blue-500/20 to-purple-600/20 rounded-2xl blur-lg -z-10"></div>
+                                </div>
+                                <h1 class="text-3xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent text-center">
+                                    FIFA Tracker
+                                </h1>
+                                <p class="text-gray-400 text-center mt-2 font-medium">Melden Sie sich an, um fortzufahren</p>
                             </div>
-                            <button
-                                type="submit"
-                                class="login-btn w-full bg-blue-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg hover:bg-blue-700 active:scale-95 transition-all duration-150 outline-none ring-2 ring-transparent focus:ring-blue-300 border-2 border-blue-600 hover:border-blue-700 min-h-[56px]">
-                                <i class="fas fa-sign-in-alt mr-2"></i> Anmelden
-                            </button>
-                        </form>
+                            
+                            <!-- Modern Form -->
+                            <form id="loginform" class="login-area flex flex-col gap-6">
+                                <div class="space-y-5">
+                                    <!-- Email Input -->
+                                    <div class="relative group">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-300"></div>
+                                        <input 
+                                            type="email" 
+                                            id="email" 
+                                            required 
+                                            placeholder="E-Mail Adresse" 
+                                            autocomplete="email"
+                                            class="relative w-full rounded-2xl border-2 border-slate-600/50 bg-slate-800/50 text-white placeholder-gray-400 px-6 py-4 text-lg focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-300 outline-none backdrop-blur-sm group-focus-within:bg-slate-800/70"
+                                            value="${emailValue}" />
+                                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+                                            <i class="fas fa-envelope text-sm"></i>
+                                        </div>
+                                        <style>
+                                            #email { padding-left: 3rem; }
+                                        </style>
+                                    </div>
+                                    
+                                    <!-- Password Input -->
+                                    <div class="relative group">
+                                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-600/20 rounded-2xl blur opacity-0 group-focus-within:opacity-100 transition-opacity duration-300"></div>
+                                        <input 
+                                            type="password" 
+                                            id="pw" 
+                                            required 
+                                            placeholder="Passwort" 
+                                            autocomplete="current-password"
+                                            class="relative w-full rounded-2xl border-2 border-slate-600/50 bg-slate-800/50 text-white placeholder-gray-400 px-6 py-4 text-lg focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-300 outline-none backdrop-blur-sm group-focus-within:bg-slate-800/70"
+                                            value="${pwValue}" />
+                                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+                                            <i class="fas fa-lock text-sm"></i>
+                                        </div>
+                                        <style>
+                                            #pw { padding-left: 3rem; }
+                                        </style>
+                                    </div>
+                                </div>
+                                
+                                <!-- Modern Login Button -->
+                                <button
+                                    type="submit"
+                                    class="login-btn relative w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold text-xl py-5 rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 outline-none group overflow-hidden min-h-[64px]">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-700 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                                    <div class="relative flex items-center justify-center gap-3">
+                                        <i class="fas fa-sign-in-alt text-lg"></i>
+                                        <span>Anmelden</span>
+                                    </div>
+                                    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-blue-600/20 to-purple-600/20 blur-xl"></div>
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Subtle Footer -->
+                        <div class="text-center mt-6 text-gray-500 text-sm">
+                            <p>Sichere Anmeldung • Ende-zu-Ende verschlüsselt</p>
+                        </div>
                     </div>
                 </div>
             `;
