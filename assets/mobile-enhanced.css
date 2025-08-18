@@ -223,6 +223,7 @@ main {
   box-shadow: var(--shadow-soft);
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  padding: var(--space-md);
 }
 
 .player-card:hover, .match-card:hover, .finance-card:hover {
@@ -246,19 +247,20 @@ button, .btn {
 }
 
 /* Primary Button Style */
-.btn-primary, button:not(.edit-btn):not(.delete-btn):not(#logout-btn) {
+.btn-primary, button:not(.edit-btn):not(.delete-btn):not(#logout-btn):not([class*="move-"]) {
   background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
   color: white;
   box-shadow: var(--shadow-soft);
+  padding: 12px 20px;
 }
 
-.btn-primary:hover, button:not(.edit-btn):not(.delete-btn):not(#logout-btn):hover {
+.btn-primary:hover, button:not(.edit-btn):not(.delete-btn):not(#logout-btn):not([class*="move-"]):hover {
   background: linear-gradient(135deg, var(--primary-blue-light) 0%, var(--primary-blue) 100%);
   box-shadow: var(--shadow-medium);
   transform: translateY(-1px);
 }
 
-.btn-primary:active, button:not(.edit-btn):not(.delete-btn):not(#logout-btn):active {
+.btn-primary:active, button:not(.edit-btn):not(.delete-btn):not(#logout-btn):not([class*="move-"]):active {
   transform: translateY(0) scale(0.98);
 }
 
@@ -327,6 +329,66 @@ input::placeholder, textarea::placeholder {
 .accordion-panel:hover {
   border-color: rgba(255, 255, 255, 0.2);
   box-shadow: var(--shadow-medium);
+}
+
+/* Transaction Cards */
+.transaction-card {
+  background: var(--bg-gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  transition: all 0.3s ease;
+}
+
+.transaction-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Ban Cards */
+.ban-card {
+  background: var(--bg-gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  transition: all 0.3s ease;
+}
+
+.ban-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Match Cards */
+.match-card {
+  margin-bottom: var(--space-sm);
+}
+
+/* Enhanced Stats Cards */
+.stats-card {
+  background: var(--bg-gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.stats-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--primary-blue-light);
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
 }
 
 /* Mobile-Specific Optimizations */
@@ -434,4 +496,55 @@ input::placeholder, textarea::placeholder {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--primary-blue-light);
+}
+
+/* Pull-to-refresh indicator */
+.pull-to-refresh {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: var(--primary-blue);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.pull-to-refresh.active {
+  opacity: 1;
+  animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+  40% { transform: translateX(-50%) translateY(-10px); }
+  60% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* Haptic feedback simulation */
+.haptic-light {
+  animation: haptic-light 0.1s ease-out;
+}
+
+.haptic-medium {
+  animation: haptic-medium 0.2s ease-out;
+}
+
+@keyframes haptic-light {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+
+@keyframes haptic-medium {
+  0% { transform: scale(1); }
+  25% { transform: scale(0.95); }
+  75% { transform: scale(1.02); }
+  100% { transform: scale(1); }
 }
