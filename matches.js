@@ -881,13 +881,13 @@ async function submitMatchForm(event, id) {
     // SdS Bonus
     let sdsBonusAek = 0, sdsBonusReal = 0;
     if (manofthematch) {
-        if (aekAthen.find(p => p.name === manofthematch)) sdsBonusAek = 100000;
-        if (realMadrid.find(p => p.name === manofthematch)) sdsBonusReal = 100000;
+        if (matchesData.aekAthen.find(p => p.name === manofthematch)) sdsBonusAek = 100000;
+        if (matchesData.realMadrid.find(p => p.name === manofthematch)) sdsBonusReal = 100000;
     }
 
     // Spieler des Spiels-Statistik (Tabelle spieler_des_spiels)
     if (manofthematch) {
-        let t = aekAthen.find(p => p.name === manofthematch) ? "AEK" : "Real";
+        let t = matchesData.aekAthen.find(p => p.name === manofthematch) ? "AEK" : "Real";
         const { data: existing } = await supabase.from('spieler_des_spiels').select('*').eq('name', manofthematch).eq('team', t);
         if (existing && existing.length > 0) {
             await supabase.from('spieler_des_spiels').update({ count: existing[0].count + 1 }).eq('id', existing[0].id);
@@ -897,7 +897,7 @@ async function submitMatchForm(event, id) {
     }
 
     // Edit-Modus: Vorherigen Match löschen (und zugehörige Transaktionen an diesem Tag!)
-    if (id && matches.find(m => m.id === id)) {
+    if (id && matchesData.matches.find(m => m.id === id)) {
         const { data: matchOld } = await supabase.from('matches').select('date').eq('id', id).single();
         if (matchOld && matchOld.date) {
             await supabase.from('transactions').delete().or(`type.eq.Preisgeld,type.eq.Bonus SdS,type.eq.Echtgeld-Ausgleich`).eq('date', matchOld.date);
@@ -937,7 +937,7 @@ async function submitMatchForm(event, id) {
     const matchId = inserted?.id;
 
     // Nach Insert: ALLE Daten laden (damit matches aktuell ist)
-    await loadAllData(() => {});
+    await matchesData.loadAllData(() => {});
 
     // Hole App-Matchnummer (laufende Nummer)
     const appMatchNr = getAppMatchNumber(matchId);
@@ -1027,11 +1027,11 @@ async function submitMatchForm(event, id) {
 
     if (winner && loser) {
         const debts = {
-            AEK: finances.aekAthen.debt || 0,
-            Real: finances.realMadrid.debt || 0,
+            AEK: matchesData.finances.aekAthen.debt || 0,
+            Real: matchesData.finances.realMadrid.debt || 0,
         };
-        const aekSds = manofthematch && aekAthen.find(p => p.name === manofthematch) ? 1 : 0;
-        const realSds = manofthematch && realMadrid.find(p => p.name === manofthematch) ? 1 : 0;
+        const aekSds = manofthematch && matchesData.aekAthen.find(p => p.name === manofthematch) ? 1 : 0;
+        const realSds = manofthematch && matchesData.realMadrid.find(p => p.name === manofthematch) ? 1 : 0;
 
         const aekBetrag = calcEchtgeldbetrag(aekOldBalance, prizeaek, aekSds);
         const realBetrag = calcEchtgeldbetrag(realOldBalance, prizereal, realSds);
