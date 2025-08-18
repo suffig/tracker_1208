@@ -115,8 +115,8 @@ export function renderKaderTab(containerId = "app") {
 function accordionPanelHtml(team, key, bgClass, textClass) {
     const isOpen = openPanel === key;
     return `
-        <div class="${bgClass} rounded-lg border border-gray-300">
-            <button id="panel-toggle-${key}" class="flex justify-between items-center w-full px-3 py-3 ${textClass} font-medium transition" style="font-size:1.1rem;">
+        <div class="accordion-panel ${bgClass}">
+            <button id="panel-toggle-${key}" class="flex justify-between items-center w-full px-4 py-4 ${textClass} font-medium transition-all duration-300 hover:bg-white hover:bg-opacity-10" style="font-size:1.1rem;">
                 <span>${team}</span>
                 <span class="ml-2">${isOpen ? "▼" : "▶"}</span>
             </button>
@@ -175,18 +175,18 @@ function renderPlayerList(containerId, arr, team) {
             : "";
 
         const d = document.createElement("div");
-        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
+        d.className = "player-card flex items-center min-h-[110px]";
         d.innerHTML = `
           <div class="flex flex-col gap-2 mr-3">
-            <button class="edit-btn bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg flex items-center" title="Bearbeiten">
+            <button class="edit-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-lg flex items-center transition-all duration-200" title="Bearbeiten">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 17H6v-3L16.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414L9 17z" />
               </svg>
             </button>
           </div>
           <div class="flex-1 flex flex-col">
-            <p class="font-medium flex items-center">${posBadge}${player.name}</p>
-            <p class="font-bold text-sm mt-1">${marktwert}M</p>
+            <p class="font-medium flex items-center text-white">${posBadge}${player.name}</p>
+            <p class="font-bold text-sm mt-1 text-gray-200">${marktwert}M €</p>
           </div>
           <div class="flex flex-col gap-2 ml-3">
             <button class="move-btn bg-gray-400 hover:bg-gray-7000 text-white p-2 rounded-lg flex items-center" title="Zu Ehemalige">
@@ -224,31 +224,31 @@ function renderEhemaligeList(containerId = "ehemalige-players") {
 
         // Cards: Edit/Löschen links, Infos Mitte, Move zu AEK/Real rechts (blau/rot)
         const d = document.createElement("div");
-        d.className = "player-card flex items-center bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-4 shadow min-h-[110px]";
+        d.className = "player-card flex items-center min-h-[110px]";
         d.innerHTML = `
           <div class="flex flex-col gap-2 mr-3">
-            <button class="edit-btn bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg flex items-center" title="Bearbeiten">
+            <button class="edit-btn bg-white bg-opacity-20 hover:bg-opacity-30 text-white p-2 rounded-lg flex items-center transition-all duration-200" title="Bearbeiten">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 17H6v-3L16.293 3.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414L9 17z" />
               </svg>
             </button>
-            <button class="delete-btn bg-gray-700 hover:bg-gray-300 text-gray-600 p-2 rounded-lg flex items-center" title="Löschen">
+            <button class="delete-btn bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg flex items-center transition-all duration-200" title="Löschen">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M10 3h4a2 2 0 012 2v2H8V5a2 2 0 012-2z" />
               </svg>
             </button>
           </div>
           <div class="flex-1 flex flex-col">
-            <p class="font-medium flex items-center">${posBadge}${player.name}</p>
-            <p class="font-bold text-sm mt-1">${marktwert ? marktwert + "M" : ""}</p>
+            <p class="font-medium flex items-center text-white">${posBadge}${player.name}</p>
+            <p class="font-bold text-sm mt-1 text-gray-200">${marktwert ? marktwert + "M €" : ""}</p>
           </div>
           <div class="flex flex-col gap-2 ml-3">
-            <button class="move-aek-btn bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center" title="Zu AEK">
+            <button class="move-aek-btn bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg flex items-center transition-all duration-200" title="Zu AEK">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#ffffff">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
             </button>
-            <button class="move-real-btn bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg flex items-center" title="Zu Real">
+            <button class="move-real-btn bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg flex items-center transition-all duration-200" title="Zu Real">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="#ffffff">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
               </svg>
