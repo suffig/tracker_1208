@@ -29,6 +29,8 @@
     <link href="css/tailwind-play-output.css" rel="stylesheet">
     <!-- Flowbite CSS - Local Minimal Replacement -->
     <link href="assets/flowbite-minimal.css" rel="stylesheet" />
+    <!-- Enhanced Mobile-First Design -->
+    <link href="assets/mobile-enhanced.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
     <!-- Mobile menu functionality -->
     <script src="assets/mobile-menu.js"></script>
@@ -75,12 +77,12 @@
             box-shadow: none;
             transition: background 0.2s, box-shadow 0.2s;
         }
-        .nav-indicator.active.indicator-squad    { background: #2563eb; box-shadow: 0 0 8px #60a5fa; }
-        .nav-indicator.active.indicator-matches  { background: #e11d48; box-shadow: 0 0 8px #fb7185; }
-        .nav-indicator.active.indicator-bans     { background: #eab308; box-shadow: 0 0 8px #fde047; }
-        .nav-indicator.active.indicator-finanzen { background: #16a34a; box-shadow: 0 0 8px #4ade80; }
-        .nav-indicator.active.indicator-stats    { background: #8b5cf6; box-shadow: 0 0 8px #a78bfa; }
-        .nav-indicator.active.indicator-spieler  { background: orange; box-shadow: 0 0 8px #f9a825; }
+        .nav-indicator.active.indicator-squad    { background: var(--accent-kader); box-shadow: 0 0 12px var(--accent-kader); }
+        .nav-indicator.active.indicator-matches  { background: var(--accent-matches); box-shadow: 0 0 12px var(--accent-matches); }
+        .nav-indicator.active.indicator-bans     { background: var(--accent-bans); box-shadow: 0 0 12px var(--accent-bans); }
+        .nav-indicator.active.indicator-finanzen { background: var(--accent-finanzen); box-shadow: 0 0 12px var(--accent-finanzen); }
+        .nav-indicator.active.indicator-stats    { background: var(--accent-stats); box-shadow: 0 0 12px var(--accent-stats); }
+        .nav-indicator.active.indicator-spieler  { background: var(--accent-spieler); box-shadow: 0 0 12px var(--accent-spieler); }
         
         /* Enhanced mobile navigation styles */
         @media (max-width: 767px) {
@@ -199,32 +201,32 @@
 
     <!-- BOTTOM NAVIGATION - Enhanced for mobile devices -->
     <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 w-full bg-slate-600 border-t-2 border-slate-500 shadow-2xl flex justify-between items-center px-1 py-3" style="z-index:50; padding-bottom: max(env(safe-area-inset-bottom, 12px), 12px); min-height: 72px;">
-      <a id="nav-squad" href="#" class="flex flex-col items-center text-slate-300 hover:text-blue-400 active:text-blue-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
+      <a id="nav-squad" href="#" class="flex flex-col items-center text-slate-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg" style="touch-action: manipulation;">
         <i class="fas fa-users text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Kader</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-matches" href="#" class="flex flex-col items-center text-slate-300 hover:text-rose-400 active:text-rose-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
+      <a id="nav-matches" href="#" class="flex flex-col items-center text-slate-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg" style="touch-action: manipulation;">
         <i class="fas fa-futbol text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Spiele</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-bans" href="#" class="flex flex-col items-center text-slate-300 hover:text-yellow-400 active:text-yellow-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
+      <a id="nav-bans" href="#" class="flex flex-col items-center text-slate-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg" style="touch-action: manipulation;">
         <i class="fas fa-ban text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Sperren</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-slate-300 hover:text-green-400 active:text-green-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
+      <a id="nav-finanzen" href="#" class="flex flex-col items-center text-slate-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg" style="touch-action: manipulation;">
         <i class="fas fa-euro-sign text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Finanzen</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-stats" href="#" class="flex flex-col items-center text-slate-300 hover:text-purple-400 active:text-purple-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
+      <a id="nav-stats" href="#" class="flex flex-col items-center text-slate-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg" style="touch-action: manipulation;">
         <i class="fas fa-chart-bar text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Stats</span>
         <span class="nav-indicator"></span>
       </a>
-      <a id="nav-spieler" href="#" class="flex flex-col items-center text-slate-300 hover:text-orange-400 active:text-orange-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg hover:bg-slate-500 active:bg-slate-400" style="touch-action: manipulation;">
+      <a id="nav-spieler" href="#" class="flex flex-col items-center text-slate-300 transition-colors py-2 px-2 min-w-0 flex-1 rounded-lg" style="touch-action: manipulation;">
         <i class="fas fa-star text-xl mb-1"></i>
         <span class="text-xs font-medium truncate">Spieler</span>
         <span class="nav-indicator"></span>

@@ -1,0 +1,437 @@
+/* Enhanced Mobile-First Design for FIFA Tracker */
+
+/* Color Palette - Modern and Vibrant */
+:root {
+  /* Primary Brand Colors */
+  --primary-blue: #3B82F6;
+  --primary-blue-light: #60A5FA;
+  --primary-blue-dark: #1D4ED8;
+  
+  /* Accent Colors for Different Sections */
+  --accent-kader: #2563EB;        /* Blue for Kader */
+  --accent-matches: #E11D48;       /* Rose for Matches */
+  --accent-bans: #EAB308;          /* Yellow for Bans */
+  --accent-finanzen: #16A34A;      /* Green for Finanzen */
+  --accent-stats: #8B5CF6;         /* Purple for Stats */
+  --accent-spieler: #F59E0B;       /* Orange for Spieler */
+  
+  /* Background Gradients */
+  --bg-gradient-primary: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+  --bg-gradient-card: linear-gradient(135deg, #334155 0%, #475569 100%);
+  --bg-gradient-nav: linear-gradient(180deg, rgba(51, 65, 85, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+  
+  /* Interactive States */
+  --hover-overlay: rgba(255, 255, 255, 0.1);
+  --active-overlay: rgba(255, 255, 255, 0.15);
+  --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.4);
+  
+  /* Shadows */
+  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.2);
+  
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+}
+
+/* Enhanced Mobile Body and Root Styles */
+body {
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-gradient-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Enhanced App Container */
+.app-container {
+  background: var(--bg-gradient-primary);
+  backdrop-filter: blur(20px);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* Enhanced Header */
+header {
+  background: var(--bg-gradient-nav);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Enhanced Logo and Brand */
+.app-container header a {
+  transition: transform 0.2s ease;
+}
+
+.app-container header a:active {
+  transform: scale(0.98);
+}
+
+/* Enhanced Logout Button */
+#logout-btn {
+  background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.2s ease;
+  min-height: 48px;
+  min-width: 48px;
+}
+
+#logout-btn:hover {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+#logout-btn:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Enhanced Bottom Navigation */
+#bottom-nav {
+  background: var(--bg-gradient-nav);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  padding-bottom: max(env(safe-area-inset-bottom), 16px);
+  padding-top: 16px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+}
+
+/* Enhanced Navigation Links */
+#bottom-nav a {
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+/* Navigation Link Hover Effects */
+#bottom-nav a:hover {
+  background: var(--hover-overlay);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+#bottom-nav a:active {
+  transform: translateY(0) scale(0.95);
+  background: var(--active-overlay);
+}
+
+/* Navigation Icons */
+#bottom-nav a i {
+  font-size: 24px;
+  transition: all 0.3s ease;
+}
+
+#bottom-nav a:hover i {
+  transform: scale(1.1);
+}
+
+/* Navigation Text */
+#bottom-nav a span:not(.nav-indicator) {
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* Enhanced Navigation Indicators */
+.nav-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-top: 2px;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.nav-indicator.active {
+  width: 8px;
+  height: 8px;
+  box-shadow: 0 0 12px currentColor;
+  animation: pulse-indicator 2s infinite;
+}
+
+@keyframes pulse-indicator {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Section-Specific Colors for Navigation */
+#nav-squad:hover, #nav-squad.active {
+  color: var(--accent-kader) !important;
+}
+
+#nav-matches:hover, #nav-matches.active {
+  color: var(--accent-matches) !important;
+}
+
+#nav-bans:hover, #nav-bans.active {
+  color: var(--accent-bans) !important;
+}
+
+#nav-finanzen:hover, #nav-finanzen.active {
+  color: var(--accent-finanzen) !important;
+}
+
+#nav-stats:hover, #nav-stats.active {
+  color: var(--accent-stats) !important;
+}
+
+#nav-spieler:hover, #nav-spieler.active {
+  color: var(--accent-spieler) !important;
+}
+
+/* Enhanced Main Content Area */
+main {
+  background: transparent;
+  padding: var(--space-lg);
+  padding-bottom: 100px; /* Account for fixed bottom nav */
+  min-height: calc(100vh - 140px);
+}
+
+/* Enhanced Cards and Containers */
+.player-card, .match-card, .finance-card {
+  background: var(--bg-gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.player-card:hover, .match-card:hover, .finance-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-medium);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Enhanced Buttons */
+button, .btn {
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  min-height: 48px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+/* Primary Button Style */
+.btn-primary, button:not(.edit-btn):not(.delete-btn):not(#logout-btn) {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+  color: white;
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-primary:hover, button:not(.edit-btn):not(.delete-btn):not(#logout-btn):hover {
+  background: linear-gradient(135deg, var(--primary-blue-light) 0%, var(--primary-blue) 100%);
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active, button:not(.edit-btn):not(.delete-btn):not(#logout-btn):active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Enhanced Form Elements */
+input, textarea, select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  color: white;
+  font-size: 16px; /* Prevent zoom on iOS */
+  transition: all 0.3s ease;
+  min-height: 48px;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: var(--focus-ring);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Enhanced Modal Styles */
+.modal {
+  backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+  background: var(--bg-gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-strong);
+  backdrop-filter: blur(20px);
+}
+
+/* Enhanced Loading Spinner */
+.animate-spin {
+  border-color: var(--primary-blue);
+  border-top-color: transparent;
+  filter: drop-shadow(0 0 8px var(--primary-blue));
+}
+
+/* Enhanced Demo Mode Banner */
+.demo-banner {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(147, 51, 234, 0.2) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(10px);
+}
+
+/* Enhanced Accordion/Panel Styles */
+.accordion-panel {
+  background: var(--bg-gradient-card);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.accordion-panel:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-medium);
+}
+
+/* Mobile-Specific Optimizations */
+@media (max-width: 767px) {
+  /* Improved touch targets */
+  button, a, input, select, textarea {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
+  /* Better spacing for mobile */
+  main {
+    padding: var(--space-md);
+    padding-bottom: 100px;
+  }
+  
+  /* Enhanced modal for mobile */
+  .modal-content {
+    margin: var(--space-sm);
+    width: calc(100vw - 16px);
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+  }
+  
+  /* Better text sizing */
+  h1 { font-size: 24px; }
+  h2 { font-size: 20px; }
+  h3 { font-size: 18px; }
+  
+  /* Enhanced navigation for small screens */
+  #bottom-nav {
+    padding: var(--space-sm) var(--space-xs) max(env(safe-area-inset-bottom), var(--space-md)) var(--space-xs);
+  }
+  
+  #bottom-nav a {
+    min-height: 56px;
+    padding: var(--space-xs);
+  }
+  
+  #bottom-nav a span:not(.nav-indicator) {
+    font-size: 10px;
+  }
+  
+  #bottom-nav a i {
+    font-size: 20px;
+  }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.5);
+  }
+  
+  button, input, .player-card {
+    border-width: 2px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Enhanced focus indicators for accessibility */
+*:focus-visible {
+  outline: 3px solid var(--primary-blue);
+  outline-offset: 2px;
+}
+
+/* Enhanced selection colors */
+::selection {
+  background: var(--primary-blue);
+  color: white;
+}
+
+/* Enhanced scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-blue);
+  border-radius: var(--radius-sm);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-blue-light);
+}
