@@ -288,53 +288,157 @@ function matchHtml(match, nr) {
     function goalsHtml(goals) {
         if (!goals || !goals.length) return `<span class="text-gray-400 text-xs">(keine Torschützen)</span>`;
         return goals
-            .map(g => `<span class="inline-block bg-gray-700 dark:bg-gray-600 text-gray-200 dark:text-gray-300 rounded px-2 mx-0.5">${g.player} (${g.count})</span>`)
+            .map(g => `<span class="inline-block bg-gray-700 dark:bg-gray-600 text-gray-200 dark:text-gray-300 rounded px-2 py-1 mx-0.5 text-xs font-medium">
+                <i class="fas fa-futbol mr-1 text-xs"></i>${g.player} (${g.count})
+            </span>`)
             .join('');
     }
+    
     function prizeHtml(amount, team) {
         const isPos = amount >= 0;
         const tClass = team === "AEK" ? "bg-blue-800 dark:bg-blue-900" : "bg-red-800 dark:bg-red-900";
         const color = isPos ? "text-green-200 dark:text-green-300" : "text-red-200 dark:text-red-300";
-        return `<span class="inline-block px-2 rounded ${tClass} ${color} font-bold">${isPos ? '+' : ''}${amount.toLocaleString('de-DE')} €</span>`;
+        const icon = isPos ? "+" : "-";
+        return `<span class="inline-block px-3 py-1 rounded-lg ${tClass} ${color} font-bold text-sm">
+            <i class="fas fa-euro-sign mr-1"></i>${icon}${Math.abs(amount).toLocaleString('de-DE')} €
+        </span>`;
     }
+    
+    function cardsHtml(yellows, reds, team) {
+        const teamColor = team === "AEK" ? "border-blue-500" : "border-red-500";
+        return `
+            <div class="flex items-center gap-2 text-xs">
+                <span class="inline-flex items-center bg-yellow-600 dark:bg-yellow-700 text-yellow-100 rounded px-2 py-1 font-medium">
+                    🟨 ${yellows || 0}
+                </span>
+                <span class="inline-flex items-center bg-red-600 dark:bg-red-700 text-red-100 rounded px-2 py-1 font-medium">
+                    🟥 ${reds || 0}
+                </span>
+            </div>
+        `;
+    }
+    
+    // Determine match result and winner styling
+    const isAekWin = match.goalsa > match.goalsb;
+    const isRealWin = match.goalsb > match.goalsa;
+    const isDraw = match.goalsa === match.goalsb;
+    
+    const aekScoreClass = isAekWin ? "text-green-400 font-bold" : isDraw ? "text-yellow-300 font-bold" : "text-gray-300";
+    const realScoreClass = isRealWin ? "text-green-400 font-bold" : isDraw ? "text-yellow-300 font-bold" : "text-gray-300";
+    
     return `
-    <div class="bg-gray-800 dark:bg-gray-800 border dark:border-gray-700 rounded-lg p-2 mt-1 text-gray-100 dark:text-gray-100">
-      <div class="flex justify-between items-center mb-1">
-        <div>
-          <span class="font-bold">#${nr} ${match.date}:</span>
-          <span>${match.teama} <b>${match.goalsa}</b> : <b>${match.goalsb}</b> ${match.teamb}</span>
+    <div class="bg-gradient-to-r from-gray-800 to-gray-750 dark:from-gray-800 dark:to-gray-750 border-l-4 ${isDraw ? 'border-yellow-400' : isAekWin ? 'border-blue-400' : 'border-red-400'} rounded-lg p-4 mt-3 text-gray-100 shadow-lg hover:shadow-xl transition-shadow">
+      <!-- Match Header -->
+      <div class="flex justify-between items-center mb-3">
+        <div class="flex items-center gap-3">
+          <span class="inline-flex items-center bg-gray-700 text-gray-200 rounded-full px-3 py-1 text-sm font-bold">
+            <i class="fas fa-futbol mr-2"></i>#${nr}
+          </span>
+          <span class="text-gray-300 text-sm font-medium">${match.date}</span>
         </div>
         <div class="flex gap-2">
-          <button class="edit-match-btn bg-blue-500 text-white px-3 py-1 rounded-md text-sm flex items-center justify-center active:scale-95 transition" title="Bearbeiten" data-id="${match.id}">
+          <button class="edit-match-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm flex items-center justify-center active:scale-95 transition-all shadow-md" title="Bearbeiten" data-id="${match.id}">
             <i class="fas fa-edit"></i>
           </button>
-          <button class="delete-match-btn bg-red-500 text-white px-3 py-1 rounded-md text-sm flex items-center justify-center active:scale-95 transition" title="Löschen" data-id="${match.id}">
+          <button class="delete-match-btn bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm flex items-center justify-center active:scale-95 transition-all shadow-md" title="Löschen" data-id="${match.id}">
             <i class="fas fa-trash"></i>
           </button>
         </div>
       </div>
-      <div class="text-xs mb-1">
-        <b>${match.teama} Torschützen:</b> ${goalsHtml(match.goalslista || [])}
+      
+      <!-- Score Display -->
+      <div class="flex items-center justify-center mb-4 bg-gray-750 dark:bg-gray-750 rounded-lg p-3">
+        <div class="flex items-center gap-4 text-lg">
+          <span class="flex items-center gap-2">
+            <span class="inline-flex items-center bg-blue-700 text-blue-100 rounded px-2 py-1 text-sm font-bold">
+              AEK
+            </span>
+            <span class="${aekScoreClass} text-2xl font-bold">${match.goalsa}</span>
+          </span>
+          <span class="text-gray-400 font-bold">:</span>
+          <span class="flex items-center gap-2">
+            <span class="${realScoreClass} text-2xl font-bold">${match.goalsb}</span>
+            <span class="inline-flex items-center bg-red-700 text-red-100 rounded px-2 py-1 text-sm font-bold">
+              Real
+            </span>
+          </span>
+        </div>
       </div>
-      <div class="text-xs mb-1">
-        <b>${match.teamb} Torschützen:</b> ${goalsHtml(match.goalslistb || [])}
+      
+      <!-- Goal Scorers -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <div class="bg-gray-700 dark:bg-gray-700 rounded-lg p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center bg-blue-600 text-blue-100 rounded px-2 py-1 text-xs font-bold">
+              AEK
+            </span>
+            <span class="text-gray-300 text-sm font-medium">Torschützen</span>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            ${goalsHtml(match.goalslista || [])}
+          </div>
+        </div>
+        
+        <div class="bg-gray-700 dark:bg-gray-700 rounded-lg p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center bg-red-600 text-red-100 rounded px-2 py-1 text-xs font-bold">
+              Real
+            </span>
+            <span class="text-gray-300 text-sm font-medium">Torschützen</span>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            ${goalsHtml(match.goalslistb || [])}
+          </div>
+        </div>
       </div>
-      <div class="text-xs">
-        <b>${match.teama} Karten:</b> <span class="inline-block bg-yellow-800 dark:bg-yellow-900 text-yellow-200 dark:text-yellow-300 rounded px-2 mx-0.5 text-xs">Gelb: ${match.yellowa || 0}</span>
-        <span class="inline-block bg-red-800 dark:bg-red-900 text-red-200 dark:text-red-300 rounded px-2 mx-0.5 text-xs">Rot: ${match.reda || 0}</span>
+      
+      <!-- Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
+        <div class="bg-gray-700 dark:bg-gray-700 rounded-lg p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center bg-blue-600 text-blue-100 rounded px-2 py-1 text-xs font-bold">
+              AEK
+            </span>
+            <span class="text-gray-300 text-sm font-medium">Karten</span>
+          </div>
+          ${cardsHtml(match.yellowa, match.reda, "AEK")}
+        </div>
+        
+        <div class="bg-gray-700 dark:bg-gray-700 rounded-lg p-3">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center bg-red-600 text-red-100 rounded px-2 py-1 text-xs font-bold">
+              Real
+            </span>
+            <span class="text-gray-300 text-sm font-medium">Karten</span>
+          </div>
+          ${cardsHtml(match.yellowb, match.redb, "Real")}
+        </div>
       </div>
-      <div class="text-xs">
-        <b>${match.teamb} Karten:</b> <span class="inline-block bg-yellow-800 dark:bg-yellow-900 text-yellow-200 dark:text-yellow-300 rounded px-2 mx-0.5 text-xs">Gelb: ${match.yellowb || 0}</span>
-        <span class="inline-block bg-red-800 dark:bg-red-900 text-red-200 dark:text-red-300 rounded px-2 mx-0.5 text-xs">Rot: ${match.redb || 0}</span>
+      
+      <!-- Prize Money -->
+      <div class="bg-gray-700 dark:bg-gray-700 rounded-lg p-3 mb-3">
+        <div class="flex items-center gap-2 mb-2">
+          <i class="fas fa-euro-sign text-green-400"></i>
+          <span class="text-gray-300 text-sm font-medium">Preisgelder</span>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          ${prizeHtml(match.prizeaek ?? 0, "AEK")}
+          ${prizeHtml(match.prizereal ?? 0, "Real")}
+        </div>
       </div>
-      <div class="text-xs mt-2">
-        <b>Preisgelder:</b>
-        ${prizeHtml(match.prizeaek ?? 0, "AEK")}
-        ${prizeHtml(match.prizereal ?? 0, "Real")}
+      
+      <!-- Player of the Match -->
+      ${match.manofthematch ? `
+      <div class="bg-gray-700 dark:bg-gray-700 rounded-lg p-3">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-star text-yellow-400"></i>
+          <span class="text-gray-300 text-sm font-medium">Spieler des Spiels:</span>
+          <span class="inline-flex items-center bg-yellow-600 text-yellow-100 rounded px-3 py-1 text-sm font-bold">
+            ${match.manofthematch}
+          </span>
+        </div>
       </div>
-      <div class="text-xs mt-1">
-        <b>Spieler des Spiels:</b> ${match.manofthematch ? match.manofthematch : '<span class="text-gray-400">-</span>'}
-      </div>
+      ` : ''}
     </div>
     `;
 }
@@ -744,8 +848,8 @@ async function submitMatchForm(event, id) {
         const groupA = form.querySelector("#scorersA");
         goalslista = getScorers(groupA, "goalslista");
         const sumA = goalslista.reduce((sum, g) => sum + (g.count || 0), 0);
-        if (sumA > goalsa) {
-            alert(`Die Summe der Torschützen-Tore für ${teama} (${sumA}) darf nicht größer als die Gesamtanzahl der Tore (${goalsa}) sein!`);
+        if (sumA !== goalsa) {
+            alert(`Die Summe der Torschützen-Tore für ${teama} (${sumA}) muss exakt der Gesamtanzahl der Tore (${goalsa}) entsprechen!`);
             return;
         }
     }
@@ -753,8 +857,8 @@ async function submitMatchForm(event, id) {
         const groupB = form.querySelector("#scorersB");
         goalslistb = getScorers(groupB, "goalslistb");
         const sumB = goalslistb.reduce((sum, g) => sum + (g.count || 0), 0);
-        if (sumB > goalsb) {
-            alert(`Die Summe der Torschützen-Tore für ${teamb} (${sumB}) darf nicht größer als die Gesamtanzahl der Tore (${goalsb}) sein!`);
+        if (sumB !== goalsb) {
+            alert(`Die Summe der Torschützen-Tore für ${teamb} (${sumB}) muss exakt der Gesamtanzahl der Tore (${goalsb}) entsprechen!`);
             return;
         }
     }
