@@ -532,38 +532,57 @@ async function renderLoginArea() {
             if (document.getElementById('email')) emailValue = document.getElementById('email').value;
             if (document.getElementById('pw')) pwValue = document.getElementById('pw').value;
             loginDiv.innerHTML = `
-                <div class="min-h-screen bg-gray-900 flex flex-col items-center justify-center px-4 py-8">
-                    <div class="w-full max-w-md">
+                <div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex flex-col items-center justify-center px-4 py-8 relative overflow-hidden">
+                    <!-- Background Pattern -->
+                    <div class="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(59,130,246,0.1),transparent_50%)] bg-[radial-gradient(circle_at_80%_80%,rgba(167,243,208,0.1),transparent_50%)]"></div>
+                    
+                    <div class="w-full max-w-md relative z-10">
                         <div class="flex flex-col items-center mb-8">
-                            <img src="assets/logo.png" alt="Logo" class="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 mb-4" />
-                            <h1 class="text-2xl sm:text-3xl font-bold text-gray-100 text-center">FIFA Statistik-Tracker</h1>
-                            <p class="text-gray-400 text-center mt-2">Melden Sie sich an, um fortzufahren</p>
-                        </div>
-                        <form id="loginform" class="login-area flex flex-col gap-6">
-                            <div class="space-y-4">
-                                <input 
-                                    type="email" 
-                                    id="email" 
-                                    required 
-                                    placeholder="E-Mail" 
-                                    autocomplete="email"
-                                    class="w-full rounded-lg border-2 border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400 px-4 py-4 text-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 outline-none" 
-                                    value="${emailValue}" />
-                                <input 
-                                    type="password" 
-                                    id="pw" 
-                                    required 
-                                    placeholder="Passwort" 
-                                    autocomplete="current-password"
-                                    class="w-full rounded-lg border-2 border-gray-600 bg-gray-800 text-gray-100 placeholder-gray-400 px-4 py-4 text-lg focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-200 outline-none" 
-                                    value="${pwValue}" />
+                            <div class="relative mb-6">
+                                <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-green-400 rounded-full blur-xl opacity-20 scale-150"></div>
+                                <img src="assets/logo.png" alt="Logo" class="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 drop-shadow-2xl" />
                             </div>
-                            <button
-                                type="submit"
-                                class="login-btn w-full bg-blue-600 text-white font-bold text-xl py-4 rounded-xl shadow-lg hover:bg-blue-700 active:scale-95 transition-all duration-150 outline-none ring-2 ring-transparent focus:ring-blue-300 border-2 border-blue-600 hover:border-blue-700 min-h-[56px]">
-                                <i class="fas fa-sign-in-alt mr-2"></i> Anmelden
-                            </button>
-                        </form>
+                            <h1 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-green-400 bg-clip-text text-transparent text-center leading-tight">FIFA Stats Tracker</h1>
+                            <p class="text-slate-400 text-center mt-3 text-base sm:text-lg font-medium">Willkommen zurück!</p>
+                        </div>
+                        
+                        <div class="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-2xl p-6 sm:p-8 shadow-2xl">
+                            <form id="loginform" class="login-area flex flex-col gap-6">
+                                <div class="space-y-5">
+                                    <div class="relative group">
+                                        <input 
+                                            type="email" 
+                                            id="email" 
+                                            required 
+                                            placeholder="E-Mail Adresse" 
+                                            autocomplete="email"
+                                            class="w-full rounded-xl border-2 border-slate-600/50 bg-slate-900/50 text-slate-100 placeholder-slate-400 px-4 py-4 text-base font-medium focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300 outline-none backdrop-blur-sm group-hover:border-slate-500/70" 
+                                            value="${emailValue}" />
+                                        <div class="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 rounded-full"></div>
+                                    </div>
+                                    <div class="relative group">
+                                        <input 
+                                            type="password" 
+                                            id="pw" 
+                                            required 
+                                            placeholder="Passwort" 
+                                            autocomplete="current-password"
+                                            class="w-full rounded-xl border-2 border-slate-600/50 bg-slate-900/50 text-slate-100 placeholder-slate-400 px-4 py-4 text-base font-medium focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all duration-300 outline-none backdrop-blur-sm group-hover:border-slate-500/70" 
+                                            value="${pwValue}" />
+                                        <div class="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 scale-x-0 group-focus-within:scale-x-100 transition-transform duration-300 rounded-full"></div>
+                                    </div>
+                                </div>
+                                <button
+                                    type="submit"
+                                    class="login-btn w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-bold text-lg py-4 rounded-xl shadow-xl hover:shadow-2xl active:scale-[0.98] transition-all duration-200 outline-none focus:ring-4 focus:ring-blue-400/30 border border-blue-500/50 min-h-[56px] relative overflow-hidden group">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    <span class="relative flex items-center justify-center gap-2">
+                                        <i class="fas fa-sign-in-alt text-lg"></i>
+                                        <span>Anmelden</span>
+                                    </span>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             `;

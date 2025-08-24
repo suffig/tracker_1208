@@ -177,20 +177,32 @@
 </head>
 <body class="bg-slate-800 font-sans transition-colors min-h-screen">
 <div id="login-area"></div>
-<div class="app-container mx-auto bg-slate-700 shadow-lg relative overflow-hidden max-w-screen-xl min-h-screen" style="display:none;">
-    <!-- TOP HEADER - Logo and Logout Only -->
-    <header class="bg-slate-600 border-b-2 border-slate-500 px-4 py-3 shadow-xl">
+<div class="app-container mx-auto bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 shadow-2xl relative overflow-hidden max-w-screen-xl min-h-screen" style="display:none;">
+    <!-- TOP HEADER - Modern Enhanced Design -->
+    <header class="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 border-b border-slate-600/50 px-4 py-4 shadow-2xl backdrop-blur-xl">
       <div class="flex justify-between items-center mx-auto max-w-screen-xl">
-        <a href="#" class="flex items-center">
-          <img src="assets/logo.png" class="h-10 mr-3" alt="Logo" />
-          <span class="self-center text-lg sm:text-xl font-bold whitespace-nowrap text-slate-100 hidden sm:block">FIFA Statistik-Tracker</span>
-          <span class="self-center text-lg font-bold whitespace-nowrap text-slate-100 block sm:hidden">FIFA Tracker</span>
+        <a href="#" class="flex items-center group">
+          <div class="relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-blue-500 to-green-400 rounded-full blur-md opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+            <img src="assets/logo.png" class="relative h-10 w-10 sm:h-12 sm:w-12 mr-3 drop-shadow-lg" alt="Logo" />
+          </div>
+          <div class="flex flex-col">
+            <span class="text-base sm:text-lg font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent hidden sm:block leading-tight">FIFA Stats Tracker</span>
+            <span class="text-sm sm:text-base font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent block sm:hidden leading-tight">FIFA Stats</span>
+            <span class="text-xs text-slate-400 font-medium hidden sm:block">Game Statistics</span>
+          </div>
         </a>
-        <div class="flex items-center gap-2">
-          <!-- Logout Button oben rechts (Icon-Button) -->
-          <button id="logout-btn" title="Abmelden" class="inline-flex items-center justify-center border-2 font-sans font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed text-sm rounded-lg py-3 px-4 shadow-lg hover:shadow-xl bg-red-600 border-red-600 text-red-50 hover:bg-red-500 hover:border-red-500 active:scale-95" style="min-width:48px;">
-            <i class="fas fa-sign-out-alt text-lg"></i>
-            <span class="ml-2 hidden sm:inline">Abmelden</span>
+        <div class="flex items-center gap-3">
+          <!-- Status Indicator -->
+          <div class="hidden sm:flex items-center gap-2 bg-slate-800/50 rounded-lg px-3 py-2 border border-slate-600/50">
+            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span class="text-xs text-slate-300 font-medium">Online</span>
+          </div>
+          <!-- Logout Button -->
+          <button id="logout-btn" title="Abmelden" class="relative inline-flex items-center justify-center bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 border border-red-500/50 font-medium text-center transition-all duration-300 ease-in disabled:opacity-50 disabled:shadow-none disabled:cursor-not-allowed text-sm rounded-xl py-3 px-4 shadow-lg hover:shadow-xl text-red-50 active:scale-95 overflow-hidden group" style="min-width:48px;">
+            <div class="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <i class="fas fa-sign-out-alt text-base relative z-10"></i>
+            <span class="ml-2 hidden sm:inline relative z-10">Abmelden</span>
           </button>
         </div>
       </div>
@@ -231,10 +243,13 @@
       </a>
     </nav>
 
-    <main class="p-3 pb-28 lg:pb-8 relative min-h-[calc(100vh-140px)] bg-slate-700">
+    <main class="p-4 pb-28 lg:pb-8 relative min-h-[calc(100vh-140px)] bg-gradient-to-br from-slate-800/50 via-slate-700/50 to-slate-800/50 backdrop-blur-sm">
         <!-- Loader -->
-        <div id="tab-loader" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-10 flex items-center justify-center z-50" style="display:none;">
-            <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin"></div>
+        <div id="tab-loader" class="fixed top-0 left-0 w-full h-full bg-black/20 backdrop-blur-sm flex items-center justify-center z-50" style="display:none;">
+            <div class="bg-slate-800/90 rounded-2xl p-6 shadow-2xl border border-slate-600/50">
+                <div class="w-12 h-12 border-4 border-blue-500 border-t-transparent border-solid rounded-full animate-spin mx-auto"></div>
+                <p class="text-slate-300 text-sm mt-4 text-center font-medium">Lädt...</p>
+            </div>
         </div>
         <div id="app"></div>
     </main>
